@@ -1,0 +1,5 @@
+rootProject.name = 'mars-doc'
+include 'doc'
+include 'spring-boot-starter-doc'
+include 'doc-test'
+
