@@ -23,4 +23,5 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-aop"
 
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.8'
 }

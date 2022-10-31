@@ -234,6 +234,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
         List<ParameterVo> list = new ArrayList<>();
         Class<?> returnType = method.getReturnType();
+        System.out.println(returnType.getClass().getTypeParameters()[0].getName());
         if (returnType != Void.class) {
 
             Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
@@ -356,6 +357,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     public List<ParameterVo> fieldConvertParameter(Class clazz,Type[] actualTypeArguments, String in) {
 
+        TypeVariable<? extends Class<? extends Class>>[] typeParameters = clazz.getClass().getTypeParameters();
         Field[] declaredFields = clazz.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
             List<ParameterVo> parameterVoList = new ArrayList<>();
@@ -365,14 +367,25 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                     continue;
                 }
 
-                Type fieldType = null;
-                if (ObjectUtil.isNotEmpty(actualTypeArguments)){
-                    Optional<Type> fieldTypeOptional = Arrays.stream(actualTypeArguments).filter(m -> m == field.getGenericType()).findFirst();
-                    if (fieldTypeOptional.isPresent()){
-                        fieldType = fieldTypeOptional.get();
 
+                Type fieldType = null;
+                if (ObjectUtil.isNotEmpty(typeParameters)){
+                    Integer typeIndex = getTypeIndex(typeParameters, field);
+                    if (typeIndex!=null){
+                        fieldType = actualTypeArguments[typeIndex];
                     }
                 }
+
+                if (fieldType!=null && ClassTypeEnum.checkClass(fieldType.getClass().getTypeName())){
+                    System.out.println(fieldType.getClass());
+//                    Class cc= null;
+//                    if (field.getClass() instanceof List.class){
+//                        cc = field.getType()
+//                    }
+                }
+
+
+
                 System.out.println(fieldType);
                 System.out.println(field.getGenericType());
                 field.setAccessible(true);
@@ -404,6 +417,18 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 parameterVoList.add(build);
             }
             return parameterVoList;
+        }
+        return null;
+    }
+
+    public Integer getTypeIndex(TypeVariable<? extends Class<? extends Class>>[] typeParameters,Field field ){
+        Type genericType = field.getGenericType();
+        if (ObjectUtil.isNotEmpty(typeParameters)){
+            for (int i = 0; i < typeParameters.length; i++) {
+                if (typeParameters[i].getTypeName().equals(genericType.getTypeName())){
+                    return i;
+                }
+            }
         }
         return null;
     }

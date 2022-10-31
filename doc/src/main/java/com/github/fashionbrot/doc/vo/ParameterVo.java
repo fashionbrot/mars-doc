@@ -45,6 +45,8 @@ public class ParameterVo implements Serializable {
      */
     private String in;
 
+    private String ref;
+
     /**
      * 子参数
      */
