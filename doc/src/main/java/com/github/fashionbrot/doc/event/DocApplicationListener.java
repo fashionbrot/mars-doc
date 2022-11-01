@@ -40,6 +40,26 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     private DocConfigurationProperties docConfigurationProperties;
 
+    private Set<Class> loadClassSet = new HashSet<>();
+
+    public Class loadClass(String className){
+        Optional<Class> first = loadClassSet.stream().filter(m -> m.getSimpleName().equals(className)).findFirst();
+        Class clazz = null;
+        if (first.isPresent()){
+            return first.get();
+        }else {
+            try {
+                clazz = Class.forName(className);
+                loadClassSet.add(clazz);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return clazz;
+    }
+
+
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
@@ -224,12 +244,16 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     }
 
 
+
+
     private List<ParameterVo> getResponse(Method method) {
 
         Type genericReturnType = method.getGenericReturnType();
         if (genericReturnType!=null){
             System.out.println(genericReturnType.getTypeName());
         }
+
+        test1(method);
 
 
         List<ParameterVo> list = new ArrayList<>();
@@ -271,16 +295,70 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         return list;
     }
 
-    private Class parseString(String returnClass){
-        //com.github.fashionbrot.vo.RespVo<java.util.List<com.github.fashionbrot.entity.TestEntity>>
-        if (ObjectUtil.isNotEmpty(returnClass)){
-            String substring = returnClass.substring(0, returnClass.lastIndexOf("<"));
+    private void test1(Method method){
+        String methodId = getMethodId(method);
+        List<MethodTypeVo> methodTypeVoList=new ArrayList<>();
+
+        Type genericReturnType = method.getGenericReturnType();
+//        test222(genericReturnType,methodId,methodTypeVoList);
+        TypeVariable<? extends Class<?>>[] typeParameters = method.getReturnType().getTypeParameters();
+        if (ObjectUtil.isNotEmpty(typeParameters)){
+            Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
+            for (int i = 0; i < typeParameters.length; i++) {
+                Type  classType = actualTypeArguments[i];
+                Type  genType = typeParameters[i];
+
+                MethodTypeVo build = MethodTypeVo.builder()
+                        .methodId(methodId)
+                        .typeClass(classType.getTypeName())
+                        .typeName(genType.getTypeName())
+                        .build();
+
+
+                if (!ClassTypeEnum.checkClass(classType.getTypeName())){
+                    List<MethodTypeVo> childList=new ArrayList<>();
+                    test222(classType,methodId,childList);
+                }
+                methodTypeVoList.add(build);
+            }
         }
-
-
-        return null;
+        System.out.println(methodTypeVoList);
     }
 
+    public void test222(Type classType,String methodId,List<MethodTypeVo> methodTypeVoList){
+        if (!classType.getClass().getName().equals("sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl")){
+            return;
+        }
+
+        Type childClass = ((ParameterizedType) classType).getRawType();
+        TypeVariable[] typeVariables = childClass.getClass().getTypeParameters();
+        Type[] actualTypeArguments = ((ParameterizedType) classType).getActualTypeArguments();
+        if (ObjectUtil.isNotEmpty(typeVariables)){
+            for (int i = 0; i < typeVariables.length; i++) {
+                TypeVariable typeVariable = typeVariables[i];
+                Type type = actualTypeArguments[i];
+                MethodTypeVo build = MethodTypeVo.builder()
+                        .methodId(methodId)
+                        .typeClass(type.getTypeName())
+                        .typeName(typeVariable.getTypeName())
+                        .build();
+
+                if (!ClassTypeEnum.checkClass(type.getTypeName())){
+                    List<MethodTypeVo> childList=new ArrayList<>();
+                    test222(type,methodId,childList);
+                    build.setChild(childList);
+                }
+                methodTypeVoList.add(build);
+            }
+        }
+    }
+
+
+    public String getMethodId(Method method){
+        Class<?> declaringClass = method.getDeclaringClass();
+        String classId = declaringClass.getName();
+        return declaringClass.getName()+"#"+method.getName();
+    }
 
     private List<ParameterVo> getRequest(Method method) {
         Parameter[] parameters = method.getParameters();
@@ -357,7 +435,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     public List<ParameterVo> fieldConvertParameter(Class clazz,Type[] actualTypeArguments, String in) {
 
-        TypeVariable<? extends Class<? extends Class>>[] typeParameters = clazz.getClass().getTypeParameters();
+//        TypeVariable<? extends Class<? extends Class>>[] typeParameters = clazz.getClass().getTypeParameters();
         Field[] declaredFields = clazz.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
             List<ParameterVo> parameterVoList = new ArrayList<>();
@@ -368,25 +446,25 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 }
 
 
-                Type fieldType = null;
-                if (ObjectUtil.isNotEmpty(typeParameters)){
-                    Integer typeIndex = getTypeIndex(typeParameters, field);
-                    if (typeIndex!=null){
-                        fieldType = actualTypeArguments[typeIndex];
-                    }
-                }
-
-                if (fieldType!=null && ClassTypeEnum.checkClass(fieldType.getClass().getTypeName())){
-                    System.out.println(fieldType.getClass());
-//                    Class cc= null;
-//                    if (field.getClass() instanceof List.class){
-//                        cc = field.getType()
+//                Type fieldType = null;
+//                if (ObjectUtil.isNotEmpty(typeParameters)){
+//                    Integer typeIndex = getTypeIndex(typeParameters, field);
+//                    if (typeIndex!=null){
+//                        fieldType = actualTypeArguments[typeIndex];
 //                    }
-                }
+//                }
+
+//                if (fieldType!=null && ClassTypeEnum.checkClass(fieldType.getClass().getTypeName())){
+//                    System.out.println(fieldType.getClass());
+////                    Class cc= null;
+////                    if (field.getClass() instanceof List.class){
+////                        cc = field.getType()
+////                    }
+//                }
 
 
 
-                System.out.println(fieldType);
+//                System.out.println(fieldType);
                 System.out.println(field.getGenericType());
                 field.setAccessible(true);
                 String fieldName = field.getName();

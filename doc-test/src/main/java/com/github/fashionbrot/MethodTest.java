@@ -41,7 +41,7 @@ public class MethodTest {
 
     }
 
-    public RespVo<List<RespVo<TestEntity>>> test(){
+    public RespVo<List<TestEntity>> test(){
         return RespVo.success();
     }
 

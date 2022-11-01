@@ -45,7 +45,15 @@ public class ParameterVo implements Serializable {
      */
     private String in;
 
+    /**
+     * 泛型对应的 class
+     */
     private String ref;
+
+    /**
+     * 是否是集合类型
+     */
+    private Integer collection;
 
     /**
      * 子参数

@@ -4,7 +4,9 @@ import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.entity.TestEntity;
 import com.github.fashionbrot.req.TestReq;
+import com.github.fashionbrot.vo.PageVo;
 import com.github.fashionbrot.vo.RespVo;
+import com.github.fashionbrot.vo.RespVo2;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,8 +40,8 @@ public class TestController {
     @ApiOperation("test3接口")
     @GetMapping("test3")
     @ResponseBody
-    private RespVo<List<TestEntity>> test3(TestReq req){
-        return RespVo.success();
+    private RespVo2<Integer,PageVo<TestEntity>> test3(TestReq req){
+        return RespVo2.success();
     }
 
 //    @ApiOperation("test4接口")
