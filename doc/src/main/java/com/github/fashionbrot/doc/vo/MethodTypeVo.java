@@ -15,7 +15,9 @@ public class MethodTypeVo {
 
     private String methodId;
 
-    private String typeClass;
+    private Class typeClass;
+
+    private String typeClassStr;
 
     private String typeName;
 
