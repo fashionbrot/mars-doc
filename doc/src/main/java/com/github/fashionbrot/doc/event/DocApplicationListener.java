@@ -3,6 +3,7 @@ package com.github.fashionbrot.doc.event;
 
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.DocConfigurationProperties;
+import com.github.fashionbrot.doc.DocParameterizedType;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
@@ -264,8 +265,8 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
             MethodTypeVo methodTypeRoot = getMethodTypeVo(method);
 
-            String methodId = getMethodId(method);
-            Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
+//            String methodId = getMethodId(method);
+//            Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
 
 
             if (ClassTypeEnum.checkClass(returnType.getTypeName())) {
@@ -313,12 +314,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 Type  classType = actualTypeArguments[i];
                 Type  genType = typeParameters[i];
 
-                Class typeClass = null;
-                if(classType instanceof  Class){
-                    typeClass = (Class) classType;
-                }else if (classType instanceof ParameterizedType){
-                    typeClass = (Class) ((ParameterizedType) classType).getRawType();
-                }
+                Class typeClass = convertClass(classType);
 
                 MethodTypeVo build = MethodTypeVo.builder()
                         .methodId(methodId)
@@ -329,15 +325,25 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
                 if (!ClassTypeEnum.checkClass(classType.getTypeName())){
-                    List<MethodTypeVo> childList=getMethodTypeList(classType,genType,methodId);
-                    build.setChild(childList);
+
+                    if (typeClass.isArray()){
+                        System.out.println(typeClass.getComponentType());
+                        //TODO 需要继续
+                        DocParameterizedType parameterizedType = new DocParameterizedType(null,null,null);
+                        List<MethodTypeVo> childList = getMethodTypeList(classType, genType, methodId);
+                        build.setChild(childList);
+                    }else {
+                        List<MethodTypeVo> childList = getMethodTypeList(classType, genType, methodId);
+                        build.setChild(childList);
+                    }
+
                 }
                 methodTypeVoList.add(build);
             }
         }
         MethodTypeVo root = MethodTypeVo.builder()
                 .methodId(methodId)
-                .typeClass((Class) ((ParameterizedType) genericReturnType).getRawType())
+                .typeClass(convertClass(genericReturnType))
                 .typeName(genericReturnType.getTypeName())
                 .typeClassStr("root")
                 .child(methodTypeVoList)
@@ -348,10 +354,13 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     public List<MethodTypeVo> getMethodTypeList(Type classType,Type  genType,String methodId){
         List<MethodTypeVo> list=new ArrayList<>();
 
-        if (!"sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl".equals(classType.getClass().getName())){
+
+        if (!"sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl".equals(classType.getClass().getName())  ){
+
             return list;
         }
-        TypeVariable<? extends Class<?>>[] typeVariables = ((ParameterizedTypeImpl) classType).getRawType().getTypeParameters();
+//        TypeVariable<? extends Class<?>>[] typeVariables = ((ParameterizedTypeImpl) classType).getRawType().getTypeParameters();
+        TypeVariable<? extends Class<?>>[] typeVariables = getTypeVariable(classType);
 
 //        TypeVariable<?>[] typeParameters = ((ParameterizedType) classType).getRawType().getClass().getTypeParameters();
 //        TypeVariable<?>[] typeVariables = ((TypeVariable) genType).getGenericDeclaration().getTypeParameters();
@@ -362,12 +371,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 Type typeVariable = typeVariables[i];
                 Type type = actualTypeArguments[i];
 
-                Class typeClass = null;
-                if(type instanceof  Class){
-                    typeClass = (Class) type;
-                }else if (type instanceof ParameterizedType){
-                    typeClass = (Class) ((ParameterizedType) type).getRawType();
-                }
+                Class typeClass = convertClass(type);
 
                 MethodTypeVo build = MethodTypeVo.builder()
                         .methodId(methodId)
@@ -385,10 +389,32 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         return list;
     }
 
+    public TypeVariable[] getTypeVariable(Type type){
+        Class typeClass = null;
+        if(type instanceof  Class){
+            typeClass = (Class) type;
+        }else if (type instanceof ParameterizedType){
+            typeClass = (Class) ((ParameterizedType) type).getRawType();
+        }
+        if (typeClass!=null){
+            return typeClass.getTypeParameters();
+        }
+        return null;
+    }
+
+    private Class convertClass(Type type) {
+        Class typeClass = null;
+        if(type instanceof  Class){
+            typeClass = (Class) type;
+        }else if (type instanceof ParameterizedType){
+            typeClass = (Class) ((ParameterizedType) type).getRawType();
+        }
+        return typeClass;
+    }
+
 
     public String getMethodId(Method method){
         Class<?> declaringClass = method.getDeclaringClass();
-        String classId = declaringClass.getName();
         return declaringClass.getName()+"#"+method.getName();
     }
 
@@ -504,12 +530,14 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         if (first.isPresent()){
                             MethodTypeVo methodType = first.get();
                             build.setDataType(methodType.getTypeClassStr());
-                            if (JavaClassValidateUtil.isCollection(methodType.getTypeClass().getName())){
+                            if (JavaClassValidateUtil.isCollection(methodType.getTypeClass().getName())) {
                                 build.setCollection(1);
                                 if (ObjectUtil.isNotEmpty(methodType.getChild())) {
                                     MethodTypeVo childMethodType = methodType.getChild().get(0);
                                     build.setChild(fieldConvertParameter(childMethodType.getTypeClass(), childMethodType.getChild(), in));
                                 }
+                            }else if (methodType.getTypeClass().isArray()){
+                                System.out.println(1);
                             }else{
                                 build.setCollection(0);
                                 build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), in));
