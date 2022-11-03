@@ -565,33 +565,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         return null;
     }
 
-    /**
-     * 判断返回值类型是否是集合或者数组类型
-     * @param returnType 类型
-     * @return 是否是集合或者数组类型
-     */
-    public boolean returnsMany(Class<?> returnType) {
-        //判断返回类型是否是集合类型
-        boolean isCollection = Collection.class.isAssignableFrom(returnType);
 
-        boolean isIterable = Iterable.class.isAssignableFrom(returnType);
-        //判断返回类型是否是数组类型
-        boolean isArray = returnType.isArray();
-        return isCollection || isArray || isIterable;
-    }
-
-
-    public Integer getTypeIndex(TypeVariable<? extends Class<? extends Class>>[] typeParameters,Field field ){
-        Type genericType = field.getGenericType();
-        if (ObjectUtil.isNotEmpty(typeParameters)){
-            for (int i = 0; i < typeParameters.length; i++) {
-                if (typeParameters[i].getTypeName().equals(genericType.getTypeName())){
-                    return i;
-                }
-            }
-        }
-        return null;
-    }
 
 
     @Override

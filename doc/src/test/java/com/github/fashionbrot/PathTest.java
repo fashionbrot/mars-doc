@@ -8,8 +8,9 @@ public class PathTest {
 
 
     @Test
-    private void test1(){
+    public void test1(){
         String s = PathUtil.formatPath("api", "test");
+        System.out.println(s);
         Assert.assertEquals("/api/test",s);
 
     }
