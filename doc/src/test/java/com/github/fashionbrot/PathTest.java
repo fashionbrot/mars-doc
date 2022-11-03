@@ -1,31 +1,19 @@
 package com.github.fashionbrot;
 
-import com.github.fashionbrot.doc.event.DocApplicationListener;
+import com.github.fashionbrot.doc.util.PathUtil;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class PathTest {
 
 
-    public static void main(String[] args) {
-
-
-        System.out.println(formatPath("test","list"));
+    @Test
+    private void test1(){
+        String s = PathUtil.formatPath("api", "test");
+        Assert.assertEquals("/api/test",s);
 
     }
 
 
-    public static String formatPath(String classPath, String methodPath){
-        String path = "";
-        if (classPath.startsWith("/")){
-            path = classPath;
-        }else {
-            path = "/"+classPath;
-        }
-        if (methodPath.startsWith("/")){
-            path += methodPath;
-        }else{
-            path +="/"+methodPath;
-        }
-        return path;
-    }
 
 }

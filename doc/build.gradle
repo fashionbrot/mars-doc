@@ -3,8 +3,10 @@ plugins {
     id 'java-library'
 }
 
-
+apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: "java-library"
+
 
 group 'com.github.fashionbrot'
 version '1.0.0'
@@ -13,7 +15,7 @@ version '1.0.0'
 dependencies {
     implementation 'org.projectlombok:lombok:1.18.20'
     compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
     implementation 'org.slf4j:slf4j-api:1.7.10'
 
     compileOnly 'org.springframework:spring-webmvc:4.3.0.RELEASE'
@@ -21,4 +23,14 @@ dependencies {
     compileOnly 'org.springframework:spring-aop:4.3.0.RELEASE'
     compileOnly 'org.springframework:spring-context:4.3.0.RELEASE'
     implementation 'com.alibaba.fastjson2:fastjson2:2.0.8'
+    testImplementation 'junit:junit:4.11'
+
 }
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

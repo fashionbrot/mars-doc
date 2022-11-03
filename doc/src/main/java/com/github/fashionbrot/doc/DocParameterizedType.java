@@ -1,6 +1,5 @@
 package com.github.fashionbrot.doc;
 
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.MalformedParameterizedTypeException;
 import java.lang.reflect.ParameterizedType;
@@ -85,8 +84,8 @@ public class DocParameterizedType implements ParameterizedType {
             }
 
             var1.append("$");
-            if (this.ownerType instanceof ParameterizedTypeImpl) {
-                var1.append(this.rawType.getName().replace(((ParameterizedTypeImpl)this.ownerType).getRawType().getName() + "$", ""));
+            if (this.ownerType instanceof ParameterizedType) {
+                var1.append(this.rawType.getName().replace(((ParameterizedType)this.ownerType).getRawType().getTypeName() + "$", ""));
             } else {
                 var1.append(this.rawType.getSimpleName());
             }

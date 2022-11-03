@@ -18,7 +18,7 @@ import java.util.List;
 
 @Api("test接口类")
 @Controller
-@RequestMapping(value = {"/test","t1"})
+@RequestMapping(value = {"/test", "t1"})
 public class TestController {
 
 
@@ -37,12 +37,12 @@ public class TestController {
 //        return RespVo.success();
 //    }
 //
-    @ApiOperation("test3接口")
-    @GetMapping("test3")
-    @ResponseBody
-    private RespVo<List<TestEntity>> test3(TestReq req){
-        return RespVo.success();
-    }
+//    @ApiOperation("test3接口")
+//    @GetMapping("test3")
+//    @ResponseBody
+//    private RespVo<List<TestEntity>> test3(TestReq req){
+//        return RespVo.success();
+//    }
 //
 //    @ApiOperation("test4接口")
 //    @RequestMapping("test4")
@@ -74,17 +74,17 @@ public class TestController {
 //    }
 
 
-//    @ApiOperation("test8接口")
-//    @RequestMapping("test8")
-//    @ResponseBody
-//    private RespVo<TestEntity[]> test8( TestReq req){
-//        return RespVo.success();
-//    }
+    @ApiOperation("test8接口")
+    @RequestMapping("test8")
+    @ResponseBody
+    private RespVo<TestEntity[]> test8( TestReq req){
+        return RespVo.success();
+    }
 
 //    @ApiOperation("test9接口")
 //    @RequestMapping("test9")
 //    @ResponseBody
-//    private RespVo2<Integer,RespVo2<String,TestEntity[]>> test9( TestReq req){
+//    private RespVo2<Integer, RespVo2<String, TestEntity[]>> test9(TestReq req) {
 //        return RespVo2.success();
 //    }
 

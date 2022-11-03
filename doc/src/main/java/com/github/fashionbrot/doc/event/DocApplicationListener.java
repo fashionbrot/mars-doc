@@ -11,6 +11,7 @@ import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.util.JavaClassValidateUtil;
 import com.github.fashionbrot.doc.util.ObjectUtil;
+import com.github.fashionbrot.doc.util.PathUtil;
 import com.github.fashionbrot.doc.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 
 import java.lang.reflect.*;
@@ -209,7 +209,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 String classPath = classPaths[i];
                 for (MethodVo mv : methodVoList) {
                     list.add(MethodVo.builder()
-                            .path(formatPath(classPath, mv.getPath()))
+                            .path(PathUtil.formatPath(classPath, mv.getPath()))
                             .method(mv.getMethod())
                             .build());
                 }
@@ -231,20 +231,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         }
     }
 
-    public static String formatPath(String classPath, String methodPath) {
-        String path = "";
-        if (classPath.startsWith("/")) {
-            path = classPath;
-        } else {
-            path = "/" + classPath;
-        }
-        if (methodPath.startsWith("/")) {
-            path += methodPath;
-        } else {
-            path += "/" + methodPath;
-        }
-        return path;
-    }
+
 
 
 
@@ -329,8 +316,9 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                     if (typeClass.isArray()){
                         System.out.println(typeClass.getComponentType());
                         //TODO 需要继续
-                        DocParameterizedType parameterizedType = new DocParameterizedType(null,null,null);
-                        List<MethodTypeVo> childList = getMethodTypeList(classType, genType, methodId);
+                        DocParameterizedType parameterizedType = new DocParameterizedType(List.class, new Class[]{typeClass.getComponentType()},null);
+                        List<MethodTypeVo> childList = getMethodTypeList(parameterizedType, genType, methodId);
+//                        build.setTypeClass(typeClass.getComponentType());
                         build.setChild(childList);
                     }else {
                         List<MethodTypeVo> childList = getMethodTypeList(classType, genType, methodId);
@@ -351,12 +339,19 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         return root;
     }
 
+    public boolean isParameterizedType(String typeClassName){
+        if ("sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl".equals(typeClassName)
+           || "com.github.fashionbrot.doc.DocParameterizedType".equals(typeClassName)){
+            return true;
+        }
+        return false;
+    }
+
     public List<MethodTypeVo> getMethodTypeList(Type classType,Type  genType,String methodId){
         List<MethodTypeVo> list=new ArrayList<>();
 
 
-        if (!"sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl".equals(classType.getClass().getName())  ){
-
+        if (!isParameterizedType(classType.getClass().getName())  ){
             return list;
         }
 //        TypeVariable<? extends Class<?>>[] typeVariables = ((ParameterizedTypeImpl) classType).getRawType().getTypeParameters();
@@ -380,8 +375,14 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         .typeName(typeVariable.getTypeName())
                         .build();
 
-                if (!ClassTypeEnum.checkClass(type.getTypeName())){
-                    build.setChild(getMethodTypeList(type,typeVariable,methodId));
+                if (!ClassTypeEnum.checkClass(typeClass.getTypeName())){
+                    if (typeClass.isArray()){
+                        DocParameterizedType parameterizedType = new DocParameterizedType(List.class, new Class[]{typeClass.getComponentType()},null);
+                        List<MethodTypeVo> childList = getMethodTypeList(parameterizedType, genType, methodId);
+                        build.setChild(childList);
+                    }else {
+                        build.setChild(getMethodTypeList(type, typeVariable, methodId));
+                    }
                 }
                 list.add(build);
             }
@@ -524,23 +525,29 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         .dataType(valueType.getSimpleName())
                         .build();
 
-                if (!ClassTypeEnum.checkClass(valueType.getTypeName())) {
+                if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
                     if (ObjectUtil.isNotEmpty(methodTypeList)){
                         Optional<MethodTypeVo> first = methodTypeList.stream().filter(m -> m.getTypeName().equals(field.getGenericType().getTypeName())).findFirst();
                         if (first.isPresent()){
                             MethodTypeVo methodType = first.get();
                             build.setDataType(methodType.getTypeClassStr());
-                            if (JavaClassValidateUtil.isCollection(methodType.getTypeClass().getName())) {
+
+
+                            if (JavaClassValidateUtil.isCollection(methodType.getTypeClass()) ) {
                                 build.setCollection(1);
                                 if (ObjectUtil.isNotEmpty(methodType.getChild())) {
                                     MethodTypeVo childMethodType = methodType.getChild().get(0);
                                     build.setChild(fieldConvertParameter(childMethodType.getTypeClass(), childMethodType.getChild(), in));
                                 }
-                            }else if (methodType.getTypeClass().isArray()){
-                                System.out.println(1);
+                            }else if (JavaClassValidateUtil.isArray(methodType.getTypeClass())){
+                                build.setCollection(1);
+
+                                build.setChild(fieldConvertParameter(methodType.getTypeClass().getComponentType(), methodType.getChild(), in));
                             }else{
                                 build.setCollection(0);
-                                build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), in));
+                                if (ObjectUtil.isNotEmpty(methodType.getChild())){
+                                    build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), in));
+                                }
                             }
                             System.out.println(methodType.getTypeName());
 
@@ -557,6 +564,22 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         }
         return null;
     }
+
+    /**
+     * 判断返回值类型是否是集合或者数组类型
+     * @param returnType 类型
+     * @return 是否是集合或者数组类型
+     */
+    public boolean returnsMany(Class<?> returnType) {
+        //判断返回类型是否是集合类型
+        boolean isCollection = Collection.class.isAssignableFrom(returnType);
+
+        boolean isIterable = Iterable.class.isAssignableFrom(returnType);
+        //判断返回类型是否是数组类型
+        boolean isArray = returnType.isArray();
+        return isCollection || isArray || isIterable;
+    }
+
 
     public Integer getTypeIndex(TypeVariable<? extends Class<? extends Class>>[] typeParameters,Field field ){
         Type genericType = field.getGenericType();

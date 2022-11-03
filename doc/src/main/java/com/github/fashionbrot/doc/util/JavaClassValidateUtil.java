@@ -99,25 +99,11 @@ public class JavaClassValidateUtil {
     /**
      * validate java collection
      *
-     * @param type java typeName
+     * @param  clazz  clazz
      * @return boolean
      */
-    public static boolean isCollection(String type) {
-        switch (type) {
-            case "java.util.List":
-            case "java.util.LinkedList":
-            case "java.util.ArrayList":
-            case "java.util.Set":
-            case "java.util.TreeSet":
-            case "java.util.HashSet":
-            case "java.util.SortedSet":
-            case "java.util.Collection":
-            case "java.util.ArrayDeque":
-            case "java.util.PriorityQueue":
-                return true;
-            default:
-                return false;
-        }
+    public static boolean isCollection(Class clazz) {
+        return clazz!=null && Iterable.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -151,6 +137,16 @@ public class JavaClassValidateUtil {
      */
     public static boolean isArray(String type) {
         return type.endsWith("[]");
+    }
+
+    /**
+     * check array
+     *
+     * @param type type name
+     * @return boolean
+     */
+    public static boolean isArray(Class clazz) {
+        return clazz!=null && clazz.isArray();
     }
 
 
