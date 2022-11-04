@@ -1,4 +1,4 @@
-package com.github.fashionbrot.doc;
+package com.github.fashionbrot.doc.type;
 
 
 import java.lang.reflect.MalformedParameterizedTypeException;
@@ -20,7 +20,7 @@ public class DocParameterizedType implements ParameterizedType {
     public DocParameterizedType(Class<?> rawType, Type[] actualTypeArguments, Type ownerType) {
         this.actualTypeArguments = actualTypeArguments;
         this.rawType = rawType;
-        this.ownerType = (Type)(ownerType != null ? ownerType : rawType.getDeclaringClass());
+        this.ownerType = (ownerType != null ? ownerType : rawType.getDeclaringClass());
         this.validateConstructorArguments();
     }
 
@@ -38,7 +38,7 @@ public class DocParameterizedType implements ParameterizedType {
 
     @Override
     public Type[] getActualTypeArguments() {
-        return (Type[])this.actualTypeArguments.clone();
+        return this.actualTypeArguments.clone();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.github.fashionbrot;
+package com.github.fashionbrot.test;
 
 import com.github.fashionbrot.doc.util.PathUtil;
 import org.junit.Assert;
@@ -12,7 +12,6 @@ public class PathTest {
         String s = PathUtil.formatPath("api", "test");
         System.out.println(s);
         Assert.assertEquals("/api/test",s);
-
     }
 
 

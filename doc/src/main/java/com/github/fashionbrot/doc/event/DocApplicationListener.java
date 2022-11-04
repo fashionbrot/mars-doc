@@ -3,15 +3,16 @@ package com.github.fashionbrot.doc.event;
 
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.DocConfigurationProperties;
-import com.github.fashionbrot.doc.DocParameterizedType;
+import com.github.fashionbrot.doc.consts.MarsDocConst;
+import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
+import com.github.fashionbrot.doc.enums.RequestTypeEnum;
+import com.github.fashionbrot.doc.type.DocParameterizedType;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.enums.ClassTypeEnum;
-import com.github.fashionbrot.doc.util.JavaClassValidateUtil;
-import com.github.fashionbrot.doc.util.ObjectUtil;
-import com.github.fashionbrot.doc.util.PathUtil;
+import com.github.fashionbrot.doc.util.*;
 import com.github.fashionbrot.doc.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -108,17 +109,18 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 }
 
 
-                String methodDescription = method.getName();
-                int methodPriority = 0;
-                ApiOperation apiOperation = method.getDeclaredAnnotation(ApiOperation.class);
-                if (apiOperation != null) {
-                    methodDescription = apiOperation.value();
-                    methodPriority = apiOperation.priority();
-                }
 
-
-                List<MethodVo> methodVoList = getRequestMapping(method);
+                List<MethodVo> methodVoList = RequestMappingUtil.getRequestMapping(method);
                 if (ObjectUtil.isNotEmpty(methodVoList)) {
+
+                    String methodDescription = method.getName();
+                    int methodPriority = 0;
+                    ApiOperation apiOperation = method.getDeclaredAnnotation(ApiOperation.class);
+                    if (apiOperation != null) {
+                        methodDescription = apiOperation.value();
+                        methodPriority = apiOperation.priority();
+                    }
+
                     for (MethodVo vo : methodVoList) {
                         vo.setMethodId(methodId);
                         vo.setDescription(methodDescription);
@@ -133,6 +135,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                             .list(getRequest(method))
                             .build());
                 }
+
                 long respCount = responseVoList.stream().filter(m -> m.getMethodId().equals(methodId)).count();
                 if (respCount == 0) {
                     responseVoList.add(LinkVo.builder()
@@ -162,74 +165,6 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     }
 
-    public List<MethodVo> getRequestMapping(Method method) {
-
-        Class<?> declaringClass = method.getDeclaringClass();
-        RequestMapping classRequestMapping = declaringClass.getDeclaredAnnotation(RequestMapping.class);
-        String[] classPaths = null;
-        if (classRequestMapping != null) {
-            classPaths = classRequestMapping.value();
-        }
-        List<MethodVo> methodVoList = new ArrayList<>();
-        if (method != null) {
-
-            GetMapping getMapping = method.getDeclaredAnnotation(GetMapping.class);
-            if (getMapping != null) {
-                getMapping(getMapping.value(), "GET", methodVoList);
-            }
-            PostMapping postMapping = method.getDeclaredAnnotation(PostMapping.class);
-            if (postMapping != null) {
-                getMapping(postMapping.value(), "POST", methodVoList);
-            }
-            PutMapping putMapping = method.getDeclaredAnnotation(PutMapping.class);
-            if (putMapping != null) {
-                getMapping(putMapping.value(), "PUT", methodVoList);
-            }
-            DeleteMapping deleteMapping = method.getDeclaredAnnotation(DeleteMapping.class);
-            if (deleteMapping != null) {
-                getMapping(deleteMapping.value(), "DELETE", methodVoList);
-            }
-            RequestMapping mapping = method.getDeclaredAnnotation(RequestMapping.class);
-            if (mapping != null) {
-                RequestMethod[] requestMethods = mapping.method();
-                if (ObjectUtil.isNotEmpty(requestMethods)) {
-                    for (RequestMethod request : requestMethods) {
-                        getMapping(mapping.value(), request.name(), methodVoList);
-                    }
-                } else {
-                    for (RequestMethod request : RequestMethod.values()) {
-                        getMapping(mapping.value(), request.name(), methodVoList);
-                    }
-                }
-            }
-        }
-        if (ObjectUtil.isNotEmpty(classPaths)) {
-            List<MethodVo> list = new ArrayList<>();
-            for (int i = 0; i < classPaths.length; i++) {
-                String classPath = classPaths[i];
-                for (MethodVo mv : methodVoList) {
-                    list.add(MethodVo.builder()
-                            .path(PathUtil.formatPath(classPath, mv.getPath()))
-                            .method(mv.getMethod())
-                            .build());
-                }
-            }
-            return list;
-        }
-
-        return methodVoList;
-    }
-
-    private void getMapping(String[] values, String method, List<MethodVo> methodVoList) {
-        if (ObjectUtil.isNotEmpty(values)) {
-            for (String path : values) {
-                methodVoList.add(MethodVo.builder()
-                        .method(method)
-                        .path(path)
-                        .build());
-            }
-        }
-    }
 
 
 
@@ -238,23 +173,12 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     private List<ParameterVo> getResponse(Method method) {
 
-        Type genericReturnType = method.getGenericReturnType();
-        if (genericReturnType!=null){
-            System.out.println(genericReturnType.getTypeName());
-        }
-
-
-
 
         List<ParameterVo> list = new ArrayList<>();
         Class<?> returnType = method.getReturnType();
         if (returnType != Void.class) {
 
             MethodTypeVo methodTypeRoot = getMethodTypeVo(method);
-
-//            String methodId = getMethodId(method);
-//            Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
-
 
             if (ClassTypeEnum.checkClass(returnType.getTypeName())) {
                 String description = "";
@@ -288,7 +212,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     }
 
     private MethodTypeVo getMethodTypeVo(Method method){
-        String methodId = getMethodId(method);
+        String methodId = MethodUtil.getMethodId(method);
 
         Type genericReturnType = method.getGenericReturnType();
         TypeVariable<? extends Class<?>>[] typeParameters = method.getReturnType().getTypeParameters();
@@ -301,7 +225,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 Type  classType = actualTypeArguments[i];
                 Type  genType = typeParameters[i];
 
-                Class typeClass = convertClass(classType);
+                Class typeClass = typeConvertClass(classType);
 
                 MethodTypeVo build = MethodTypeVo.builder()
                         .methodId(methodId)
@@ -314,15 +238,16 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (!ClassTypeEnum.checkClass(classType.getTypeName())){
 
                     if (typeClass.isArray()){
-                        System.out.println(typeClass.getComponentType());
-                        //TODO 需要继续
+
                         DocParameterizedType parameterizedType = new DocParameterizedType(List.class, new Class[]{typeClass.getComponentType()},null);
                         List<MethodTypeVo> childList = getMethodTypeList(parameterizedType, genType, methodId);
-//                        build.setTypeClass(typeClass.getComponentType());
+
                         build.setChild(childList);
                     }else {
+
                         List<MethodTypeVo> childList = getMethodTypeList(classType, genType, methodId);
                         build.setChild(childList);
+
                     }
 
                 }
@@ -331,27 +256,21 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         }
         MethodTypeVo root = MethodTypeVo.builder()
                 .methodId(methodId)
-                .typeClass(convertClass(genericReturnType))
+                .typeClass(typeConvertClass(genericReturnType))
                 .typeName(genericReturnType.getTypeName())
-                .typeClassStr("root")
+                .typeClassStr(MarsDocConst.TYPE_CLASS_ROOT)
                 .child(methodTypeVoList)
                 .build();
         return root;
     }
 
-    public boolean isParameterizedType(String typeClassName){
-        if ("sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl".equals(typeClassName)
-           || "com.github.fashionbrot.doc.DocParameterizedType".equals(typeClassName)){
-            return true;
-        }
-        return false;
-    }
+
 
     public List<MethodTypeVo> getMethodTypeList(Type classType,Type  genType,String methodId){
         List<MethodTypeVo> list=new ArrayList<>();
 
 
-        if (!isParameterizedType(classType.getClass().getName())  ){
+        if (!ParameterizedTypeEnum.isParameterizedType(classType.getClass().getName())  ){
             return list;
         }
 //        TypeVariable<? extends Class<?>>[] typeVariables = ((ParameterizedTypeImpl) classType).getRawType().getTypeParameters();
@@ -366,7 +285,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 Type typeVariable = typeVariables[i];
                 Type type = actualTypeArguments[i];
 
-                Class typeClass = convertClass(type);
+                Class typeClass = typeConvertClass(type);
 
                 MethodTypeVo build = MethodTypeVo.builder()
                         .methodId(methodId)
@@ -403,7 +322,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         return null;
     }
 
-    private Class convertClass(Type type) {
+    private Class typeConvertClass(Type type) {
         Class typeClass = null;
         if(type instanceof  Class){
             typeClass = (Class) type;
@@ -414,10 +333,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     }
 
 
-    public String getMethodId(Method method){
-        Class<?> declaringClass = method.getDeclaringClass();
-        return declaringClass.getName()+"#"+method.getName();
-    }
+
 
     private List<ParameterVo> getRequest(Method method) {
         Parameter[] parameters = method.getParameters();
@@ -437,11 +353,11 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
                     Class<?> type = parameter.getType();
-                    String desc = "";
+                    String parameterDescription = "";
                     boolean required = false;
                     ApiModelProperty apiModelProperty = parameter.getDeclaredAnnotation(ApiModelProperty.class);
                     if (apiModelProperty != null) {
-                        desc = apiModelProperty.value();
+                        parameterDescription = apiModelProperty.value();
                         required = apiModelProperty.required();
                         if (apiModelProperty.hidden()) {
                             continue;
@@ -450,8 +366,8 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
                     parameterVoList.add(ParameterVo.builder()
                             .name(parameterName)
-                            .in("query")
-                            .description(desc)
+                            .requestType(RequestTypeEnum.QUERY.name())
+                            .description(parameterDescription)
                             .required(required)
                             .dataType(type.getSimpleName())
                             .build());
@@ -459,7 +375,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 } else {
 
                     RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
-                    String in = requestBody != null ? "body" : "query";
+                    String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
                     ParameterVo req = null;
                     if (requestBody != null) {
                         String description = parameterName;
@@ -470,12 +386,12 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
                         req = ParameterVo.builder()
                                 .name(parameterName)
-                                .in("body")
+                                .requestType(requestType)
                                 .required(true)
                                 .description(description)
                                 .build();
                     }
-                    List<ParameterVo> parameterVos = fieldConvertParameter(classType,null, in);
+                    List<ParameterVo> parameterVos = fieldConvertParameter(classType,null, requestType);
                     if (req != null) {
                         req.setChild(parameterVos);
                         parameterVoList.add(req);
@@ -492,7 +408,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         return parameterVoList;
     }
 
-    public List<ParameterVo> fieldConvertParameter(Class clazz,List<MethodTypeVo> methodTypeList, String in) {
+    public List<ParameterVo> fieldConvertParameter(Class clazz,List<MethodTypeVo> methodTypeList, String requestType) {
 
         Field[] declaredFields = clazz.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
@@ -502,27 +418,26 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                     continue;
                 }
 
-
-                System.out.println(field.getGenericType());
                 field.setAccessible(true);
                 String fieldName = field.getName();
-                Class<?> valueType = field.getType();
-                String desc = "";
+
+                String fieldDescription = "";
                 boolean required = false;
                 ApiModelProperty apiModelProperty = field.getDeclaredAnnotation(ApiModelProperty.class);
                 if (apiModelProperty != null) {
-                    desc = apiModelProperty.value();
+                    fieldDescription = apiModelProperty.value();
                     required = apiModelProperty.required();
                     if (apiModelProperty.hidden()) {
                         continue;
                     }
                 }
+
                 ParameterVo build = ParameterVo.builder()
                         .name(fieldName)
-                        .in(in)
-                        .description(desc)
+                        .requestType(requestType)
+                        .description(fieldDescription)
                         .required(required)
-                        .dataType(valueType.getSimpleName())
+                        .dataType(field.getType().getSimpleName())
                         .build();
 
                 if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
@@ -537,26 +452,21 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                                 build.setCollection(1);
                                 if (ObjectUtil.isNotEmpty(methodType.getChild())) {
                                     MethodTypeVo childMethodType = methodType.getChild().get(0);
-                                    build.setChild(fieldConvertParameter(childMethodType.getTypeClass(), childMethodType.getChild(), in));
+                                    build.setChild(fieldConvertParameter(childMethodType.getTypeClass(), childMethodType.getChild(), requestType));
                                 }
                             }else if (JavaClassValidateUtil.isArray(methodType.getTypeClass())){
                                 build.setCollection(1);
 
-                                build.setChild(fieldConvertParameter(methodType.getTypeClass().getComponentType(), methodType.getChild(), in));
+                                build.setChild(fieldConvertParameter(methodType.getTypeClass().getComponentType(), methodType.getChild(), requestType));
                             }else{
                                 build.setCollection(0);
                                 if (ObjectUtil.isNotEmpty(methodType.getChild())){
-                                    build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), in));
+                                    build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), requestType));
                                 }
                             }
-                            System.out.println(methodType.getTypeName());
 
                         }
                     }
-//                    else{
-//                        build.setChild(fieldConvertParameter(valueType,null, in));
-//                    }
-
                 }
                 parameterVoList.add(build);
             }

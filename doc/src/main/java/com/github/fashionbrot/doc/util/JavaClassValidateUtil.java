@@ -2,7 +2,7 @@ package com.github.fashionbrot.doc.util;
 
 
 
-import com.github.fashionbrot.doc.constants.SpringMvcAnnotations;
+import com.github.fashionbrot.doc.consts.SpringMvcAnnotations;
 
 import java.util.List;
 import java.util.Objects;

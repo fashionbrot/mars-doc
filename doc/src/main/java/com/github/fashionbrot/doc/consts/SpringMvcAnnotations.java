@@ -1,4 +1,4 @@
-package com.github.fashionbrot.doc.constants;
+package com.github.fashionbrot.doc.consts;
 
 
 public interface SpringMvcAnnotations {

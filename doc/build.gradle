@@ -27,6 +27,11 @@ dependencies {
     testImplementation 'junit:junit:4.11'
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.springframework:spring-webmvc:4.3.0.RELEASE'
+    testImplementation 'org.springframework:spring-web:4.3.0.RELEASE'
+    testImplementation 'org.springframework:spring-aop:4.3.0.RELEASE'
+    testImplementation 'org.springframework:spring-context:4.3.0.RELEASE'
+    testImplementation 'com.alibaba.fastjson2:fastjson2:2.0.8'
 
 }
 

@@ -41,9 +41,9 @@ public class ParameterVo implements Serializable {
     private String example;
 
     /**
-     * query or  body
+     * @see com.github.fashionbrot.doc.enums.RequestTypeEnum
      */
-    private String in;
+    private String requestType;
 
     /**
      * 泛型对应的 class
