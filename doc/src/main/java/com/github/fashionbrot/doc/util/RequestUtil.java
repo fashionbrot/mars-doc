@@ -30,6 +30,8 @@ public class RequestUtil {
                 Class<?> classType = parameter.getType();
                 String parameterName = parameter.getName();
 
+                RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
+                String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
 
                 if (ClassTypeEnum.checkClass(classType.getName())) {
 
@@ -48,7 +50,7 @@ public class RequestUtil {
 
                     parameterVoList.add(ParameterVo.builder()
                             .name(parameterName)
-                            .requestType(RequestTypeEnum.QUERY.name())
+                            .requestType(requestType)
                             .description(parameterDescription)
                             .required(required)
                             .dataType(type.getSimpleName())
@@ -56,8 +58,6 @@ public class RequestUtil {
 
                 } else {
 
-                    RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
-                    String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
                     ParameterVo req = null;
                     if (requestBody != null) {
                         String description = parameterName;
