@@ -2,6 +2,9 @@ package com.github.fashionbrot.doc.annotation;
 
 import java.lang.annotation.*;
 
+/**
+ * @author fashi
+ */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited

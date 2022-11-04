@@ -5,6 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author fashi
+ */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
@@ -12,7 +15,6 @@ public @interface ApiOperation {
 
     /**
      * 接口名称
-     * @return
      */
     String value();
 
