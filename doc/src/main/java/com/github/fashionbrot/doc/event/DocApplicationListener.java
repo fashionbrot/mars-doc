@@ -5,10 +5,8 @@ import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.DocConfigurationProperties;
 import com.github.fashionbrot.doc.consts.MarsDocConst;
 import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
-import com.github.fashionbrot.doc.enums.RequestTypeEnum;
 import com.github.fashionbrot.doc.type.DocParameterizedType;
 import com.github.fashionbrot.doc.annotation.Api;
-import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.enums.ClassTypeEnum;
@@ -25,7 +23,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -132,7 +129,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (reqCount == 0) {
                     requestVoList.add(LinkVo.builder()
                             .methodId(methodId)
-                            .list(getRequest(method))
+                            .list(RequestUtil.getRequest(method))
                             .build());
                 }
 
@@ -140,7 +137,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (respCount == 0) {
                     responseVoList.add(LinkVo.builder()
                             .methodId(methodId)
-                            .list(getResponse(method))
+                            .list(ResponseUtil.getResponse(method))
                             .build());
                 }
 
@@ -164,318 +161,6 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         System.out.println(JSON.toJSONString(docVo));
 
     }
-
-
-
-
-
-
-
-    private List<ParameterVo> getResponse(Method method) {
-
-
-        List<ParameterVo> list = new ArrayList<>();
-        Class<?> returnType = method.getReturnType();
-        if (returnType != Void.class) {
-
-            MethodTypeVo methodTypeRoot = getMethodTypeVo(method);
-
-            if (ClassTypeEnum.checkClass(returnType.getTypeName())) {
-                String description = "";
-                boolean required = false;
-                String example = "";
-                String dataType = returnType.getTypeName();
-                String name = returnType.getSimpleName();
-                ApiModelProperty apiModelProperty = returnType.getDeclaredAnnotation(ApiModelProperty.class);
-                if (apiModelProperty != null) {
-                    description = apiModelProperty.value();
-                    required = apiModelProperty.required();
-                    example = apiModelProperty.example();
-                    dataType = apiModelProperty.dataType();
-                }
-                ParameterVo build = ParameterVo.builder()
-                        .name(name)
-                        .description(description)
-                        .dataType(dataType)
-                        .required(required)
-                        .example(example)
-                        .build();
-                list.add(build);
-            } else {
-                List<ParameterVo> parameterVos = fieldConvertParameter(returnType, methodTypeRoot.getChild(), "");
-                if (ObjectUtil.isNotEmpty(parameterVos)) {
-                    list.addAll(parameterVos);
-                }
-            }
-        }
-        return list;
-    }
-
-    private MethodTypeVo getMethodTypeVo(Method method){
-        String methodId = MethodUtil.getMethodId(method);
-
-        Type genericReturnType = method.getGenericReturnType();
-        TypeVariable<? extends Class<?>>[] typeParameters = method.getReturnType().getTypeParameters();
-
-        List<MethodTypeVo> methodTypeVoList= new ArrayList<>();
-
-        if (ObjectUtil.isNotEmpty(typeParameters)){
-            Type[] actualTypeArguments = ((ParameterizedType) genericReturnType).getActualTypeArguments();
-            for (int i = 0; i < typeParameters.length; i++) {
-                Type  classType = actualTypeArguments[i];
-                Type  genType = typeParameters[i];
-
-                Class typeClass = typeConvertClass(classType);
-
-                MethodTypeVo build = MethodTypeVo.builder()
-                        .methodId(methodId)
-                        .typeClass(typeClass)
-                        .typeClassStr(classType.getTypeName())
-                        .typeName(genType.getTypeName())
-                        .build();
-
-
-                if (!ClassTypeEnum.checkClass(classType.getTypeName())){
-
-                    if (typeClass.isArray()){
-
-                        DocParameterizedType parameterizedType = new DocParameterizedType(List.class, new Class[]{typeClass.getComponentType()},null);
-                        List<MethodTypeVo> childList = getMethodTypeList(parameterizedType, genType, methodId);
-
-                        build.setChild(childList);
-                    }else {
-
-                        List<MethodTypeVo> childList = getMethodTypeList(classType, genType, methodId);
-                        build.setChild(childList);
-
-                    }
-
-                }
-                methodTypeVoList.add(build);
-            }
-        }
-        MethodTypeVo root = MethodTypeVo.builder()
-                .methodId(methodId)
-                .typeClass(typeConvertClass(genericReturnType))
-                .typeName(genericReturnType.getTypeName())
-                .typeClassStr(MarsDocConst.TYPE_CLASS_ROOT)
-                .child(methodTypeVoList)
-                .build();
-        return root;
-    }
-
-
-
-    public List<MethodTypeVo> getMethodTypeList(Type classType,Type  genType,String methodId){
-        List<MethodTypeVo> list=new ArrayList<>();
-
-
-        if (!ParameterizedTypeEnum.isParameterizedType(classType.getClass().getName())  ){
-            return list;
-        }
-//        TypeVariable<? extends Class<?>>[] typeVariables = ((ParameterizedTypeImpl) classType).getRawType().getTypeParameters();
-        TypeVariable<? extends Class<?>>[] typeVariables = getTypeVariable(classType);
-
-//        TypeVariable<?>[] typeParameters = ((ParameterizedType) classType).getRawType().getClass().getTypeParameters();
-//        TypeVariable<?>[] typeVariables = ((TypeVariable) genType).getGenericDeclaration().getTypeParameters();
-//        TypeVariable<?>[] typeParameters1 = genType.getClass().getTypeParameters();
-        Type[] actualTypeArguments = ((ParameterizedType) classType).getActualTypeArguments();
-        if (ObjectUtil.isNotEmpty(typeVariables)){
-            for (int i = 0; i < typeVariables.length; i++) {
-                Type typeVariable = typeVariables[i];
-                Type type = actualTypeArguments[i];
-
-                Class typeClass = typeConvertClass(type);
-
-                MethodTypeVo build = MethodTypeVo.builder()
-                        .methodId(methodId)
-                        .typeClassStr(type.getTypeName())
-                        .typeClass(typeClass)
-                        .typeName(typeVariable.getTypeName())
-                        .build();
-
-                if (!ClassTypeEnum.checkClass(typeClass.getTypeName())){
-                    if (typeClass.isArray()){
-                        DocParameterizedType parameterizedType = new DocParameterizedType(List.class, new Class[]{typeClass.getComponentType()},null);
-                        List<MethodTypeVo> childList = getMethodTypeList(parameterizedType, genType, methodId);
-                        build.setChild(childList);
-                    }else {
-                        build.setChild(getMethodTypeList(type, typeVariable, methodId));
-                    }
-                }
-                list.add(build);
-            }
-        }
-        return list;
-    }
-
-    public TypeVariable[] getTypeVariable(Type type){
-        Class typeClass = null;
-        if(type instanceof  Class){
-            typeClass = (Class) type;
-        }else if (type instanceof ParameterizedType){
-            typeClass = (Class) ((ParameterizedType) type).getRawType();
-        }
-        if (typeClass!=null){
-            return typeClass.getTypeParameters();
-        }
-        return null;
-    }
-
-    private Class typeConvertClass(Type type) {
-        Class typeClass = null;
-        if(type instanceof  Class){
-            typeClass = (Class) type;
-        }else if (type instanceof ParameterizedType){
-            typeClass = (Class) ((ParameterizedType) type).getRawType();
-        }
-        return typeClass;
-    }
-
-
-
-
-    private List<ParameterVo> getRequest(Method method) {
-        Parameter[] parameters = method.getParameters();
-
-
-        List<ParameterVo> parameterVoList = new ArrayList<>();
-
-        if (ObjectUtil.isNotEmpty(parameters)) {
-            for (int i = 0; i < parameters.length; i++) {
-                Parameter parameter = parameters[i];
-
-                Class<?> classType = parameter.getType();
-                String parameterName = parameter.getName();
-
-
-                if (ClassTypeEnum.checkClass(classType.getName())) {
-
-
-                    Class<?> type = parameter.getType();
-                    String parameterDescription = "";
-                    boolean required = false;
-                    ApiModelProperty apiModelProperty = parameter.getDeclaredAnnotation(ApiModelProperty.class);
-                    if (apiModelProperty != null) {
-                        parameterDescription = apiModelProperty.value();
-                        required = apiModelProperty.required();
-                        if (apiModelProperty.hidden()) {
-                            continue;
-                        }
-                    }
-
-                    parameterVoList.add(ParameterVo.builder()
-                            .name(parameterName)
-                            .requestType(RequestTypeEnum.QUERY.name())
-                            .description(parameterDescription)
-                            .required(required)
-                            .dataType(type.getSimpleName())
-                            .build());
-
-                } else {
-
-                    RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
-                    String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
-                    ParameterVo req = null;
-                    if (requestBody != null) {
-                        String description = parameterName;
-                        ApiModel apiModel = classType.getDeclaredAnnotation(ApiModel.class);
-                        if (apiModel != null) {
-                            description = apiModel.value();
-                        }
-
-                        req = ParameterVo.builder()
-                                .name(parameterName)
-                                .requestType(requestType)
-                                .required(true)
-                                .description(description)
-                                .build();
-                    }
-                    List<ParameterVo> parameterVos = fieldConvertParameter(classType,null, requestType);
-                    if (req != null) {
-                        req.setChild(parameterVos);
-                        parameterVoList.add(req);
-                    } else {
-                        if (ObjectUtil.isNotEmpty(parameterVos)) {
-                            parameterVoList.addAll(parameterVos);
-                        }
-                    }
-
-                }
-
-            }
-        }
-        return parameterVoList;
-    }
-
-    public List<ParameterVo> fieldConvertParameter(Class clazz,List<MethodTypeVo> methodTypeList, String requestType) {
-
-        Field[] declaredFields = clazz.getDeclaredFields();
-        if (ObjectUtil.isNotEmpty(declaredFields)) {
-            List<ParameterVo> parameterVoList = new ArrayList<>();
-            for (Field field : declaredFields) {
-                if (Modifier.isFinal(field.getModifiers())) {
-                    continue;
-                }
-
-                field.setAccessible(true);
-                String fieldName = field.getName();
-
-                String fieldDescription = "";
-                boolean required = false;
-                ApiModelProperty apiModelProperty = field.getDeclaredAnnotation(ApiModelProperty.class);
-                if (apiModelProperty != null) {
-                    fieldDescription = apiModelProperty.value();
-                    required = apiModelProperty.required();
-                    if (apiModelProperty.hidden()) {
-                        continue;
-                    }
-                }
-
-                ParameterVo build = ParameterVo.builder()
-                        .name(fieldName)
-                        .requestType(requestType)
-                        .description(fieldDescription)
-                        .required(required)
-                        .dataType(field.getType().getSimpleName())
-                        .build();
-
-                if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
-                    if (ObjectUtil.isNotEmpty(methodTypeList)){
-                        Optional<MethodTypeVo> first = methodTypeList.stream().filter(m -> m.getTypeName().equals(field.getGenericType().getTypeName())).findFirst();
-                        if (first.isPresent()){
-                            MethodTypeVo methodType = first.get();
-                            build.setDataType(methodType.getTypeClassStr());
-
-
-                            if (JavaClassValidateUtil.isCollection(methodType.getTypeClass()) ) {
-                                build.setCollection(1);
-                                if (ObjectUtil.isNotEmpty(methodType.getChild())) {
-                                    MethodTypeVo childMethodType = methodType.getChild().get(0);
-                                    build.setChild(fieldConvertParameter(childMethodType.getTypeClass(), childMethodType.getChild(), requestType));
-                                }
-                            }else if (JavaClassValidateUtil.isArray(methodType.getTypeClass())){
-                                build.setCollection(1);
-
-                                build.setChild(fieldConvertParameter(methodType.getTypeClass().getComponentType(), methodType.getChild(), requestType));
-                            }else{
-                                build.setCollection(0);
-                                if (ObjectUtil.isNotEmpty(methodType.getChild())){
-                                    build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), requestType));
-                                }
-                            }
-
-                        }
-                    }
-                }
-                parameterVoList.add(build);
-            }
-            return parameterVoList;
-        }
-        return null;
-    }
-
-
 
 
     @Override

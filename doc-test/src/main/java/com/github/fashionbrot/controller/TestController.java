@@ -2,6 +2,7 @@ package com.github.fashionbrot.controller;
 
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
+import com.github.fashionbrot.entity.MultiTest;
 import com.github.fashionbrot.entity.TestEntity;
 import com.github.fashionbrot.req.TestReq;
 import com.github.fashionbrot.vo.PageVo;
@@ -74,12 +75,12 @@ public class TestController {
 //    }
 
 
-    @ApiOperation("test8接口")
-    @RequestMapping("test8")
-    @ResponseBody
-    private RespVo<TestEntity[]> test8( TestReq req){
-        return RespVo.success();
-    }
+//    @ApiOperation("test8接口")
+//    @RequestMapping("test8")
+//    @ResponseBody
+//    private RespVo<TestEntity[]> test8( TestReq req){
+//        return RespVo.success();
+//    }
 
 //    @ApiOperation("test9接口")
 //    @RequestMapping("test9")
@@ -87,5 +88,12 @@ public class TestController {
 //    private RespVo2<Integer, RespVo2<String, TestEntity[]>> test9(TestReq req) {
 //        return RespVo2.success();
 //    }
+
+    @ApiOperation("test10接口")
+    @RequestMapping("test10")
+    @ResponseBody
+    private RespVo<MultiTest> test10(TestReq req){
+        return RespVo.success();
+    }
 
 }
