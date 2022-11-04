@@ -6,6 +6,7 @@ import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.enums.RequestTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -89,5 +90,6 @@ public class RequestUtil {
         }
         return parameterVoList;
     }
+
 
 }

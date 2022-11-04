@@ -156,6 +156,11 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         docVo.setClassList(classVoList);
         docVo.setRequestList(requestVoList);
         docVo.setResponseList(responseVoList);
+        docVo.setInfo(InfoVo.builder()
+                        .version(MarsDocConst.VERSION)
+                        .baseUrl("")
+                        .description("")
+                .build());
 
 
         System.out.println(JSON.toJSONString(docVo));
