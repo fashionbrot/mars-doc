@@ -106,6 +106,10 @@ public class JavaClassValidateUtil {
         return clazz!=null && Iterable.class.isAssignableFrom(clazz);
     }
 
+    public static boolean isObject(Class clazz){
+        return "java.lang.Object".equals(clazz.getTypeName());
+    }
+
     /**
      * Check if it is an map
      *
@@ -142,7 +146,7 @@ public class JavaClassValidateUtil {
     /**
      * check array
      *
-     * @param type type name
+     * @param clazz type name
      * @return boolean
      */
     public static boolean isArray(Class clazz) {

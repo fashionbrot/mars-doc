@@ -7,12 +7,12 @@ import com.github.fashionbrot.doc.enums.RequestTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author fashionbrot
@@ -22,14 +22,12 @@ public class RequestUtil {
     public static List<ParameterVo> getRequest(Method method) {
         Parameter[] parameters = method.getParameters();
 
-        Type[] parameterTypes = method.getGenericParameterTypes();
 
         List<ParameterVo> parameterVoList = new ArrayList<>();
 
         if (ObjectUtil.isNotEmpty(parameters)) {
             for (int i = 0; i < parameters.length; i++) {
                 Parameter parameter = parameters[i];
-                Type parameterType = parameterTypes[i];
 
                 Class<?> parameterClass = parameter.getType();
                 String parameterName = parameter.getName();
@@ -77,8 +75,11 @@ public class RequestUtil {
                                 .description(description)
                                 .build();
                     }
-                    List<ParameterVo> parameterVos = ParameterUtil.fieldConvertParameter(parameterClass,null, requestType);
-                    getSuperField(parameterClass,parameterType,requestType);
+                    List<ParameterVo> parameterVos = ParameterUtil.fieldConvertParameter(parameterClass, null, requestType);
+                    List<ParameterVo> superField = getSuperClassField(parameterClass, requestType);
+                    if (ObjectUtil.isNotEmpty(superField)){
+                        parameterVos.addAll(superField);
+                    }
                     if (req != null) {
                         req.setChild(parameterVos);
                         parameterVoList.add(req);
@@ -95,17 +96,120 @@ public class RequestUtil {
         return parameterVoList;
     }
 
-    public static void getSuperField(Class parameterClass,Type parameterType,String requestType){
-        if (parameterClass!=null){
-            Class superclass = parameterClass.getSuperclass();
-            if (superclass!=null){
-                TypeVariable<?>[] typeParameters = parameterClass.getClass().getTypeParameters();
-                TypeVariable[] typeVariable = MethodUtil.getTypeVariable(parameterType);
-                Type[] actualTypeArguments = MethodUtil.convertActualTypeArguments(parameterType);
-                System.out.println(typeParameters);
-                ParameterUtil.fieldConvertParameter(superclass,null, requestType);
+    public static List<ParameterVo>  getSuperClassField(Class parameterClass,  String requestType) {
+        if (parameterClass != null) {
+            Class superClass = parameterClass.getSuperclass();
+            if (superClass != null) {
+
+                if (!JavaClassValidateUtil.isObject(superClass)){
+                    TypeVariable<?>[] typeParameters = superClass.getTypeParameters();
+
+                    Type[] actualTypeArguments = null;
+                    Type genericSuperclass = parameterClass.getGenericSuperclass();
+                    if (genericSuperclass instanceof ParameterizedType) {
+                        actualTypeArguments = ((ParameterizedType) parameterClass.getGenericSuperclass()).getActualTypeArguments();
+                    }
+
+                    List<ParameterVo> parameterVoList = resolveSuperField(superClass, typeParameters, actualTypeArguments, requestType);
+                    return parameterVoList;
+                }
             }
         }
+        return null;
+    }
+
+    public static List<ParameterVo> resolveSuperField(Class superClass, TypeVariable<?>[] typeVariables, Type[] types, String requestType) {
+
+        List<ParameterVo> parameterList = new ArrayList<>();
+        Field[] declaredFields = superClass.getDeclaredFields();
+        if (ObjectUtil.isNotEmpty(declaredFields)) {
+            for (Field field : declaredFields) {
+                if (Modifier.isFinal(field.getModifiers())) {
+                    continue;
+                }
+                String name = field.getName();
+                String className = field.getGenericType().getTypeName();
+                String typeClassName = field.getType().getTypeName();
+
+                String fieldDescription = "";
+                boolean required = false;
+                ApiModelProperty apiModelProperty = field.getDeclaredAnnotation(ApiModelProperty.class);
+                if (apiModelProperty != null) {
+                    fieldDescription = apiModelProperty.value();
+                    required = apiModelProperty.required();
+                    if (apiModelProperty.hidden()) {
+                        continue;
+                    }
+                }
+
+                ParameterVo build = ParameterVo.builder()
+                        .name(name)
+                        .requestType(requestType)
+                        .required(required)
+                        .dataType(typeClassName)
+                        .description(fieldDescription)
+                        .build();
+
+                if (!ClassTypeEnum.checkClass(className)) {
+                    Type type = getTypeByTypeName(types, typeVariables, className);
+                    if (type != null) {
+                        Class fieldClass = MethodUtil.typeConvertClass(type);
+                        build.setDataType(fieldClass.getTypeName());
+                    }
+                }
+
+//                if (!ClassTypeEnum.checkClass(className)) {
+//                    Type type = getTypeByTypeName(types, typeVariables, className);
+//                    if (type != null) {
+//                        Class fieldClass = MethodUtil.typeConvertClass(type);
+//                        build.setDataType(fieldClass.getTypeName());
+//                        if (!ClassTypeEnum.checkClass(fieldClass.getTypeName())){
+//                            if (JavaClassValidateUtil.isArray(fieldClass)) {
+//                                build.setCollection(1);
+//                                build.setChild(getSuperField(fieldClass,requestType));
+//                            } else if (JavaClassValidateUtil.isCollection(fieldClass)) {
+//                                build.setCollection(1);
+//                                build.setChild(getSuperField(fieldClass,requestType));
+//                            } else {
+//                                build.setCollection(0);
+//                                build.setChild(getSuperField(fieldClass,requestType));
+//                            }
+//                        }
+//                    }
+//                }
+                parameterList.add(build);
+            }
+            List<ParameterVo> superField = getSuperClassField(superClass, requestType);
+            if (ObjectUtil.isNotEmpty(superField)) {
+                parameterList.addAll(superField);
+            }
+            return parameterList;
+        }
+
+        return parameterList;
+    }
+
+    public static Integer getTypeVariableIndex(TypeVariable<?>[] typeVariables, String fieldTypeName) {
+        if (ObjectUtil.isNotEmpty(typeVariables)) {
+            for (int i = 0; i < typeVariables.length; i++) {
+                TypeVariable<?> typeVariable = typeVariables[i];
+                if (typeVariable.getTypeName().equals(fieldTypeName)) {
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Type getTypeByTypeName(Type[] types, TypeVariable<?>[] typeVariables, String fieldTypeName) {
+        if (ObjectUtil.isNotEmpty(types)) {
+            Integer typeVariableIndex = getTypeVariableIndex(typeVariables, fieldTypeName);
+            if (typeVariableIndex != null) {
+                Type type = types[typeVariableIndex];
+                return type;
+            }
+        }
+        return null;
     }
 
 

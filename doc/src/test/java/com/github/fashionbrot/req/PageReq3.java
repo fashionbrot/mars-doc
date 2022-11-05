@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @ApiModel("pageReq")
-public class PageReq2<T,T2> extends PageReq3<String,String>{
+public class PageReq3<T,T2> {
 
     @ApiModelProperty("页码")
     private String pageNum;
@@ -16,8 +16,8 @@ public class PageReq2<T,T2> extends PageReq3<String,String>{
     private String pageSize;
 
     @ApiModelProperty("test哦")
-    private T t1;
+    private T t11;
 
     @ApiModelProperty("test哦")
-    private T2 t2;
+    private T2 t22;
 }
