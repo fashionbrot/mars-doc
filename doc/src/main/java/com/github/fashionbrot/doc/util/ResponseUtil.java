@@ -30,12 +30,17 @@ public class ResponseUtil {
                 String example = "";
                 String dataType = returnType.getTypeName();
                 String name = returnType.getSimpleName();
+
+                boolean hidden = false;
                 ApiModelProperty apiModelProperty = returnType.getDeclaredAnnotation(ApiModelProperty.class);
                 if (apiModelProperty != null) {
                     description = apiModelProperty.value();
                     required = apiModelProperty.required();
                     example = apiModelProperty.example();
-                    dataType = apiModelProperty.dataType();
+                    if (ObjectUtil.isNotEmpty(apiModelProperty.dataType())) {
+                        dataType = apiModelProperty.dataType();
+                    }
+                    hidden = apiModelProperty.hidden();
                 }
                 ParameterVo build = ParameterVo.builder()
                         .name(name)

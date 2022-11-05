@@ -2,13 +2,11 @@ package com.github.fashionbrot.doc.util;
 
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.enums.ClassTypeEnum;
+import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
 import com.github.fashionbrot.doc.vo.MethodTypeVo;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -109,5 +107,76 @@ public class ParameterUtil {
         }
         return null;
     }
+
+    public static List<ParameterVo> forFieldOrParam(Class clazz,Type type, String requestType) {
+        Field[] declaredFields = clazz.getDeclaredFields();
+        List<ParameterVo> parameterVoList = new ArrayList<>();
+        if (ObjectUtil.isNotEmpty(declaredFields)) {
+
+            for (Field field : declaredFields) {
+                if (Modifier.isFinal(field.getModifiers())) {
+                    continue;
+                }
+
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                String fieldTypeName = field.getGenericType().getTypeName();
+                String fieldClassName = field.getType().getTypeName();
+
+                String fieldDescription = "";
+                boolean required = false;
+                ApiModelProperty apiModelProperty = field.getDeclaredAnnotation(ApiModelProperty.class);
+                if (apiModelProperty != null) {
+                    fieldDescription = apiModelProperty.value();
+                    required = apiModelProperty.required();
+                    if (apiModelProperty.hidden()) {
+                        continue;
+                    }
+                }
+
+                ParameterVo build = ParameterVo.builder()
+                        .name(fieldName)
+                        .requestType(requestType)
+                        .description(fieldDescription)
+                        .required(required)
+                        .dataType(fieldClassName)
+                        .build();
+
+                if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
+
+                    if (ParameterizedTypeEnum.isParameterizedType(type.getClass().getName())  ){
+
+                        TypeVariable<? extends Class<?>>[] typeVariables = MethodUtil.getTypeVariable(type);
+                        Type[] types = ((ParameterizedType) type).getActualTypeArguments();
+
+                        Type childType = MethodUtil.getTypeByTypeName(types, typeVariables, fieldTypeName);
+                        if (childType != null) {
+
+                            Class fieldClass = MethodUtil.typeConvertClass(childType);
+                            build.setDataType(fieldClass.getTypeName());
+
+                            if (!ClassTypeEnum.checkClass(fieldClass.getTypeName())){
+                                if (JavaClassValidateUtil.isArray(fieldClass)) {
+                                    build.setCollection(1);
+                                    build.setChild(forFieldOrParam(fieldClass,childType,requestType));
+                                } else if (JavaClassValidateUtil.isCollection(fieldClass)) {
+                                    build.setCollection(1);
+                                    build.setChild(forFieldOrParam(fieldClass,childType,requestType));
+                                } else {
+                                    build.setCollection(0);
+                                    build.setChild(forFieldOrParam(fieldClass,childType,requestType));
+                                }
+                            }
+                        }
+
+                    }
+                }
+                parameterVoList.add(build);
+            }
+        }
+        return parameterVoList;
+    }
+
+
 
 }

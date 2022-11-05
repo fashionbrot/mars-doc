@@ -155,4 +155,27 @@ public class MethodUtil {
         return null;
     }
 
+
+    public static Integer getTypeVariableIndex(TypeVariable<?>[] typeVariables, String fieldTypeName) {
+        if (ObjectUtil.isNotEmpty(typeVariables)) {
+            for (int i = 0; i < typeVariables.length; i++) {
+                TypeVariable<?> typeVariable = typeVariables[i];
+                if (typeVariable.getTypeName().equals(fieldTypeName)) {
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Type getTypeByTypeName(Type[] types, TypeVariable<?>[] typeVariables, String fieldTypeName) {
+        if (ObjectUtil.isNotEmpty(types)) {
+            Integer typeVariableIndex = getTypeVariableIndex(typeVariables, fieldTypeName);
+            if (typeVariableIndex != null) {
+                Type type = types[typeVariableIndex];
+                return type;
+            }
+        }
+        return null;
+    }
 }
