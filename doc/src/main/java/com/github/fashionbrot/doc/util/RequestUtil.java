@@ -6,10 +6,11 @@ import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.enums.RequestTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.context.request.ServletWebRequest;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +22,22 @@ public class RequestUtil {
     public static List<ParameterVo> getRequest(Method method) {
         Parameter[] parameters = method.getParameters();
 
+        Type[] parameterTypes = method.getGenericParameterTypes();
 
         List<ParameterVo> parameterVoList = new ArrayList<>();
 
         if (ObjectUtil.isNotEmpty(parameters)) {
             for (int i = 0; i < parameters.length; i++) {
                 Parameter parameter = parameters[i];
+                Type parameterType = parameterTypes[i];
 
-                Class<?> classType = parameter.getType();
+                Class<?> parameterClass = parameter.getType();
                 String parameterName = parameter.getName();
 
                 RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
                 String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
 
-                if (ClassTypeEnum.checkClass(classType.getName())) {
+                if (ClassTypeEnum.checkClass(parameterClass.getName())) {
 
 
                     Class<?> type = parameter.getType();
@@ -62,7 +65,7 @@ public class RequestUtil {
                     ParameterVo req = null;
                     if (requestBody != null) {
                         String description = parameterName;
-                        ApiModel apiModel = classType.getDeclaredAnnotation(ApiModel.class);
+                        ApiModel apiModel = parameterClass.getDeclaredAnnotation(ApiModel.class);
                         if (apiModel != null) {
                             description = apiModel.value();
                         }
@@ -74,7 +77,8 @@ public class RequestUtil {
                                 .description(description)
                                 .build();
                     }
-                    List<ParameterVo> parameterVos = ParameterUtil.fieldConvertParameter(classType,null, requestType);
+                    List<ParameterVo> parameterVos = ParameterUtil.fieldConvertParameter(parameterClass,null, requestType);
+                    getSuperField(parameterClass,parameterType,requestType);
                     if (req != null) {
                         req.setChild(parameterVos);
                         parameterVoList.add(req);
@@ -89,6 +93,19 @@ public class RequestUtil {
             }
         }
         return parameterVoList;
+    }
+
+    public static void getSuperField(Class parameterClass,Type parameterType,String requestType){
+        if (parameterClass!=null){
+            Class superclass = parameterClass.getSuperclass();
+            if (superclass!=null){
+                TypeVariable<?>[] typeParameters = parameterClass.getClass().getTypeParameters();
+                TypeVariable[] typeVariable = MethodUtil.getTypeVariable(parameterType);
+                Type[] actualTypeArguments = MethodUtil.convertActualTypeArguments(parameterType);
+                System.out.println(typeParameters);
+                ParameterUtil.fieldConvertParameter(superclass,null, requestType);
+            }
+        }
     }
 
 

@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel("测试表Entity")
-public class TestReq {
+public class TestReq extends PageReq2<Integer> {
 
 
     @ApiModelProperty("测试参数1")

@@ -2,9 +2,7 @@ package com.github.fashionbrot.test;
 
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
-import com.github.fashionbrot.doc.util.RequestMappingUtil;
 import com.github.fashionbrot.doc.util.ResponseUtil;
-import com.github.fashionbrot.doc.vo.MethodVo;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.Multi2Test;
 import com.github.fashionbrot.entity.MultiTest;

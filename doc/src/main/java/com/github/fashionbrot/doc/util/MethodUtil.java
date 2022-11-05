@@ -147,4 +147,12 @@ public class MethodUtil {
         return typeClass;
     }
 
+
+    public static Type[] convertActualTypeArguments(Type type){
+        if (type!=null && type instanceof ParameterizedType){
+            return ((ParameterizedType) type).getActualTypeArguments();
+        }
+        return null;
+    }
+
 }
