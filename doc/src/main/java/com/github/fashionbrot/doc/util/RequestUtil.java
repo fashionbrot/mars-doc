@@ -19,6 +19,85 @@ import java.util.stream.Stream;
  */
 public class RequestUtil {
 
+//    public static List<ParameterVo> getRequest(Method method) {
+//        Parameter[] parameters = method.getParameters();
+//
+//
+//        List<ParameterVo> parameterVoList = new ArrayList<>();
+//
+//        if (ObjectUtil.isNotEmpty(parameters)) {
+//            for (int i = 0; i < parameters.length; i++) {
+//                Parameter parameter = parameters[i];
+//
+//                Class<?> parameterClass = parameter.getType();
+//                String parameterName = parameter.getName();
+//
+//                RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
+//                String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
+//
+//                if (ClassTypeEnum.checkClass(parameterClass.getName())) {
+//
+//
+//                    Class<?> type = parameter.getType();
+//                    String parameterDescription = "";
+//                    boolean required = false;
+//                    ApiModelProperty apiModelProperty = parameter.getDeclaredAnnotation(ApiModelProperty.class);
+//                    if (apiModelProperty != null) {
+//                        parameterDescription = apiModelProperty.value();
+//                        required = apiModelProperty.required();
+//                        if (apiModelProperty.hidden()) {
+//                            continue;
+//                        }
+//                    }
+//
+//                    parameterVoList.add(ParameterVo.builder()
+//                            .name(parameterName)
+//                            .requestType(requestType)
+//                            .description(parameterDescription)
+//                            .required(required)
+//                            .dataType(type.getSimpleName())
+//                            .build());
+//
+//                } else {
+//
+//                    ParameterVo req = null;
+//                    if (requestBody != null) {
+//                        String description = parameterName;
+//                        ApiModel apiModel = parameterClass.getDeclaredAnnotation(ApiModel.class);
+//                        if (apiModel != null) {
+//                            description = apiModel.value();
+//                        }
+//
+//                        req = ParameterVo.builder()
+//                                .name(parameterName)
+//                                .requestType(requestType)
+//                                .required(true)
+//                                .description(description)
+//                                .build();
+//                    }
+//                    List<ParameterVo> parameterVos = ParameterUtil.fieldConvertParameter(parameterClass, null, requestType);
+//                    List<ParameterVo> superField = getSuperClassField(parameterClass, requestType);
+//                    if (ObjectUtil.isNotEmpty(superField)){
+//                        parameterVos.addAll(superField);
+//                    }
+//                    if (req != null) {
+//                        req.setChild(parameterVos);
+//                        parameterVoList.add(req);
+//                    } else {
+//                        if (ObjectUtil.isNotEmpty(parameterVos)) {
+//                            parameterVoList.addAll(parameterVos);
+//                        }
+//                    }
+//
+//                }
+//
+//            }
+//        }
+//        return parameterVoList;
+//    }
+
+
+
     public static List<ParameterVo> getRequest(Method method) {
         Parameter[] parameters = method.getParameters();
 
@@ -75,7 +154,7 @@ public class RequestUtil {
                                 .description(description)
                                 .build();
                     }
-                    List<ParameterVo> parameterVos = ParameterUtil.fieldConvertParameter(parameterClass, null, requestType);
+                    List<ParameterVo> parameterVos = ParameterUtil.forFieldOrParam(parameterClass, null, requestType);
                     List<ParameterVo> superField = getSuperClassField(parameterClass, requestType);
                     if (ObjectUtil.isNotEmpty(superField)){
                         parameterVos.addAll(superField);
@@ -118,6 +197,7 @@ public class RequestUtil {
         return null;
     }
 
+
     public static List<ParameterVo> resolveSuperField(Class superClass, TypeVariable<?>[] typeVariables, Type[] types, String requestType) {
 
         List<ParameterVo> parameterList = new ArrayList<>();
@@ -158,25 +238,6 @@ public class RequestUtil {
                     }
                 }
 
-//                if (!ClassTypeEnum.checkClass(className)) {
-//                    Type type = getTypeByTypeName(types, typeVariables, className);
-//                    if (type != null) {
-//                        Class fieldClass = MethodUtil.typeConvertClass(type);
-//                        build.setDataType(fieldClass.getTypeName());
-//                        if (!ClassTypeEnum.checkClass(fieldClass.getTypeName())){
-//                            if (JavaClassValidateUtil.isArray(fieldClass)) {
-//                                build.setCollection(1);
-//                                build.setChild(getSuperField(fieldClass,requestType));
-//                            } else if (JavaClassValidateUtil.isCollection(fieldClass)) {
-//                                build.setCollection(1);
-//                                build.setChild(getSuperField(fieldClass,requestType));
-//                            } else {
-//                                build.setCollection(0);
-//                                build.setChild(getSuperField(fieldClass,requestType));
-//                            }
-//                        }
-//                    }
-//                }
                 parameterList.add(build);
             }
             List<ParameterVo> superField = getSuperClassField(superClass, requestType);

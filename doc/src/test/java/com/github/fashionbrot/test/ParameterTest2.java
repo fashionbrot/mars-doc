@@ -68,7 +68,6 @@ public class ParameterTest2 {
     }
 
 
-    //TODO 需要继续编写
     @Test
     public void test3(){
         Method[] methods = ParameterTest2.TestController2.class.getDeclaredMethods();
@@ -76,6 +75,7 @@ public class ParameterTest2 {
 
         Class<?> returnClass = method.getReturnType();
         Type type = method.getGenericReturnType();
+
         List<ParameterVo> parameterVoList = ParameterUtil.forFieldOrParam(returnClass,type,"query");
 
         System.out.println(JSON.toJSONString(parameterVoList));

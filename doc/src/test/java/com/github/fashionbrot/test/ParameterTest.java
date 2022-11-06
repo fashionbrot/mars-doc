@@ -69,7 +69,6 @@ public class ParameterTest {
     }
 
 
-    //TODO 需要继续编写
     @Test
     public void test3(){
         Method[] methods = ParameterTest.TestController2.class.getDeclaredMethods();
