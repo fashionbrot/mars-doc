@@ -142,6 +142,7 @@ public class ParameterUtil {
                         .dataType(fieldClassName)
                         .build();
 
+                Class thisFieldClass = null;
                 if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
 
                     if (ParameterizedTypeEnum.isParameterizedType(type.getClass().getName())  ){
@@ -154,6 +155,7 @@ public class ParameterUtil {
 
                             Class fieldClass = MethodUtil.typeConvertClass(childType);
                             build.setDataType(fieldClass.getTypeName());
+                            thisFieldClass = fieldClass;
 
                             if (!ClassTypeEnum.checkClass(fieldClass.getTypeName())){
                                 if (JavaClassValidateUtil.isArray(fieldClass)) {
@@ -169,8 +171,53 @@ public class ParameterUtil {
                             }
                         }
 
+                    }else{
+                        build.setDataType(fieldTypeName);
+                        if (JavaClassValidateUtil.isCollection(field.getType()) ) {
+                            build.setCollection(1);
+
+                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+
+                                Type[] actualTypeArguments = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
+                                if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
+                                    Class convertClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
+                                    thisFieldClass = convertClass;
+                                    build.setDataType(convertClass.getTypeName());
+
+                                    List<ParameterVo> fieldParameterList = forFieldOrParam(convertClass, null, requestType);
+                                    build.setChild(fieldParameterList);
+                                }
+                            }
+                        }else if (JavaClassValidateUtil.isArray(field.getType())){
+                            build.setCollection(1);
+                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                                Class convertClass = MethodUtil.typeConvertClass(field.getGenericType());
+                                thisFieldClass = convertClass.getComponentType();
+                                build.setDataType(convertClass.getComponentType().getTypeName());
+
+                                List<ParameterVo> fieldParameterList = forFieldOrParam(convertClass.getComponentType(), null, requestType);
+                                build.setChild(fieldParameterList);
+                            }
+                        }else{
+                            build.setCollection(0);
+                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                                thisFieldClass = field.getType();
+                                List<ParameterVo> fieldParameterList = forFieldOrParam(field.getType(), null, requestType);
+                                build.setChild(fieldParameterList);
+                            }
+                        }
+
                     }
                 }
+
+
+                //获取 superClass的属性
+                List<ParameterVo> superClassFieldList = RequestUtil.getSuperClassField(thisFieldClass, requestType);
+                if (ObjectUtil.isNotEmpty(superClassFieldList)){
+                    build.getChild().addAll(superClassFieldList);
+                    build.setChild(build.getChild());
+                }
+
                 parameterVoList.add(build);
             }
         }

@@ -5,7 +5,6 @@ import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.util.ParameterUtil;
-import com.github.fashionbrot.doc.util.RequestUtil;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.vo.RespVo;
 import lombok.Data;
@@ -20,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
-public class ParameterTest {
+public class ParameterTest2 {
 
 
     @ApiModel("RequestReq1")
@@ -31,7 +30,7 @@ public class ParameterTest {
         private String test1;
 
         @ApiModelProperty("requestReq2哦")
-        private RequestReq2 requestReq2;
+        private RequestReq2[] requestReq2;
     }
 
     @ApiModel("RequestReq2")
@@ -72,7 +71,7 @@ public class ParameterTest {
     //TODO 需要继续编写
     @Test
     public void test3(){
-        Method[] methods = ParameterTest.TestController2.class.getDeclaredMethods();
+        Method[] methods = ParameterTest2.TestController2.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test3")).findFirst().get();
 
         Class<?> returnClass = method.getReturnType();
