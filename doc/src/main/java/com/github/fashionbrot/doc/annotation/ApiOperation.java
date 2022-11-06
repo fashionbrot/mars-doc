@@ -17,33 +17,23 @@ public @interface ApiOperation {
      * 接口名称
      */
     String value();
-
-
     /**
      * 接口注释
      */
     String description() default "";
-
-
     /**
      * 接口优先级
      */
     int priority() default 0;
-
-
     /**
      * 返回类
      * @return
      */
     Class<?> response() default Void.class;
-
-
     /**
      * 接口方法   "GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS" and "PATCH"
      */
     String httpMethod() default "";
-
-
     /**
      * 因否隐藏该接口
      */

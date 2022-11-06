@@ -6,8 +6,10 @@ import com.github.fashionbrot.doc.util.ResponseUtil;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.Multi2Test;
 import com.github.fashionbrot.entity.MultiTest;
+import com.github.fashionbrot.entity.TestEntity;
 import com.github.fashionbrot.req.TestReq;
 import com.github.fashionbrot.vo.RespVo;
+import com.github.fashionbrot.vo.RespVo2;
 import org.junit.Test;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,6 +40,22 @@ public class ResponseTest {
             return RespVo.success();
         }
 
+
+        @ApiOperation("test7接口")
+        @RequestMapping("test7")
+        @ResponseBody
+        private RespVo2<Integer, RespVo2<String,List<TestEntity>>> test7(TestReq req){
+            return RespVo2.success();
+        }
+
+        @ApiOperation("test8接口")
+        @RequestMapping("test8")
+        @ResponseBody
+        private RespVo<TestEntity[]> test8( TestReq req){
+            return RespVo.success();
+        }
+
+
     }
 
 
@@ -55,6 +73,23 @@ public class ResponseTest {
     public void test2(){
         Method[] methods = ResponseTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test2")).findFirst().get();
+        List<ParameterVo> response = ResponseUtil.getResponse(method);
+        System.out.println(JSON.toJSONString(response));
+    }
+
+    @Test
+    public void test7(){
+        Method[] methods = ResponseTest.TestController.class.getDeclaredMethods();
+        Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test7")).findFirst().get();
+        List<ParameterVo> response = ResponseUtil.getResponse(method);
+        System.out.println(JSON.toJSONString(response));
+    }
+
+
+    @Test
+    public void test8(){
+        Method[] methods = ResponseTest.TestController.class.getDeclaredMethods();
+        Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test8")).findFirst().get();
         List<ParameterVo> response = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(response));
     }

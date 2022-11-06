@@ -21,7 +21,6 @@ public @interface Api {
      */
     int priority() default 0;
 
-
     /**
      * 是否隐藏类的所有接口
      */

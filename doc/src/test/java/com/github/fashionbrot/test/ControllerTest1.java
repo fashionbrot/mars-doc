@@ -1,13 +1,16 @@
 package com.github.fashionbrot.test;
 
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 public class ControllerTest1 {
 
+    @ApiIgnore
     @Controller
     @RequestMapping("test1")
     public class TestController{

@@ -1,9 +1,11 @@
 package com.github.fashionbrot.doc.util;
 
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
+import com.github.fashionbrot.doc.annotation.ApiImplicitParam;
 import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.enums.ClassTypeEnum;
-import com.github.fashionbrot.doc.enums.RequestTypeEnum;
+import com.github.fashionbrot.doc.enums.ParamTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -11,8 +13,7 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 /**
  * @author fashionbrot
@@ -104,15 +105,25 @@ public class RequestUtil {
 
         List<ParameterVo> parameterVoList = new ArrayList<>();
 
+        List<ParameterVo> apiImplicitParamList = parseApiImplicitParam(method);
+        if (ObjectUtil.isNotEmpty(apiImplicitParamList)){
+            parameterVoList.addAll(parameterVoList);
+        }
+
         if (ObjectUtil.isNotEmpty(parameters)) {
             for (int i = 0; i < parameters.length; i++) {
                 Parameter parameter = parameters[i];
+
+                ApiIgnore apiIgnore = parameter.getDeclaredAnnotation(ApiIgnore.class);
+                if (apiIgnore!=null){
+                    continue;
+                }
 
                 Class<?> parameterClass = parameter.getType();
                 String parameterName = parameter.getName();
 
                 RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
-                String requestType = requestBody != null ? RequestTypeEnum.BODY.name() : RequestTypeEnum.QUERY.name();
+                String requestType = requestBody != null ? ParamTypeEnum.BODY.name() : ParamTypeEnum.QUERY.name();
 
                 if (ClassTypeEnum.checkClass(parameterClass.getName())) {
 
@@ -173,6 +184,35 @@ public class RequestUtil {
             }
         }
         return parameterVoList;
+    }
+
+    public static List<ParameterVo> parseApiImplicitParam(Method method){
+        ApiImplicitParam[] apiImplicitParams = method.getDeclaredAnnotationsByType(ApiImplicitParam.class);
+        if (ObjectUtil.isNotEmpty(apiImplicitParams)){
+            return Arrays.stream(apiImplicitParams)
+                    .filter(m -> checkParamType(m.paramType()))
+                    .map(m-> buildParameterVo(m))
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    public static boolean checkParamType(String paramType){
+        if (ParamTypeEnum.BODY.name().equalsIgnoreCase(paramType) || ParamTypeEnum.QUERY.name().equalsIgnoreCase(paramType)){
+            return true;
+        }
+        return false;
+    }
+
+    public static ParameterVo buildParameterVo(ApiImplicitParam param){
+        return ParameterVo.builder()
+                .name(param.name())
+                .description(param.value())
+                .requestType(param.paramType())
+                .required(param.required())
+                .dataType(param.dataType())
+                .example(param.defaultValue())
+                .build();
     }
 
     public static List<ParameterVo>  getSuperClassField(Class parameterClass,  String requestType) {

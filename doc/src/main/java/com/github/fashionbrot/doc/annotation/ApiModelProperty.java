@@ -17,25 +17,18 @@ public @interface ApiModelProperty {
      * 属性的简要说明
      */
     String value() default "";
-
-
     /**
      * 参数的数据类型
      */
     String dataType() default "";
-
-
     /**
      * 指定参数是否为必填项
      */
     boolean required() default false;
-
-
     /**
      * 属性是否隐藏
      */
     boolean hidden() default false;
-
     /**
      *属性的示例值
      */

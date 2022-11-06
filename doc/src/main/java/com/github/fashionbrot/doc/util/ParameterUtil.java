@@ -145,7 +145,7 @@ public class ParameterUtil {
                 Class thisFieldClass = null;
                 if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
 
-                    if (ParameterizedTypeEnum.isParameterizedType(type.getClass().getName())  ){
+                    if (type!=null && ParameterizedTypeEnum.isParameterizedType(type.getClass().getName())  ){
 
                         TypeVariable<? extends Class<?>>[] typeVariables = MethodUtil.getTypeVariable(type);
                         Type[] types = ((ParameterizedType) type).getActualTypeArguments();
@@ -155,13 +155,18 @@ public class ParameterUtil {
 
                             Class fieldClass = MethodUtil.typeConvertClass(childType);
                             build.setDataType(fieldClass.getTypeName());
-                            thisFieldClass = fieldClass;
+
 
                             if (!ClassTypeEnum.checkClass(fieldClass.getTypeName())){
                                 if (JavaClassValidateUtil.isArray(fieldClass)) {
+                                    fieldClass = fieldClass.getComponentType();
                                     build.setCollection(1);
                                     build.setChild(forFieldOrParam(fieldClass,childType,requestType));
                                 } else if (JavaClassValidateUtil.isCollection(fieldClass)) {
+                                    Type[] actualTypeArguments = ((ParameterizedType) childType).getActualTypeArguments();
+                                    if (ObjectUtil.isNotEmpty(actualTypeArguments)){
+                                        fieldClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
+                                    }
                                     build.setCollection(1);
                                     build.setChild(forFieldOrParam(fieldClass,childType,requestType));
                                 } else {
@@ -169,6 +174,7 @@ public class ParameterUtil {
                                     build.setChild(forFieldOrParam(fieldClass,childType,requestType));
                                 }
                             }
+                            thisFieldClass = fieldClass;
                         }
 
                     }else{

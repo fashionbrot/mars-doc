@@ -1,6 +1,7 @@
 package com.github.fashionbrot.doc.vo;
 
 
+import com.github.fashionbrot.doc.enums.ParamTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,7 +42,7 @@ public class ParameterVo implements Serializable {
     private String example;
 
     /**
-     * @see com.github.fashionbrot.doc.enums.RequestTypeEnum
+     * @see ParamTypeEnum
      */
     private String requestType;
 

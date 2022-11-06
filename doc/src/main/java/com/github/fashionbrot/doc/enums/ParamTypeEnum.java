@@ -3,6 +3,6 @@ package com.github.fashionbrot.doc.enums;
 /**
  * @author fashionbrot
  */
-public enum RequestTypeEnum {
-    QUERY,BODY
+public enum ParamTypeEnum {
+    QUERY,BODY,HEADER
 }

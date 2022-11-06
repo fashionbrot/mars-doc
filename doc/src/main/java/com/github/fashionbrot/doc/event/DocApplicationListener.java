@@ -3,6 +3,7 @@ package com.github.fashionbrot.doc.event;
 
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.DocConfigurationProperties;
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.consts.MarsDocConst;
 import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
 import com.github.fashionbrot.doc.type.DocParameterizedType;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class DocApplicationListener implements ApplicationListener<ContextRefreshedEvent>, BeanFactoryAware, EnvironmentAware {
@@ -68,6 +70,14 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
             return;
         }
 
+        List<String> ignoreClassList = null;
+        String ignoreClass = docConfigurationProperties.getIgnoreClass();
+        if (ObjectUtil.isNotEmpty(ignoreClass)){
+            ignoreClassList = Arrays.stream(ignoreClass.split(",")).collect(Collectors.toList());
+        }else{
+            ignoreClassList = new ArrayList<>(0);
+        }
+
 
         DocVo docVo = DocVo.builder().build();
 
@@ -84,12 +94,31 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
                 HandlerMethod value = map.getValue();
                 Method method = value.getMethod();
-                if ("org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController".equals(method.getDeclaringClass().getName())) {
-                    continue;
-                }
+
+
 
                 //接口类名
                 Class<?> declaringClass = method.getDeclaringClass();
+
+                ApiIgnore classIgnore = declaringClass.getDeclaredAnnotation(ApiIgnore.class);
+                if (classIgnore!=null){
+                    continue;
+                }
+
+                ApiIgnore methodIgnore = method.getDeclaredAnnotation(ApiIgnore.class);
+                if (methodIgnore!=null){
+                    continue;
+                }
+
+                long count = ignoreClassList.stream().filter(m -> m.equals(method.getDeclaringClass().getName())).count();
+                if (count>0){
+                    continue;
+                }
+
+//                if ("org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController".equals(method.getDeclaringClass().getName())) {
+//                    continue;
+//                }
+
 
                 String classId = declaringClass.getName();
                 String methodId = declaringClass.getName()+"#"+method.getName();

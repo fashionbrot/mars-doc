@@ -1,5 +1,6 @@
 package com.github.fashionbrot.doc.vo;
 
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
