@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author fashi
+ */
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,7 +19,7 @@ public class DocConfigurationProperties {
     public static final String BASE_PACKAGE = "mars.doc.";
 
     public static final String SCAN_BASE_PACKAGE = BASE_PACKAGE +"scan-base-package";
-    public static final String SPRING_PROFILES_ACTIVE = BASE_PACKAGE + "profiles-active";
+    public static final String SPRING_PROFILES_ACTIVE = BASE_PACKAGE + "spring-profiles-active";
     public static final String CONTEXT_PATH = BASE_PACKAGE + "context-path";
     public static final String DESCRIPTION = BASE_PACKAGE + "description";
     public static final String USERNAME = BASE_PACKAGE + "username";

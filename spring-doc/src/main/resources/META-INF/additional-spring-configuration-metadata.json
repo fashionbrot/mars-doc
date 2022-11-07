@@ -1,0 +1,53 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc",
+      "type": "com.github.fashionbrot.doc.DocConfigurationProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.context-path",
+      "description": "项目名",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.description",
+      "description": "文档注释",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.ignore-class",
+      "description": "要忽略的Class",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.password",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.scan-base-package",
+      "description": "扫描包",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.spring-profiles-active",
+      "description": "环境",
+      "type": "java.lang.String",
+      "defaultValue":"default"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.username",
+      "type": "java.lang.String"
+    }
+  ]
+}

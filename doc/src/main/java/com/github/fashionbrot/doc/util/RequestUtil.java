@@ -7,18 +7,37 @@ import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.enums.ParamTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
-import org.springframework.web.bind.annotation.RequestBody;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * @author fashionbrot
  */
 public class RequestUtil {
+
+    public static final String REQUEST_BODY="org.springframework.web.bind.annotation.RequestBody";
+    public static final String REQUEST_BODY_REQUIRED = "required";
+
+    public static boolean getRequestBodyRequired(Annotation annotation, Method method){
+        Object invoke = null;
+        try {
+            invoke = method.invoke(annotation, null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        if (invoke instanceof Boolean){
+            return (Boolean) invoke;
+        }
+        return true;
+    }
 
 //    public static List<ParameterVo> getRequest(Method method) {
 //        Parameter[] parameters = method.getParameters();
@@ -122,8 +141,9 @@ public class RequestUtil {
                 Class<?> parameterClass = parameter.getType();
                 String parameterName = parameter.getName();
 
-                RequestBody requestBody = parameter.getDeclaredAnnotation(RequestBody.class);
-                String requestType = requestBody != null ? ParamTypeEnum.BODY.name() : ParamTypeEnum.QUERY.name();
+                boolean requestBodyRequired = getRequestBodyRequired(parameter);
+
+                String requestType = requestBodyRequired ? ParamTypeEnum.BODY.name() : ParamTypeEnum.QUERY.name();
 
                 if (ClassTypeEnum.checkClass(parameterClass.getName())) {
 
@@ -151,7 +171,7 @@ public class RequestUtil {
                 } else {
 
                     ParameterVo req = null;
-                    if (requestBody != null) {
+                    if (requestBodyRequired) {
                         String description = parameterName;
                         ApiModel apiModel = parameterClass.getDeclaredAnnotation(ApiModel.class);
                         if (apiModel != null) {
@@ -184,6 +204,19 @@ public class RequestUtil {
             }
         }
         return parameterVoList;
+    }
+
+    private static boolean getRequestBodyRequired(Parameter parameter) {
+
+        Optional<Annotation> requestBodyAnnotation = Arrays.stream(parameter.getDeclaredAnnotations()).filter(m -> REQUEST_BODY.equals(m.annotationType().getTypeName())).findFirst();
+        if (requestBodyAnnotation.isPresent()){
+            Annotation annotation = requestBodyAnnotation.get();
+            Optional<Method> requestBodyRequiredMethod = Arrays.stream(annotation.annotationType().getDeclaredMethods()).filter(m -> REQUEST_BODY_REQUIRED.equals(m.getName())).findFirst();
+            if (requestBodyRequiredMethod.isPresent()){
+                return  getRequestBodyRequired(annotation, requestBodyRequiredMethod.get());
+            }
+        }
+        return false;
     }
 
     public static List<ParameterVo> parseApiImplicitParam(Method method){

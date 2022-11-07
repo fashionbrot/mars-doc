@@ -1,8 +1,12 @@
 package com.github.fashionbrot.doc.util;
 
+import com.github.fashionbrot.doc.util.ObjectUtil;
+import com.github.fashionbrot.doc.util.PathUtil;
 import com.github.fashionbrot.doc.vo.MethodVo;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +17,22 @@ import java.util.List;
 public class RequestMappingUtil {
 
 
+
+
+    public static String[] getMappingValue(Annotation annotation,Method method){
+        Object invoke = null;
+        try {
+            invoke = method.invoke(annotation, null);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        if (invoke instanceof String[]){
+            return (String[]) invoke;
+        }
+        return null;
+    }
     /**
      * 根据method 获取  requestMapping
      * @param method  method
@@ -65,6 +85,9 @@ public class RequestMappingUtil {
             List<MethodVo> list = new ArrayList<>();
             for (int i = 0; i < classPaths.length; i++) {
                 String classPath = classPaths[i];
+                if (ObjectUtil.isEmpty(classPath)){
+                    continue;
+                }
                 for (MethodVo mv : methodVoList) {
                     list.add(MethodVo.builder()
                             .path(PathUtil.formatPath(classPath, mv.getPath()))
@@ -82,6 +105,9 @@ public class RequestMappingUtil {
     private static void getMapping(String[] values, String method, List<MethodVo> methodVoList) {
         if (ObjectUtil.isNotEmpty(values)) {
             for (String path : values) {
+                if (ObjectUtil.isEmpty(path)){
+                    continue;
+                }
                 methodVoList.add(MethodVo.builder()
                         .method(method)
                         .path(path)

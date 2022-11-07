@@ -11,6 +11,9 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 
+/**
+ * @author fashi
+ */
 public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
     private Environment environment;
@@ -25,11 +28,17 @@ public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         AnnotationAttributes attributes = fromMap(metadata.getAnnotationAttributes(EnableMarsDoc.class.getName()));
 
-        if (attributes!=null && attributes.containsKey("springProfilesActive")){
-            DocConfigurationProperties properties= DocConfigurationProperties.builder().springProfilesActive(attributes.getString("springProfilesActive")).build();
 
-            BeanUtil.registerSingleton(registry, DocConfigurationProperties.BEAN_NAME, properties);
-        }
+        DocConfigurationProperties properties= DocConfigurationProperties.builder()
+                .springProfilesActive(environment.getProperty(DocConfigurationProperties.SPRING_PROFILES_ACTIVE,"default"))
+                .contextPath(environment.getProperty(DocConfigurationProperties.CONTEXT_PATH))
+                .description(environment.getProperty(DocConfigurationProperties.DESCRIPTION))
+                .ignoreClass(environment.getProperty(DocConfigurationProperties.IGNORE_CLASS))
+                .username(environment.getProperty(DocConfigurationProperties.USERNAME))
+                .password(environment.getProperty(DocConfigurationProperties.PASSWORD))
+                .scanBasePackage(environment.getProperty(DocConfigurationProperties.SCAN_BASE_PACKAGE))
+                .build();
+        BeanUtil.registerSingleton(registry, DocConfigurationProperties.BEAN_NAME, properties);
 
 
         BeanUtil.registerInfrastructureBeanIfAbsent(registry, DocApplicationListener.BEAN_NAME, DocApplicationListener.class);

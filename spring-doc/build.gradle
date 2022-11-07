@@ -14,10 +14,16 @@ version '1.0.0'
 
 dependencies {
 
+    api project(":doc")
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
     implementation 'org.slf4j:slf4j-api:1.7.10'
 
+    compileOnly 'org.springframework:spring-webmvc:4.3.0.RELEASE'
+    compileOnly 'org.springframework:spring-web:4.3.0.RELEASE'
+    compileOnly 'org.springframework:spring-aop:4.3.0.RELEASE'
+    compileOnly 'org.springframework:spring-context:4.3.0.RELEASE'
 
 
     testImplementation 'junit:junit:4.11'

@@ -1,17 +1,15 @@
 package com.github.fashionbrot.doc.event;
 
 
-import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.DocConfigurationProperties;
-import com.github.fashionbrot.doc.annotation.ApiIgnore;
-import com.github.fashionbrot.doc.consts.MarsDocConst;
-import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
-import com.github.fashionbrot.doc.type.DocParameterizedType;
+import com.github.fashionbrot.doc.util.RequestMappingUtil;
 import com.github.fashionbrot.doc.annotation.Api;
-import com.github.fashionbrot.doc.annotation.ApiModelProperty;
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
-import com.github.fashionbrot.doc.enums.ClassTypeEnum;
-import com.github.fashionbrot.doc.util.*;
+import com.github.fashionbrot.doc.consts.MarsDocConst;
+import com.github.fashionbrot.doc.util.ObjectUtil;
+import com.github.fashionbrot.doc.util.RequestUtil;
+import com.github.fashionbrot.doc.util.ResponseUtil;
 import com.github.fashionbrot.doc.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -28,11 +26,13 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author fashi
+ */
 @Slf4j
 public class DocApplicationListener implements ApplicationListener<ContextRefreshedEvent>, BeanFactoryAware, EnvironmentAware {
 
@@ -152,6 +152,8 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         vo.setDescription(methodDescription);
                         vo.setPriority(methodPriority);
                     }
+                }else{
+                    continue;
                 }
 
                 long reqCount = requestVoList.stream().filter(m -> m.getMethodId().equals(methodId)).count();
@@ -192,7 +194,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 .build());
 
 
-        System.out.println(JSON.toJSONString(docVo));
+//        System.out.println(JSON.toJSONString(docVo));
 
     }
 

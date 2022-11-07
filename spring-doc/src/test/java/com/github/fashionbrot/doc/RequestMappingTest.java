@@ -1,4 +1,4 @@
-package com.github.fashionbrot.test;
+package com.github.fashionbrot.doc;
 
 import com.github.fashionbrot.doc.util.RequestMappingUtil;
 import com.github.fashionbrot.doc.vo.MethodVo;
