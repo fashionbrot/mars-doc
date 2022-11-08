@@ -12,7 +12,4 @@ import java.lang.annotation.*;
 public @interface EnableMarsDoc {
 
 
-
-    String springProfilesActive() default "dev,test,default";
-
 }

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html  lang="zh" >
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>MarsDoc</title>
+    <!-- 避免IE使用兼容模式 -->
+ 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link href="./css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="./css/jquery.contextMenu.min.css" rel="stylesheet"/>
+    <link href="./css/animate.css" rel="stylesheet"/>
+    <link href="./css/style.css" rel="stylesheet"/>
+
+    <style>
+        .submenu>li>a:focus{background-color:#FFB6C1;color:#FFF;}
+        <style class="cp-pen-styles">* {
+                                        margin: 0;
+                                        padding: 0;
+                                        -webkit-box-sizing: border-box;
+                                        -moz-box-sizing: border-box;
+                                        box-sizing: border-box;
+                                    }
+
+        body {
+            font-family: 'Open Sans', Arial, Helvetica, Sans-serif, Verdana, Tahoma;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        a {
+            color: #b63b4d;
+            text-decoration: none;
+        }
+
+        /** =======================
+         * Contenedor Principal
+         ===========================*/
+        h1 {
+            color: #FFF;
+            font-size: 24px;
+            font-weight: 400;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        h1 a {
+            color: #DCDCDC;
+            font-size: 16px;
+        }
+
+        .accordion {
+            width: 100%;
+            max-width: 360px;
+            margin: 0px auto 20px;
+            padding-left:0px;
+            background: #2f4050;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+        .accordion .link {
+            cursor: pointer;
+            display: block;
+            padding: 15px 15px 15px 42px;
+            /*color: #4D4D4D;*/
+            color: 	#CCC;
+            font-size: 14px;
+            font-weight: 700;
+            border-bottom: 1px solid #CCC;
+            position: relative;
+            -webkit-transition: all 0.4s ease;
+            -o-transition: all 0.4s ease;
+            transition: all 0.4s ease;
+        }
+
+        .accordion li:last-child .link {
+            border-bottom: 0;
+        }
+
+        .accordion li i {
+            position: absolute;
+            top: 16px;
+            left: 12px;
+            font-size: 18px;
+            color: #595959;
+            -webkit-transition: all 0.4s ease;
+            -o-transition: all 0.4s ease;
+            transition: all 0.4s ease;
+        }
+
+        .accordion li i.fa-chevron-down {
+            right: 12px;
+            left: auto;
+            font-size: 16px;
+        }
+
+        .accordion li.open .link {
+            color: #FFFFFF;
+        }
+
+        .accordion li.open i {
+            color: #b63b4d;
+        }
+        .accordion li.open i.fa-chevron-down {
+            -webkit-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            transform: rotate(180deg);
+        }
+
+        .accordion li.default .submenu {display: block;}
+        /**
+         * Submenu
+         -----------------------------*/
+        .submenu {
+            display: none;
+            background: #444359;
+            font-size: 14px;
+            padding-left:0px;
+        }
+
+        .submenu li {
+            border-bottom: 1px solid #4b4a5e;
+        }
+
+        .submenu a {
+            display: block;
+            text-decoration: none;
+            color: #d9d9d9;
+            padding: 12px;
+            padding-left: 42px;
+            -webkit-transition: all 0.25s ease;
+            -o-transition: all 0.25s ease;
+            transition: all 0.25s ease;
+        }
+
+        .submenu a:hover {
+            background: #FFB6C1;
+            color: #FFF;
+        }
+    </style>
+
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow: hidden">
+<div id="wrapper">
+
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close">
+            <i class="fa fa-times-circle"></i>
+        </div>
+        <a >
+            <li class="logo hidden-xs">
+                <span class="logo-lg">管理系统</span>
+            </li>
+         </a>
+        <div class="sidebar-collapse">
+            <!--<ul class="nav" id="side-menu">
+                <li>
+                    <a class="menuItem" href="@{/system/main}"><i class="fa fa-home"></i> <span class="nav-label">首页</span> </a>
+                </li>
+                <li class="active">
+                	<a class="menuItem" href="" data-refresh="true">
+                		<i class="fa fa-bar-chart-o" ></i>
+                    	<span class="nav-label" >一级菜单</span>
+                    	<span class="fa arrow"></span>
+                	</a>
+                    <ul class="nav nav-second-level collapse in" style="height: auto;">
+                        <li class="active">
+                            <a class="menuItem" href="https://baidu.com">二级菜单<span class="fa arrow"></span></a>
+                        </li>
+					</ul>
+                </li>
+            </ul>-->
+
+            <ul id="accordion" class="accordion">
+                <li><div class="link"><i class="fa fa-globe"></i>用户管理<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">用户维护</a></li>
+                        <li><a href="javascript:void(0);">用户定位</a></li>
+                    </ul>
+                </li>
+                <li><div class="link"><i class="fa fa-globe"></i>宏观异常管理<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">异常日报</a></li>
+                        <li><a href="javascript:void(0);">异常管理</a></li>
+                        <li><a href="javascript:void(0);">异常云图</a></li>
+                    </ul>
+                </li>
+                <li><div class="link"><i class="fa fa-globe"></i>统计报表<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">统计日报</a></li>
+                        <li><a href="javascript:void(0);">统计个人日报</a></li>
+                        <li><a href="javascript:void(0);">按时间段统计</a></li>
+                    </ul>
+                </li>
+                <li><div class="link"><i class="fa fa-globe"></i>宏观烈度图<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">烈度图</a></li>
+                    </ul>
+                </li>
+                <li><div class="link"><i class="fa fa-globe"></i>留言板<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">留言板</a></li>
+                    </ul>
+                </li>
+                <li><div class="link"><i class="fa fa-globe"></i>个人设置<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">主题定制</a></li>
+                    </ul>
+                </li>
+                <li><div class="link"><i class="fa fa-globe"></i>物联网<i class="fa fa-chevron-down"></i></div>
+                    <ul class="submenu">
+                        <li><a href="javascript:void(0);">设备监控</a></li>
+                        <li><a href="javascript:void(0);">GIS</a></li>
+                        <li><a href="javascript:void(0);">统计图</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row border-bottom">
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2" style="color:#FFF;" href="#" title="收起菜单">
+                    	<i class="fa fa-bars"></i>
+                    </a>
+                </div>
+                <ul class="nav navbar-top-links navbar-right welcome-message">
+                    <!--<li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="开发文档" href="http://doc.ruoyi.vip/ruoyi" target="_blank"><i class="fa fa-question-circle"></i> 文档</a></li>
+                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="#" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>-->
+	                <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="全屏显示" href="#" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏</a></li>
+                    <li class="dropdown user-menu">
+						<ul class="dropdown-menu">
+							<li>
+								<a onclick="resetPwd()">
+								<i class="fa fa-key"></i> 修改密码</a>
+							</li>
+							<li>
+								<a onclick="toggleMenu()">
+								<i class="fa fa-toggle-off"></i> 横向菜单</a>
+							</li>
+							<li class="divider"></li>
+							<li>
+								<a href="@{/sys/user/logout}">
+								<i class="fa fa-sign-out"></i> 退出登录</a>
+							</li>
+						</ul>
+					</li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row content-tabs">
+            <button class="roll-nav roll-left tabLeft">
+                <i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active menuTab" data-id="@{/system/main}">首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right tabRight">
+                <i class="fa fa-forward"></i>
+            </button>
+            <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+        </div>
+
+        <a id="ax_close_max" class="ax_close_max" href="#" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
+
+        <div class="row mainContent" id="content-main" style="height: calc(100% - 91px)">
+            <iframe class="RuoYi_iframe" name="iframe0" width="100%" height="100%" data-id="/system/main"
+                    src="/system/main" frameborder="0" seamless></iframe>
+        </div>
+        
+        <div  class="footer">
+            <div class="pull-right">© Mars Doc Copyright </div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+</div>
+<!-- 全局js -->
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+<script type="text/javascript" src="./js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./js/jquery.contextMenu.min.js"></script>
+<script type="text/javascript" src="./js/jquery.slimscroll.min.js"></script>
+<script type="text/javascript" src="./js/jquery.contextMenu.min.js"></script>
+<script type="text/javascript" src="./js/jquery.metisMenu.js"></script>
+
+<script type="text/javascript" src="./js/index.js"></script>
+<script type="text/javascript" src="./js/doc.js"></script>
+
+
+<script type="text/javascript">
+
+    $(function () {
+        var Accordion = function (el, multiple) {
+            this.el = el || {};
+            this.multiple = multiple || false;
+            var links = this.el.find('.link');
+            links.on('click', {
+                el: this.el,
+                multiple: this.multiple
+            }, this.dropdown);
+        };
+        Accordion.prototype.dropdown = function (e) {
+            var $el = e.data.el;
+            $this = $(this), $next = $this.next();
+            $next.slideToggle();
+            $this.parent().toggleClass('open');
+            if (!e.data.multiple) {
+                $el.find('.submenu').not($next).slideUp().parent().removeClass('open');
+            }
+            ;
+        };
+        var accordion = new Accordion($('#accordion'), false);
+    });
+
+window.history.forward(1);
+// history（表示去掉地址的#）否则地址以"#"形式展示
+let mode = "history";
+/** 刷新时访问路径页签 */
+function applyPath(url) {
+	$('a[href$="' + decodeURI(url) + '"]').click();
+	if (!$('a[href$="' + url + '"]').hasClass("noactive")) {
+	    $('a[href$="' + url + '"]').parent("li").addClass("selected").parents("li").addClass("active").end().parents("ul").addClass("in");
+	}
+}
+
+$(function() {
+	if($.common.equals("history", mode) && window.performance.navigation.type == 1) {
+		var url = storage.get('publicPath');
+	    if ($.common.isNotEmpty(url)) {
+	    	applyPath(url);
+	    }
+	} else {
+		var hash = location.hash;
+	    if ($.common.isNotEmpty(hash)) {
+	        var url = hash.substring(1, hash.length);
+	        applyPath(url);
+	    } else {
+	    	if($.common.equals("history", mode)) {
+	    		storage.set('publicPath', "");
+	    	}
+	    }
+	}
+
+	$("[data-toggle='tooltip']").tooltip();
+
+});
+</script>
+</body>
+</html>
