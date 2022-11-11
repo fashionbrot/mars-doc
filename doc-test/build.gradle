@@ -13,9 +13,9 @@ apply plugin: "io.spring.dependency-management"
 
 
 
-
+sourceSets.main.resources.srcDirs = ["src/main/java","src/main/resources"]
 dependencies {
-    api project(":doc")
+    api project(":spring-doc")
 
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'

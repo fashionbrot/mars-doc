@@ -2,6 +2,7 @@ package com.github.fashionbrot.doc.event;
 
 
 import com.github.fashionbrot.doc.DocConfigurationProperties;
+import com.github.fashionbrot.doc.controller.MarsDocController;
 import com.github.fashionbrot.doc.util.RequestMappingUtil;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiIgnore;
@@ -75,7 +76,8 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         if (ObjectUtil.isNotEmpty(ignoreClass)){
             ignoreClassList = Arrays.stream(ignoreClass.split(",")).collect(Collectors.toList());
         }else{
-            ignoreClassList = new ArrayList<>(0);
+            ignoreClassList = new ArrayList<>(5);
+            ignoreClassList.add(MarsDocController.class.getTypeName());
         }
 
 
@@ -84,6 +86,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         List<LinkVo> requestVoList = new ArrayList<>();
         List<LinkVo> responseVoList = new ArrayList<>();
         List<ClassVo> classVoList = new ArrayList<>();
+        List<MethodVo> methodVoList = new ArrayList<>();
 
         RequestMappingHandlerMapping requestMapping = applicationContext.getBean(REQUEST_BEAN_NAME, RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> infoMap = requestMapping.getHandlerMethods();
@@ -136,8 +139,10 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
 
-                List<MethodVo> methodVoList = RequestMappingUtil.getRequestMapping(method);
-                if (ObjectUtil.isNotEmpty(methodVoList)) {
+                List<MethodVo> methodList = RequestMappingUtil.getRequestMapping(method);
+                if (ObjectUtil.isNotEmpty(methodList)) {
+
+                    methodVoList.addAll(methodList);
 
                     String methodDescription = method.getName();
                     int methodPriority = 0;
@@ -147,7 +152,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         methodPriority = apiOperation.priority();
                     }
 
-                    for (MethodVo vo : methodVoList) {
+                    for (MethodVo vo : methodList) {
                         vo.setMethodId(methodId);
                         vo.setDescription(methodDescription);
                         vo.setPriority(methodPriority);
@@ -172,15 +177,17 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                             .build());
                 }
 
+                long classCount = classVoList.stream().filter(m -> m.getClassId().equals(classId)).count();
+                if (classCount==0) {
+                    ClassVo classVo = ClassVo.builder()
+                            .classId(classId)
+                            .description(className)
+                            .priority(priority)
+                            .methodList(methodVoList)
+                            .build();
 
-                ClassVo classVo = ClassVo.builder()
-                        .classId(classId)
-                        .description(className)
-                        .priority(priority)
-                        .methodList(methodVoList)
-                        .build();
-
-                classVoList.add(classVo);
+                    classVoList.add(classVo);
+                }
 
             }
         }
@@ -193,7 +200,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         .description("")
                 .build());
 
-
+        MarsDocController.docVo = docVo;
 //        System.out.println(JSON.toJSONString(docVo));
 
     }

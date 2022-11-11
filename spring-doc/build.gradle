@@ -11,7 +11,7 @@ apply plugin: "java-library"
 group 'com.github.fashionbrot'
 version '1.0.0'
 
-
+sourceSets.main.resources.srcDirs = ["src/main/java","src/main/resources"]
 dependencies {
 
     api project(":doc")
