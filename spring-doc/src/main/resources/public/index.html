@@ -245,12 +245,17 @@
             if (data){
                 let menuHtml="";
                 let classList = data.classList;
+
+                storage.set("classList",classList);
+                storage.set("reqList",data.requestList);
+                storage.set("response",data.responseList);
+
                 if (classList){
 
-                    menuHtml+="<li>"
+
                     for (let i = 0; i < classList.length; i++) {
                         let classInfo =classList[i];
-
+                        menuHtml+="<li>"
                         menuHtml+="<a class=\"menuItem\" href='#' data-refresh=\"true\">\n" +
                             "                \t\t<i class=\"fa fa-bar-chart-o\" ></i>\n" +
                             "                    \t<span class=\"nav-label\" >"+classInfo.description+"</span>\n" +
@@ -266,19 +271,21 @@
 
                                 menuHtml+=
                                     "  <li >\n" +
-                                    "  <a class=\"menuItem\" href=\"https://baidu.com\">"+methodInfo.description+"</a>\n" +
+                                    "  <a class=\"menuItem\" href=\"test\">"+methodInfo.description+"</a>\n" +
                                     "   </li>\n" ;
                             }
                         }
                         menuHtml+="</ul>"
+                        menuHtml+="</li>"
 
                     }
-                    menuHtml+="</li>"
+
 
 
                 }
                 console.log(menuHtml);
                 $("#side-menu").html(menuHtml);
+                $('#side-menu').metisMenu();
             }
         });
     }

@@ -41,6 +41,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     private static final String REQUEST_BEAN_NAME = "requestMappingHandlerMapping";
 
+    private Environment environment;
 
     private DocConfigurationProperties docConfigurationProperties;
 
@@ -63,11 +64,29 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     }
 
 
+    public boolean checkSpringProfilesActive(String springProfilesActive,Environment environment){
+        String property = environment.getProperty("spring.profiles.active");
+        if (ObjectUtil.isNotEmpty(springProfilesActive)){
+            String[] split = springProfilesActive.split(",");
+            if (ObjectUtil.isNotEmpty(split)){
+                long count = Arrays.stream(split).filter(m -> m.equalsIgnoreCase(property)).count();
+                if (count>0){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
         if (!applicationContext.containsBean(REQUEST_BEAN_NAME)) {
+            return;
+        }
+
+        if (!checkSpringProfilesActive(docConfigurationProperties.getSpringProfilesActive(),environment)){
             return;
         }
 
@@ -86,7 +105,6 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         List<LinkVo> requestVoList = new ArrayList<>();
         List<LinkVo> responseVoList = new ArrayList<>();
         List<ClassVo> classVoList = new ArrayList<>();
-        List<MethodVo> methodVoList = new ArrayList<>();
 
         RequestMappingHandlerMapping requestMapping = applicationContext.getBean(REQUEST_BEAN_NAME, RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> infoMap = requestMapping.getHandlerMethods();
@@ -142,8 +160,6 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 List<MethodVo> methodList = RequestMappingUtil.getRequestMapping(method);
                 if (ObjectUtil.isNotEmpty(methodList)) {
 
-                    methodVoList.addAll(methodList);
-
                     String methodDescription = method.getName();
                     int methodPriority = 0;
                     ApiOperation apiOperation = method.getDeclaredAnnotation(ApiOperation.class);
@@ -177,16 +193,18 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                             .build());
                 }
 
-                long classCount = classVoList.stream().filter(m -> m.getClassId().equals(classId)).count();
-                if (classCount==0) {
+                Optional<ClassVo> optionalClassVo = classVoList.stream().filter(m -> m.getClassId().equals(classId)).findFirst();
+                if (!optionalClassVo.isPresent()) {
                     ClassVo classVo = ClassVo.builder()
                             .classId(classId)
                             .description(className)
                             .priority(priority)
-                            .methodList(methodVoList)
+                            .methodList(methodList)
                             .build();
-
                     classVoList.add(classVo);
+                }else{
+                    ClassVo classVo = optionalClassVo.get();
+                    classVo.getMethodList().addAll(methodList);
                 }
 
             }
@@ -208,7 +226,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     @Override
     public void setEnvironment(Environment environment) {
-
+        this.environment = environment;
     }
 
     @Override

@@ -397,7 +397,7 @@ $(function() {
                     }
                 });
 
-                if($.common.isNotEmpty(panelUrl)){
+                if((panelUrl)){
             		$('.menuTab[data-id="' + panelUrl + '"]').addClass('active').siblings('.menuTab').removeClass('active');
             		$('.mainContent .RuoYi_iframe').each(function() {
                         if ($(this).data('id') == panelUrl) {
@@ -436,6 +436,7 @@ $(function() {
 
     // 点击选项卡菜单
     function activeTab() {
+        alert(11)
         if (!$(this).hasClass('active')) {
             var currentId = $(this).data('id');
             syncMenuTab(currentId);
