@@ -6,227 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
     <link href="./css/bootstrap/4.1.0/bootstrap.css" rel="stylesheet" />
+    <link href="./css/mars-doc.css" rel="stylesheet" />
+
     <script type="text/javascript" src="./js/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="./js/bootstrap/4.1.0/bootstrap.js"></script>
+    <script type="text/javascript" src="./js/mars-doc.js"></script>
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Lato, Helvetica, Arial, sans-serif;
-            font-size: 14px;
-            line-height: 1.72222;
-            color: #34495e;
-            background-color: #fff;
-        }
-
-        .wrap {
-            min-width: 100%;
-            position: absolute;
-            background: #eff3f6 bottom;
-            min-height: 100%;
-            overflow: hidden;
-        }
-
-        .left {
-            margin-left: 0px;
-            position: absolute;
-            box-sizing: border-box;
-            width: 200px;
-            height: 100%;
-            background: #4d5e70 bottom;
-            overflow: hidden auto;
-        }
-
-
-        .menu-title {
-            margin-left: 15px;
-            color: #828e9a;
-            padding-top: 10px;
-            padding-bottom: 10px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .menu-item {
-            padding-left: 15px;
-            line-height: 40px;
-            height: 40px;
-            color: #aab1b7;
-            cursor: pointer;
-        }
-
-        .menu-item-active {
-            background-color: #3d4e60;
-            border-right: 4px solid #647f9d;
-            color: #fff;
-        }
-
-        .right {
-            box-sizing: border-box;
-            float: left;
-            box-sizing: border-box;
-            padding-left: 200px;
-            overflow-y: overlay;
-            overflow-x: hidden;
-            clear: both;
-            color: #717592;
-            min-width: 100%;
-            min-height: 500px;
-        }
-
-        .top {
-            background: #96b97d;
-            padding: 1rem !important;
-            align-items: center !important;
-            display: flex !important;
-        }
-
-        .top-left {
-            /*border: 1px solid red;*/
-            width: 50%;
-        }
-
-        .top-right {
-            text-align: right !important;
-            width: 50%;
-            height: 100%;
-            padding-right: var(--bs-gutter-x, .75rem);
-            padding-left: var(--bs-gutter-x, .75rem);
-            margin-right: auto;
-            margin-left: auto;
-            /*border: 1px solid red;*/
-        }
-
-        .search-input {
-            display: inline-flex;
-            width: 15rem!important;
-        }
-
-
-
-        .nav-list {
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            overflow-y: auto;
-        }
-        .detailMenu{
-            line-height: 34px;
-            width: 100%;
-        }
-        .nav-list>li {
-            display: block;
-            padding: 0;
-            margin: 0;
-            border: 0;
-            /*border-top: 1px solid #fcfcfc;*/
-            border-bottom: 1px solid #e5e5e5;
-            position: relative;
-            white-space: nowrap;
-            word-break: break-all;
-            text-overflow: ellipsis;
-            overflow-y: auto;
-        }
-        .nav-list>li>a, .nav-list .nav-header {
-            margin: 0;
-        }
-        .nav-list>li>a {
-            display: block;
-            height: 38px;
-            line-height: 36px;
-            padding: 0 16px 0 7px;
-            background-color: #f9f9f9;
-            color: #585858;
-            text-shadow: none!important;
-            font-size: 13px;
-            text-decoration: none;
-        }
-
-
-        .nav-list>li .submenu {
-            display: none;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            position: relative;
-            background-color: #fff;
-            border-top: 1px solid #e5e5e5;
-        }
-        .nav-list li .submenu {
-            line-height: 34px;
-        }
-
-        .menuLi {
-             border: 1px solid #f3f3f4;
-            border-top: 1px solid #e3e3ec;
-            padding: 1px 2px;
-            margin-bottom: 2px;
-            margin-top: 3px;
-            text-align: center;
-        }
-
-
-        .nav-tabs{
-            height: 40px;
-            line-height: 40px;
-            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
-        }
-        .nav-tabs .active{
-            border: none;
-            height: 100%;
-            background-color: rgba(167, 165, 165, 0.1);
-            border-radius: 0;
-            border-top: 2px solid #000;
-        }
-        .nav-tabs li{
-            padding-left: 0.1rem;
-        }
-        .nav-tabs li a{
-            padding-left: 1rem;
-            list-style: none;
-            text-decoration: none;
-        }
-
-
-
-
-
-
-        .close {
-            top:17px;
-            position: relative;
-            width: 24px;
-            cursor: pointer;
-            box-sizing: border-box;
-        }
-        .close:hover::before, .close:hover::after {
-            background: red;
-        }
-        .close:before {
-            position: absolute;
-            content: '';
-            width: 1px;
-            height: 10px;
-            background: #666666;
-            transform: rotate(45deg);
-            top: -3px;
-            left: 11px;
-        }
-        .close:after{
-            content: '';
-            position: absolute;
-            width: 1px;
-            height: 10px;
-            background: #666666;
-            transform: rotate(-45deg);
-            top: -3px;
-            left: 11px;
-        }
-
-
-</style>
 </head>
 <body>
 <div class="wrap">
@@ -302,89 +87,10 @@
 </div>
 </body>
 <script>
-    let util={
-        post:function (url,data,isStream,async,callback){
-            util.submit(url,"post","json",data,async,isStream,callback);
-        },get:function (url,async,callback){
-            util.submit(url,"get","json","",async,false,callback);
-        },submit:function (url,type,dataType,data,async,isStream,callback){
-            var config = {
-                url: url,
-                type: type,
-                dataType: dataType,
-                data: data,
-                async:async,
-                beforeSend: function () {
-                    util.openLoading();
-                },
-                success: function(result) {
-                    util.closeLoading();
-                    // if (typeof callback == "function") {
-                    //     callback(result);
-                    // }
-                    util.successCallback(result,callback);
-                },error:function () {
-                    util.closeLoading();
-                }
-            };
-            if (isStream){
-                var newConfig={
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }
-                config = $.extend(config, newConfig);
-            }
-            $.ajax(config)
-        },openLoading:function (){
-            // loading();
-        },closeLoading(){
-            // loaded();
-        },isSuccess:function (result){
-            if (result && result.code!= this.getSuccessCode()){
-                util.alert(result.msg);
-            }
-        },getSuccessCode:function (){
-            return 0;
-        },alert:function (msg,duration){
-            alert(msg)
-        },successCallback:function (result,callback){
-            if (result){
-                if (typeof callback == "function") {
-                    callback(result);
-                }
-            }
-            if (result && result.code &&  result.code== util.getSuccessCode()){
-                if (typeof callback == "function") {
-                    callback(result);
-                }
-            }else{
-                if (result && result.msg){
-                    util.alert(result.msg);
-                }else{
-                    // util.alert("处理失败，请联系管理员");
-                }
-            }
-        }
-    }
-
 
     $(function () {
-
         init();
-
-
     });
-
-    function initTabs(){
-        $(".nav-tabs li").on("click",function (){
-            $(".nav-tabs li").removeClass("active");
-            $(this).addClass("active");
-        });
-
-
-    }
-
-
 
     function initLeftMenu(){
         $("#menu .ma1").on("click",function () {
@@ -396,20 +102,32 @@
             }
         });
 
-
-        initTabs();
-
         $("#menu .menuLi .ma2").on("click",function (){
             addTab(this);
-        })
+        });
+        initTabs();
     }
 
 
-
-
+    function initTabs(){
+        $(".nav-tabs li").on("click",function (){
+            $(".nav-tabs li").removeClass("active");
+            $(this).addClass("active");
+        });
+        initTabsClose();
+    }
+    function initTabsClose(){
+        $(".nav-tabs .close").on("click",function (){
+            closeTab(this);
+        })
+    }
     function closeTab(obj){
         $(obj).parent().remove();
     }
+
+
+
+
 
 
     function addTab(obj){
@@ -429,9 +147,10 @@
         if (classVo){
             for (let j = 0; j < classVo.methodList.length; j++) {
                 let method = classVo.methodList[j];
-                if (method.methodId == methodId){
+                let $methodId = method.path+"#"+method.method;
+                if ($methodId == methodId){
                     let description = method.description;
-                    addTabMethod(description,methodId+"#"+method.method);
+                    addTabMethod(description,$methodId);
                     break;
                 }
             }
@@ -444,6 +163,7 @@
         if (tabs){
             for (let i = 0; i < tabs.length; i++) {
                 let $methodId = $( tabs[i]).find("a").attr("data-method-id");
+                log.log("leftMethodId:"+methodId+" navMethodId:"+$methodId);
                 if ($methodId == methodId){
                     $(tabs[i]).addClass("active");
                     flag = true;
@@ -452,32 +172,13 @@
                 }
             }
         }
-
         if (!flag){
             let h = "<li class='active'><a data-method-id='"+methodId+"' href=\"#tab2\" >"+name+"</a> <span class=\"close\"></span></li>";
             $(".nav-tabs").append(h);
         }
-
-        $(".nav-tabs .close").on("click",function (){
-            closeTab(this);
-        })
+        initTabs();
     }
 
-    // 本地缓存处理
-    let storage = {
-        set: function(key, value) {
-            window.localStorage.setItem(key, value);
-        },
-        get: function(key) {
-            return window.localStorage.getItem(key);
-        },
-        remove: function(key) {
-            window.localStorage.removeItem(key);
-        },
-        clear: function() {
-            window.localStorage.clear();
-        }
-    };
 
 
     function init(){
@@ -498,25 +199,17 @@
                         menuHtml+="<li class=\"detailMenu\">"
                         menuHtml+="<a class=\"ma1\">"+classInfo.description+"</a>";
 
-                        /**
-                         * <ul class="submenu">
-                         *                     <li class="menuLi">
-                         *                         <a class="ma2">二级菜单1</a>
-                         *                     </li>
-                         *                     <li class="menuLi">
-                         *                         <a class="ma2">二级菜单2</a>
-                         *                     </li>
-                         *                 </ul>
-                         */
                         let methodList = classInfo.methodList;
                         menuHtml+="<ul class=\"submenu\">";
                         if (methodList){
                             for (let j = 0; j < methodList.length; j++) {
                                 let methodInfo = methodList[j];
 
-                                menuHtml+=
-                                    "<li class=\"menuLi\">" +
-                                    "<a class=\"ma2\" data-class-id='"+classInfo.classId+"' data-method-id='"+methodInfo.methodId+"' >"+methodInfo.description+"</a>" +
+                                let methodType = methodInfo.method;
+                                let methodId = methodInfo.path+"#"+methodInfo.method;
+
+                                menuHtml+="<li class=\"menuLi\">" +
+                                    "<a class=\"ma2\" data-class-id='"+classInfo.classId+"'  data-method-id='"+methodId+"' >"+methodType+"&nbsp;&nbsp;"+methodInfo.description+"</a>" +
                                     "</li>" ;
                             }
                         }
