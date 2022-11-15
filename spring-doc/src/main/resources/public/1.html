@@ -12,6 +12,16 @@
     <script type="text/javascript" src="./js/bootstrap/4.1.0/bootstrap.js"></script>
     <script type="text/javascript" src="./js/mars-doc.js"></script>
 
+    <style>
+        .right-content-item{
+            border: 1px solid red;
+            display: none;
+        }
+        .right-content-item.active{
+            display: block!important;
+        }
+
+    </style>
 </head>
 <body>
 <div class="wrap">
@@ -58,31 +68,15 @@
     <!-- 右边内容 -->
     <div id="right" class="tab-content right">
         <ul class="nav nav-tabs">
-            <li class="active" ><a href="#tab1">第一个TAB</a> <span class="close"></span>
-            </li>
+            <li class="active" ><a href="#tab1">第一个TAB</a> <span class="close"></span></li>
             <li><a href="#tab2" >第二个TAB</a> <span class="close"></span></li>
         </ul>
 
 
-        <!--<div id="one" class="tab-pane active">
-                             <span style="margin-left:40px;text-shadow: 2px 0px 6px rgba(94, 35, 255, 0.91);">
-                                   内容一
-                            </span>
+        <div id="rightContent"  style="width: 100%;height: 100%;border: 1px solid red;">
+
         </div>
-        <div id="two" class="tab-pane">
-                             <span style="margin-left:40px;text-shadow: 2px 0px 6px rgba(94, 35, 255, 0.91);">
-                                   内容二
-                            </span>
-        </div>
-        <div id="three" class="tab-pane">
-                             <span style="margin-left:40px;text-shadow: 2px 0px 6px rgba(94, 35, 255, 0.91);">
-                                   内容三
-                            </span>
-        </div>-->
-        <div id="four" class="tab-pane">
-            <iframe id="fourIfm" frameborder="no" border="0" style="width:100%;" scrolling="no">
-            </iframe>
-        </div>
+
     </div>
 </div>
 </body>
@@ -113,6 +107,8 @@
         $(".nav-tabs li").on("click",function (){
             $(".nav-tabs li").removeClass("active");
             $(this).addClass("active");
+            let methodUId = $(this).find("a").attr("data-method-uid");
+            rightContentItemChange(methodUId);
         });
         initTabsClose();
     }
@@ -131,14 +127,16 @@
 
 
     function addTab(obj){
-        let classId = $(obj).attr("data-class-id");
+        let classUId = $(obj).attr("data-class-uid");
+        let methodUId = $(obj).attr("data-method-uid");
         let methodId = $(obj).attr("data-method-id");
+
         let classList =JSON.parse(storage.get("classList"));
         let classVo = null;
 
         for (let k = 0; k < classList.length; k++) {
             let clazz = classList[k];
-            if (clazz.classId == classId){
+            if (clazz.classUId == classUId){
                 classVo = clazz;
                 break
             }
@@ -146,25 +144,29 @@
 
         if (classVo){
             for (let j = 0; j < classVo.methodList.length; j++) {
-                let method = classVo.methodList[j];
-                let $methodId = method.path+"#"+method.method;
-                if ($methodId == methodId){
-                    let description = method.description;
-                    addTabMethod(description,$methodId);
+                let method = classVo.methodList[j];;
+
+                if (methodUId == method.methodUId){
+
+                    addTabMethod(classUId,method);
                     break;
                 }
             }
         }
     }
 
-    function addTabMethod(name,methodId){
+
+    function addTabMethod(classUId,method){
+        let methodDescription = method.description;
+        let methodUId = method.methodUId;
+
         let tabs = $(".nav-tabs li");
         let flag = false;
         if (tabs){
             for (let i = 0; i < tabs.length; i++) {
-                let $methodId = $( tabs[i]).find("a").attr("data-method-id");
-                log.log("leftMethodId:"+methodId+" navMethodId:"+$methodId);
-                if ($methodId == methodId){
+                let $methodUId = $( tabs[i]).find("a").attr("data-method-uid");
+
+                if ($methodUId && $methodUId == methodUId){
                     $(tabs[i]).addClass("active");
                     flag = true;
                 }else{
@@ -173,12 +175,196 @@
             }
         }
         if (!flag){
-            let h = "<li class='active'><a data-method-id='"+methodId+"' href=\"#tab2\" >"+name+"</a> <span class=\"close\"></span></li>";
+            let h = "<li class='active'><a data-class-uid='"+classUId+"' data-method-uid='"+methodUId+"' href=\"#tab2\" >"+methodDescription+"</a> <span class=\"close\"></span></li>";
             $(".nav-tabs").append(h);
+
+            addRightContent(classUId,method);
         }
         initTabs();
     }
 
+    function addRightContent(classUId,method){
+        let methodId = method.methodId;
+        let methodUId = method.methodUId;
+        let methodDescription = method.description;
+        let path = method.path;
+        let methodType = method.method;
+
+        $("#rightContent .right-content-item").removeClass("active");
+
+        let html="";
+        let requestList = JSON.parse(storage.get("requestList"));
+        let responseList = JSON.parse(storage.get("responseList"));
+        let request=null;
+        let response=null;
+        for (let i = 0; i < requestList.length; i++) {
+            let r = requestList[i];
+            if (r.methodId == methodId){
+               request = r;
+            }
+        }
+        for (let j = 0; j < responseList.length; j++) {
+            let r = responseList[j];
+            if (r.methodId == methodId){
+                response = r;
+            }
+        }
+        html+="<div class='right-content-item active' id='"+methodUId+"'>"
+        html+="<div>接口名："+methodDescription+"</div>"
+        html+="<div>接口地址："+path+"</div>"
+        html+="<div>请求方式："+methodType+"</div>"
+
+        if (request){
+            console.log(request)
+            let requestHtml = getRequestHtml(request);
+            log.info(requestHtml)
+            html+="<div>请求参数："+requestHtml+"</div>"
+        }
+        if (response){
+            console.log(response)
+            let responseHtml = getResponseHtml(response);
+            log.info(responseHtml)
+            html+="<div>响应参数："+responseHtml+"</div>"
+        }
+
+        html+="</div>"
+
+
+        $("#rightContent").append(html);
+    }
+
+    function getRequestHtml(request){
+        let h1="<table class=\"table table-bordered table-sm\">";
+        h1+="<thead><tr>";
+        h1+="<th>参数名称</th>";
+        h1+="<th>参数说明</th>";
+        h1+="<th>请求类型</th>";
+        h1+="<th>是否必须</th>";
+        h1+="<th>数据类型</th>";
+        h1+="<th>示例值</th>";
+        h1+="</tr></thead>"
+        if (request){
+            h1+="<tbody>";
+            let list = request.list;
+            if (list){
+                for (let ii = 0; ii < list.length; ii++) {
+                    var r = list[ii];
+                    h1+="<tr>"
+                    h1+="<td>"+r.name+"</td>"
+                    h1+="<td>"+r.description+"</td>"
+                    h1+="<td>"+r.requestType+"</td>"
+                    h1+="<td>"+r.required+"</td>"
+                    h1+="<td>"+r.dataType+"</td>"
+                    h1+="<td>"+r.example+"</td>"
+                    h1+="</tr>"
+                    h1+=getRequestChild(r);
+                }
+            }
+
+            h1+="</tbody>";
+        }
+
+        h1+="</table>"
+        return h1;
+    }
+
+    function getResponseHtml(response){
+        let h2="<table class=\"table table-bordered table-sm\">";
+        h2+="<thead><tr>";
+        h2+="<th>参数名称</th>";
+        h2+="<th>参数说明</th>";
+        h2+="<th>数据类型</th>";
+        h2+="</tr></thead>"
+        if (response){
+            h2+="<tbody>";
+            let list = response.list;
+
+            if (list){
+                for (let jj = 0; jj < list.length; jj++) {
+                    var r = list[jj];
+                    h2+="<tr>"
+                    h2+="<td>"+r.name+"</td>"
+                    h2+="<td>"+r.description+"</td>"
+                    h2+="<td>"+r.dataType+"</td>"
+                    h2+="</tr>"
+                    h2+=getResponseChild(r);
+                }
+            }
+
+            h2+="</tbody>";
+        }
+
+        h2+="</table>"
+        return h2;
+    }
+
+    function getResponseChild(p,separator){
+        if (p){
+            let child = p.child;
+            if (child){
+                if (!separator){
+                    separator = "&nbsp;&nbsp;"
+                }else{
+                    separator=separator+separator;
+                }
+
+                let h3="";
+                for (let k = 0; k < child.length; k++) {
+                    var r = child[k];
+                    h3+=("<tr>");
+                    h3+=("<td>"+separator+r.name+"</td>");
+                    h3+=("<td>"+r.description+"</td>");
+                    h3+=("<td>"+r.dataType+"</td>");
+                    h3+=("</tr>");
+                    h3+=(getResponseChild(r,separator));
+                }
+                return h3;
+            }
+        }
+        return "";
+    }
+
+    function getRequestChild(p,separator){
+        if (p){
+            let child = p.child;
+            if (child){
+                if (!separator){
+                    separator = "&nbsp;&nbsp;"
+                }else{
+                    separator=separator+separator;
+                }
+
+                let h3="";
+                for (let k = 0; k < child.length; k++) {
+                    var r = child[k];
+                    h3+=("<tr>");
+                    h3+=("<td>"+separator+r.name+"</td>");
+                    h3+=("<td>"+r.description+"</td>");
+                    h3+=("<td>"+r.requestType+"</td>");
+                    h3+=("<td>"+r.required+"</td>");
+                    h3+=("<td>"+r.dataType+"</td>");
+                    h3+="<td>"+r.example+"</td>"
+                    h3+=("</tr>");
+                    h3+=(getRequestChild(r,separator));
+                }
+                return h3;
+            }
+        }
+        return "";
+    }
+
+    function rightContentItemChange(methodUId){
+        $("#rightContent .right-content-item").removeClass("active");
+        var items = $("#rightContent .right-content-item");
+        if (items){
+            for (let i = 0; i < items.length; i++) {
+                var uid = $(items[i]).attr("id");
+                if (uid== methodUId){
+                    $(items[i]).addClass("active");
+                }
+            }
+        }
+    }
 
 
     function init(){
@@ -188,14 +374,15 @@
                 let classList = data.classList;
 
                 storage.set("classList",JSON.stringify(classList));
-                storage.set("reqList",JSON.stringify(data.requestList));
-                storage.set("response",JSON.stringify(data.responseList));
+                storage.set("requestList",JSON.stringify(data.requestList));
+                storage.set("responseList",JSON.stringify(data.responseList));
 
                 if (classList){
 
 
                     for (let i = 0; i < classList.length; i++) {
                         let classInfo =classList[i];
+                        let classUId = classInfo.classUId;
                         menuHtml+="<li class=\"detailMenu\">"
                         menuHtml+="<a class=\"ma1\">"+classInfo.description+"</a>";
 
@@ -206,10 +393,12 @@
                                 let methodInfo = methodList[j];
 
                                 let methodType = methodInfo.method;
-                                let methodId = methodInfo.path+"#"+methodInfo.method;
+                                let methodUId = methodInfo.methodUId;
+                                let methodId = methodInfo.methodId;
+                                let description = methodInfo.description;
 
                                 menuHtml+="<li class=\"menuLi\">" +
-                                    "<a class=\"ma2\" data-class-id='"+classInfo.classId+"'  data-method-id='"+methodId+"' >"+methodType+"&nbsp;&nbsp;"+methodInfo.description+"</a>" +
+                                    "<a class=\"ma2\" data-class-uid='"+classUId+"'  data-method-uid='"+methodUId+"' data-method-id='"+methodId+"' >"+methodType+"&nbsp;&nbsp;"+description+"</a>" +
                                     "</li>" ;
                             }
                         }
@@ -222,6 +411,15 @@
                 initLeftMenu();
             }
         });
+    }
+
+
+    function changeFrameHeight(){
+        var iframe=document.getElementById("rightContent");
+        iframe.height = document.documentElement.clientHeight;
+    }
+    window.onresize=function(){
+        changeFrameHeight();
     }
 
 </script>

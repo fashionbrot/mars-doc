@@ -15,6 +15,7 @@ public class MethodVo implements Serializable {
     private static final long serialVersionUID = 1731070425404707077L;
 
 
+    private String methodUId;
     /**
      * 接口描述
      */

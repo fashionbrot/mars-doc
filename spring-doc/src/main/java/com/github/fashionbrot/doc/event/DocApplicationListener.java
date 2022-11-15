@@ -3,14 +3,11 @@ package com.github.fashionbrot.doc.event;
 
 import com.github.fashionbrot.doc.DocConfigurationProperties;
 import com.github.fashionbrot.doc.controller.MarsDocController;
-import com.github.fashionbrot.doc.util.RequestMappingUtil;
+import com.github.fashionbrot.doc.util.*;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.consts.MarsDocConst;
-import com.github.fashionbrot.doc.util.ObjectUtil;
-import com.github.fashionbrot.doc.util.RequestUtil;
-import com.github.fashionbrot.doc.util.ResponseUtil;
 import com.github.fashionbrot.doc.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -172,6 +169,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         vo.setMethodId(methodId);
                         vo.setDescription(methodDescription);
                         vo.setPriority(methodPriority);
+                        vo.setMethodUId(Md5Util.md5(vo.getMethodId()+vo.getPath()+vo.getMethod()));
                     }
                 }else{
                     continue;
@@ -200,6 +198,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                             .description(className)
                             .priority(priority)
                             .methodList(methodList)
+                            .classUId(Md5Util.md5(classId))
                             .build();
                     classVoList.add(classVo);
                 }else{

@@ -16,6 +16,8 @@ import java.util.List;
 public class ClassVo implements Serializable {
     private static final long serialVersionUID = -242836563047724263L;
 
+    private String classUId;
+
     private String classId;
     /**
      * 类说明
