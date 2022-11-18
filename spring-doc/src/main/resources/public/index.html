@@ -1,301 +1,505 @@
 <!DOCTYPE html>
-<html  lang="zh" >
+<html lang="zh">
 <head>
+    <title>Bootstrap布局</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
-    <title>MarsDoc</title>
-    <!-- 避免IE使用兼容模式 -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="./css/bootstrap/4.1.0/bootstrap.css" rel="stylesheet" />
+    <link href="./css/mars-doc.css" rel="stylesheet" />
 
-    <link href="./css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="./css/jquery.contextMenu.min.css" rel="stylesheet"/>
-    <link href="./css/font-awesome.min.css" rel="stylesheet"/>
-    <link href="./css/animate.css" rel="stylesheet"/>
-
-    <link href="./css/style.css" rel="stylesheet"/>
-    <link href="./css/skins.css" rel="stylesheet"/>
+    <script type="text/javascript" src="./js/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/bootstrap/4.1.0/bootstrap.js"></script>
+    <script type="text/javascript" src="./js/mars-doc.js"></script>
+    <script type="text/javascript" src="./js/template-web.js"></script>
 
     <style>
+        .right-content{
+            padding: 15px;
+        }
+        .right-content-item{
+            border: 1px solid red;
+            display: none;
+        }
+        .right-content-item.active{
+            display: block!important;
+        }
 
     </style>
 </head>
-<body class="fixed-sidebar full-height-layout gray-bg skin-blue" style="overflow: hidden">
-<div id="wrapper">
+<body>
+<div class="wrap">
 
-    <!--左侧导航开始-->
-    <nav class="navbar-default navbar-static-side" role="navigation">
-        <div class="nav-close">
-            <i class="fa fa-times-circle"></i>
+    <!--顶部-->
+    <div class="top">
+        <div class="top-left">
+            欢迎使用 mars doc
         </div>
-        <a >
-            <li class="logo hidden-xs">
-                <span class="logo-lg">管理系统</span>
-            </li>
-        </a>
-        <div class="sidebar-collapse" style="width: auto; height: 96%;">
-            <ul class="nav" id="side-menu" style="height: auto;">
-                <li>
-                    <a class="menuItem" href="@{/system/main}"><i class="fa fa-home"></i> <span class="nav-label">首页</span> </a>
-                </li>
-                <li class="active">
-                	<a class="menuItem" href="" data-refresh="true">
-                		<i class="fa fa-bar-chart-o" ></i>
-                    	<span class="nav-label" >一级菜单</span>
-                    	<span class="fa arrow"></span>
-                	</a>
-                    <ul class="nav nav-second-level collapse in">
-                        <li class="active">
-                            <a class="menuItem" href="https://baidu.com">二级菜单</a>
-                        </li>
-					</ul>
-                    <ul class="nav nav-second-level collapse in" style="height: auto;">
-                        <li class="active">
-                            <a class="menuItem" href="https://baidu.com">二级菜单1</a>
-                        </li>
-                    </ul>
-                    <ul class="nav nav-second-level collapse in" style="height: auto;">
-                        <li class="active">
-                            <a class="menuItem" href="https://baidu.com">二级菜单2</a>
-                        </li>
-                    </ul>
-
-                </li>
-            </ul>
-
-
-        </div>
-    </nav>
-    <!--左侧导航结束-->
-
-    <!--右侧部分开始-->
-    <div id="page-wrapper" class="gray-bg dashbard-1">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-minimalize minimalize-styl-2" style="color:#FFF;" href="#" title="收起菜单">
-                        <i class="fa fa-bars"></i>
-                    </a>
-                </div>
-                <ul class="nav navbar-top-links navbar-right welcome-message">
-                    <!--<li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="开发文档" href="http://doc.ruoyi.vip/ruoyi" target="_blank"><i class="fa fa-question-circle"></i> 文档</a></li>
-                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="锁定屏幕" href="#" id="lockScreen"><i class="fa fa-lock"></i> 锁屏</a></li>-->
-                    <li><a data-toggle="tooltip" data-trigger="hover" data-placement="bottom" title="全屏显示" href="#" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏</a></li>
-                    <li class="dropdown user-menu">
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a onclick="resetPwd()">
-                                    <i class="fa fa-key"></i> 修改密码</a>
-                            </li>
-                            <li>
-                                <a onclick="toggleMenu()">
-                                    <i class="fa fa-toggle-off"></i> 横向菜单</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="@{/sys/user/logout}">
-                                    <i class="fa fa-sign-out"></i> 退出登录</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="row content-tabs">
-            <button class="roll-nav roll-left tabLeft">
-                <i class="fa fa-backward"></i>
-            </button>
-            <nav class="page-tabs menuTabs">
-                <div class="page-tabs-content">
-                    <a href="javascript:;" class="active menuTab" data-id="@{/system/main}">首页</a>
-                </div>
-            </nav>
-            <button class="roll-nav roll-right tabRight">
-                <i class="fa fa-forward"></i>
-            </button>
-            <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
-        </div>
-
-        <a id="ax_close_max" class="ax_close_max" href="#" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
-
-        <div class="row mainContent" id="content-main" style="height: calc(100% - 91px)">
-            <iframe class="RuoYi_iframe" name="iframe0" width="100%" height="100%" data-id="/system/main"
-                    src="/system/main" frameborder="0" seamless></iframe>
-        </div>
-
-        <div  class="footer">
-            <div class="pull-right">© Mars Doc Copyright </div>
+        <div class="top-right">
+            <input type="input" class="search-input form-control" name="s" placeholder="搜索..." aria-label="Search">
         </div>
     </div>
-    <!--右侧部分结束-->
+
+    <!-- 左边内容 -->
+    <div id="left" class="left" >
+
+        <ul id="menu" class="nav nav-list">
+            <li class="detailMenu">
+                <a class="ma1">一级菜单</a>
+                <ul class="submenu">
+                    <li class="menuLi">
+                        <a class="ma2">二级菜单1</a>
+                    </li>
+                    <li class="menuLi">
+                        <a class="ma2">二级菜单2</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="detailMenu">
+                <a class="ma1">二级菜单</a>
+                <ul class="submenu">
+                    <li class="menuLi">
+                        <a class="ma2">二级菜单1</a>
+                    </li>
+                    <li class="menuLi">
+                        <a class="ma2">二级菜单2</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+    <!-- 右边内容 -->
+    <div id="right" class="tab-content right">
+        <ul class="nav nav-tabs">
+            <li class="active" ><a href="#tab1">第一个TAB</a> <span class="close"></span></li>
+            <li><a href="#tab2" >第二个TAB</a> <span class="close"></span></li>
+        </ul>
+
+
+        <div class="right-content"  id="rightContent"  style="width: 100%;height: 100%;border: 1px solid red;">
+
+        </div>
+
+    </div>
 </div>
-<!-- 全局js -->
-<script type="text/javascript" src="./js/jquery.min.js"></script>
-<script type="text/javascript" src="./js/bootstrap.min.js"></script>
-<script type="text/javascript" src="./js/jquery.contextMenu.min.js"></script>
-<script type="text/javascript" src="./js/jquery.slimscroll.min.js"></script>
-<script type="text/javascript" src="./js/jquery.contextMenu.min.js"></script>
-<script type="text/javascript" src="./js/jquery.metisMenu.js"></script>
 
-<script type="text/javascript" src="./js/index.js"></script>
-<script type="text/javascript" src="./js/doc.js"></script>
+<div id="debugTemplate" style="display: none">
+    <div style="width: 100%;height: 30px;">
 
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <button class="btn btn-default btn-info" type="button">{{method.method}}</button>
+        </div>
+        <input type="text" class="form-control" value="{{method.path}}"  id="requestUrl" name="requestUrl">
+        <div class="input-group-prepend">
+            <button class="btn btn-secondary" type="button">发送</button>
+        </div>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" class="custom-control-input" id="customRadio1{{method.methodUId}}" name="contentType{{method.methodUId}}">
+        <label class="custom-control-label" for="customRadio1{{method.methodUId}}">x-www-form-urlencoded</label>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" class="custom-control-input" id="customRadio2{{method.methodUId}}" name="contentType{{method.methodUId}}">
+        <label class="custom-control-label" for="customRadio2{{method.methodUId}}">form-data</label>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" class="custom-control-input" id="customRadio3{{method.methodUId}}" name="contentType{{method.methodUId}}">
+        <label class="custom-control-label" for="customRadio3{{method.methodUId}}">raw</label>
+    </div>
 
-<script type="text/javascript">
-    window.history.forward(1);
-    // history（表示去掉地址的#）否则地址以"#"形式展示
-    let mode = "history";
-    /** 刷新时访问路径页签 */
-    function applyPath(url) {
-        $('a[href$="' + decodeURI(url) + '"]').click();
-        if (!$('a[href$="' + url + '"]').hasClass("noactive")) {
-            $('a[href$="' + url + '"]').parent("li").addClass("selected").parents("li").addClass("active").end().parents("ul").addClass("in");
-        }
-    }
+</div>
 
-    $(function() {
-        if(("history" == mode) && window.performance.navigation.type == 1) {
-            var url = storage.get('publicPath');
-            if ((url)) {
-                applyPath(url);
-            }
-        } else {
-            var hash = location.hash;
-            if ((hash)) {
-                var url = hash.substring(1, hash.length);
-                applyPath(url);
-            } else {
-                if(("history"== mode)) {
-                    storage.set('publicPath', "");
-                }
-            }
-        }
+</body>
+<script>
 
-        $("[data-toggle='tooltip']").tooltip();
-        init()
+    // import {template} from "./js/template-web";
+
+    $(function () {
+        init();
     });
 
-    let util={
-        post:function (url,data,isStream,async,callback){
-            util.submit(url,"post","json",data,async,isStream,callback);
-        },get:function (url,async,callback){
-            util.submit(url,"get","json","",async,false,callback);
-        },submit:function (url,type,dataType,data,async,isStream,callback){
-            var config = {
-                url: url,
-                type: type,
-                dataType: dataType,
-                data: data,
-                async:async,
-                beforeSend: function () {
-                    util.openLoading();
-                },
-                success: function(result) {
-                    util.closeLoading();
-                    // if (typeof callback == "function") {
-                    //     callback(result);
-                    // }
-                    util.successCallback(result,callback);
-                },error:function () {
-                    util.closeLoading();
-                }
-            };
-            if (isStream){
-                var newConfig={
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
-                }
-                config = $.extend(config, newConfig);
-            }
-            $.ajax(config)
-        },openLoading:function (){
-            // loading();
-        },closeLoading(){
-            // loaded();
-        },isSuccess:function (result){
-            if (result && result.code!= this.getSuccessCode()){
-                util.alert(result.msg);
-            }
-        },getSuccessCode:function (){
-            return 0;
-        },alert:function (msg,duration){
-            alert(msg)
-        },successCallback:function (result,callback){
-            if (result){
-                if (typeof callback == "function") {
-                    callback(result);
-                }
-            }
-            if (result && result.code &&  result.code== util.getSuccessCode()){
-                if (typeof callback == "function") {
-                    callback(result);
-                }
+    function initLeftMenu(){
+        $("#menu .ma1").on("click",function () {
+            if ($(this).parent().hasClass("active")){
+                $(this).parent().removeClass("active").find(".submenu").hide(100);
             }else{
-                if (result && result.msg){
-                    util.alert(result.msg);
-                }else{
-                    // util.alert("处理失败，请联系管理员");
+                $(".detailMenu").removeClass("active").find(".submenu").hide(100);
+                $(this).parent().addClass("active").find(".submenu").show(300);
+            }
+        });
+
+        $("#menu .menuLi .ma2").on("click",function (){
+            addTab(this);
+        });
+        initTabs();
+    }
+
+
+    function initTabs(){
+        $(".nav-tabs li").on("click",function (){
+            $(".nav-tabs li").removeClass("active");
+            $(this).addClass("active");
+            let methodUId = $(this).find("a").attr("data-method-uid");
+            rightContentItemChange(methodUId);
+        });
+        initTabsClose();
+    }
+    function initTabsClose(){
+        $(".nav-tabs .close").on("click",function (){
+            closeTab(this);
+        })
+    }
+    function closeTab(obj){
+        $(obj).parent().remove();
+    }
+
+
+    $(".search-input").keypress(function (even) {
+        if (even.which == 13) {
+            let searchInput = $(".search-input").val();
+
+            let classList = storage.get("classList");
+            if (classList){
+                initLeft(JSON.parse(classList),searchInput);
+            }
+        }
+    });
+
+
+
+    function addTab(obj){
+        let classUId = $(obj).attr("data-class-uid");
+        let methodUId = $(obj).attr("data-method-uid");
+        let methodId = $(obj).attr("data-method-id");
+
+        let classList =JSON.parse(storage.get("classList"));
+        let classVo = null;
+
+        for (let k = 0; k < classList.length; k++) {
+            let clazz = classList[k];
+            if (clazz.classUId == classUId){
+                classVo = clazz;
+                break
+            }
+        }
+
+        if (classVo){
+            for (let j = 0; j < classVo.methodList.length; j++) {
+                let method = classVo.methodList[j];;
+
+                if (methodUId == method.methodUId){
+
+                    addTabMethod(classUId,method);
+                    break;
                 }
             }
         }
     }
+
+
+    function addTabMethod(classUId,method){
+        let methodDescription = method.description;
+        let methodUId = method.methodUId;
+
+        let tabs = $(".nav-tabs li");
+        let flag = false;
+        if (tabs){
+            for (let i = 0; i < tabs.length; i++) {
+                let $methodUId = $( tabs[i]).find("a").attr("data-method-uid");
+
+                if ($methodUId && $methodUId == methodUId){
+                    $(tabs[i]).addClass("active");
+                    rightContentItemChange(methodUId);
+                    flag = true;
+                }else{
+                    $(tabs[i]).removeClass("active");
+                }
+            }
+        }
+        if (!flag){
+            let h = "<li class='active'><a data-class-uid='"+classUId+"' data-method-uid='"+methodUId+"' href=\"#tab2\" >"+methodDescription+"</a> <span class=\"close\"></span></li>";
+            $(".nav-tabs").append(h);
+
+            addRightContent(classUId,method);
+        }
+        initTabs();
+    }
+
+    function addRightContent(classUId,method){
+        let methodId = method.methodId;
+        let methodUId = method.methodUId;
+        let methodDescription = method.description;
+        let path = method.path;
+        let methodType = method.method;
+
+        $("#rightContent .right-content-item").removeClass("active");
+
+        let html="";
+        let requestList = JSON.parse(storage.get("requestList"));
+        let responseList = JSON.parse(storage.get("responseList"));
+        let request=null;
+        let response=null;
+        for (let i = 0; i < requestList.length; i++) {
+            let r = requestList[i];
+            if (r.methodId == methodId){
+               request = r;
+            }
+        }
+        for (let j = 0; j < responseList.length; j++) {
+            let r = responseList[j];
+            if (r.methodId == methodId){
+                response = r;
+            }
+        }
+        html+="<div class='right-content-item active' id='"+methodUId+"'>"
+        html+="<div>接口名："+methodDescription+"</div>"
+        html+="<div>接口地址："+path+"</div>"
+        html+="<div>请求方式："+methodType+"</div>"
+
+        if (request){
+            console.log(request)
+            let requestHtml = getRequestHtml(request);
+            log.info(requestHtml)
+            html+="<div>请求参数："+requestHtml+"</div>"
+        }
+        if (response){
+            console.log(response)
+            let responseHtml = getResponseHtml(response);
+            log.info(responseHtml)
+            html+="<div>响应参数："+responseHtml+"</div>"
+        }
+
+
+
+        let debugTemplateData={
+            method:method
+        }
+        let debugHtml = template("debugTemplate",debugTemplateData);
+        console.log(debugHtml);
+
+        html+=debugHtml;
+
+        html+="</div>"
+
+        $("#rightContent").append(html);
+    }
+
+    function getRequestHtml(request){
+        let h1="<table class=\"table table-bordered table-sm\">";
+        h1+="<thead><tr>";
+        h1+="<th>参数名称</th>";
+        h1+="<th>参数说明</th>";
+        h1+="<th>请求类型</th>";
+        h1+="<th>是否必须</th>";
+        h1+="<th>数据类型</th>";
+        h1+="<th>示例值</th>";
+        h1+="</tr></thead>"
+        if (request){
+            h1+="<tbody>";
+            let list = request.list;
+            if (list){
+                for (let ii = 0; ii < list.length; ii++) {
+                    var r = list[ii];
+                    h1+="<tr>"
+                    h1+="<td>"+r.name+"</td>"
+                    h1+="<td>"+r.description+"</td>"
+                    h1+="<td>"+r.requestType+"</td>"
+                    h1+="<td>"+r.required+"</td>"
+                    h1+="<td>"+r.dataType+"</td>"
+                    h1+="<td>"+r.example+"</td>"
+                    h1+="</tr>"
+                    h1+=getRequestChild(r);
+                }
+            }
+
+            h1+="</tbody>";
+        }
+
+        h1+="</table>"
+        return h1;
+    }
+
+    function getResponseHtml(response){
+        let h2="<table class=\"table table-bordered table-sm\">";
+        h2+="<thead><tr>";
+        h2+="<th>参数名称</th>";
+        h2+="<th>参数说明</th>";
+        h2+="<th>数据类型</th>";
+        h2+="</tr></thead>"
+        if (response){
+            h2+="<tbody>";
+            let list = response.list;
+
+            if (list){
+                for (let jj = 0; jj < list.length; jj++) {
+                    var r = list[jj];
+                    h2+="<tr>"
+                    h2+="<td>"+r.name+"</td>"
+                    h2+="<td>"+r.description+"</td>"
+                    h2+="<td>"+r.dataType+"</td>"
+                    h2+="</tr>"
+                    h2+=getResponseChild(r);
+                }
+            }
+
+            h2+="</tbody>";
+        }
+
+        h2+="</table>"
+        return h2;
+    }
+
+    function getResponseChild(p,separator){
+        if (p){
+            let child = p.child;
+            if (child){
+                if (!separator){
+                    separator = "&nbsp;&nbsp;"
+                }else{
+                    separator=separator+separator;
+                }
+
+                let h3="";
+                for (let k = 0; k < child.length; k++) {
+                    var r = child[k];
+                    h3+=("<tr>");
+                    h3+=("<td>"+separator+r.name+"</td>");
+                    h3+=("<td>"+r.description+"</td>");
+                    h3+=("<td>"+r.dataType+"</td>");
+                    h3+=("</tr>");
+                    h3+=(getResponseChild(r,separator));
+                }
+                return h3;
+            }
+        }
+        return "";
+    }
+
+    function getRequestChild(p,separator){
+        if (p){
+            let child = p.child;
+            if (child){
+                if (!separator){
+                    separator = "&nbsp;&nbsp;"
+                }else{
+                    separator=separator+separator;
+                }
+
+                let h3="";
+                for (let k = 0; k < child.length; k++) {
+                    var r = child[k];
+                    h3+=("<tr>");
+                    h3+=("<td>"+separator+r.name+"</td>");
+                    h3+=("<td>"+r.description+"</td>");
+                    h3+=("<td>"+r.requestType+"</td>");
+                    h3+=("<td>"+r.required+"</td>");
+                    h3+=("<td>"+r.dataType+"</td>");
+                    h3+="<td>"+common.formatValue(r.example)+"</td>"
+                    h3+=("</tr>");
+                    h3+=(getRequestChild(r,separator));
+                }
+                return h3;
+            }
+        }
+        return "";
+    }
+
+    function rightContentItemChange(methodUId){
+        $("#rightContent .right-content-item").removeClass("active");
+        var items = $("#rightContent .right-content-item");
+        if (items){
+            for (let i = 0; i < items.length; i++) {
+                var uid = $(items[i]).attr("id");
+                if (uid== methodUId){
+                    $(items[i]).addClass("active");
+                }
+            }
+        }
+    }
+
 
     function init(){
         util.post("./mars/api",{},false,true,function (data){
             if (data){
-                let menuHtml="";
+
                 let classList = data.classList;
 
-                storage.set("classList",classList);
-                storage.set("reqList",data.requestList);
-                storage.set("response",data.responseList);
+                storage.set("classList",JSON.stringify(classList));
+                storage.set("requestList",JSON.stringify(data.requestList));
+                storage.set("responseList",JSON.stringify(data.responseList));
 
-                if (classList){
-
-
-                    for (let i = 0; i < classList.length; i++) {
-                        let classInfo =classList[i];
-                        menuHtml+="<li>"
-                        menuHtml+="<a class=\"menuItem\" href='#' data-refresh=\"true\">\n" +
-                            "                \t\t<i class=\"fa fa-bar-chart-o\" ></i>\n" +
-                            "                    \t<span class=\"nav-label\" >"+classInfo.description+"</span>\n" +
-                            "                    \t<span class=\"fa arrow\"></span>\n" +
-                            "                \t</a>"
-
-
-                        let methodList = classInfo.methodList;
-                        menuHtml+="<ul class=\"nav nav-second-level collapse\">";
-                        if (methodList){
-                            for (let j = 0; j < methodList.length; j++) {
-                                let methodInfo = methodList[j];
-
-                                menuHtml+=
-                                    "  <li >\n" +
-                                    "  <a class=\"menuItem\" href=\"test\">"+methodInfo.description+"</a>\n" +
-                                    "   </li>\n" ;
-                            }
-                        }
-                        menuHtml+="</ul>"
-                        menuHtml+="</li>"
-
-                    }
-
-
-
-                }
-                console.log(menuHtml);
-                $("#side-menu").html(menuHtml);
-                $('#side-menu').metisMenu();
+                initLeft(classList,null);
             }
         });
     }
 
+    function initLeft(classList,searchInput){
+        let menuHtml="";
+        if (classList){
+            for (let i = 0; i < classList.length; i++) {
+                let classInfo =classList[i];
+                let classUId = classInfo.classUId;
+                let methodList = classInfo.methodList;
+                let methodHtml = "";
+                if (methodList){
+                    methodHtml = initLeftMethod(classUId,methodList,searchInput);
+                }
+                if (common.isEmpty(methodHtml)) {
+                    continue;
+                }
+
+                menuHtml+="<li class=\"detailMenu\">"
+                menuHtml+="<a class=\"ma1\">"+classInfo.description+"</a>";
 
 
+                menuHtml+="<ul class=\"submenu\">";
 
+                menuHtml+=methodHtml;
 
+                menuHtml+="</ul>"
+                menuHtml+="</li>"
+            }
+        }
+        $("#menu").html(menuHtml);
+        initLeftMenu();
+    }
+
+    function initLeftMethod(classUId,methodList,searchInput){
+        let menuHtml="";
+        if (!methodList){
+            return menuHtml;
+        }
+        for (let j = 0; j < methodList.length; j++) {
+            let methodInfo = methodList[j];
+
+            let methodType = methodInfo.method;
+            let methodUId = methodInfo.methodUId;
+            let methodId = methodInfo.methodId;
+            let description = methodInfo.description;
+
+            if (common.isNotEmpty(searchInput) ){
+                if (!common.like(description,searchInput)){
+                    continue;
+                }
+            }
+            menuHtml+="<li class=\"menuLi\">" +
+                "<a class=\"ma2\" data-class-uid='"+classUId+"'  data-method-uid='"+methodUId+"' data-method-id='"+methodId+"' >"+methodType+"&nbsp;&nbsp;"+description+"</a>" +
+                "</li>" ;
+        }
+        return menuHtml;
+    }
+
+    function changeFrameHeight(){
+        var iframe=document.getElementById("rightContent");
+        iframe.height = document.documentElement.clientHeight;
+    }
+    window.onresize=function(){
+        changeFrameHeight();
+    }
 
 
 </script>
-</body>
 </html>

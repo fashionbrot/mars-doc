@@ -95,3 +95,63 @@ let log = {
     }
 };
 
+let common = {
+    formatValue:function (value){
+        if (value){
+            return "-"
+        }else{
+            return value;
+        }
+    },
+    // 判断字符串是否为空
+    isEmpty: function (value) {
+        if (value == null || this.trim(value) == "") {
+            return true;
+        }
+        return false;
+    },
+    // 判断一个字符串是否为非空串
+    isNotEmpty: function (value) {
+        return !common.isEmpty(value);
+    },
+    trim: function (value) {
+        if (value == null) {
+            return "";
+        }
+        return value.toString().replace(/(^\s*)|(\s*$)|\r|\n/g, "");
+    },
+    // 比较两个字符串（大小写敏感）
+    equals: function (str, that) {
+        return str == that;
+    },
+    // 比较两个字符串（大小写不敏感）
+    equalsIgnoreCase: function (str, that) {
+        return String(str).toUpperCase() === String(that).toUpperCase();
+    },
+    // 判断字符串是否是以start开头
+    startWith: function(value, start) {
+        var reg = new RegExp("^" + start);
+        return reg.test(value)
+    },
+    // 判断字符串是否是以end结尾
+    endWith: function(value, end) {
+        var reg = new RegExp(end + "$");
+        return reg.test(value)
+    },
+    join: function(array, separator) {
+        if (common.isEmpty(array)) {
+            return null;
+        }
+        return array.join(separator);
+    },
+    like:function (str,keyWord){
+        var reg = new RegExp(keyWord);
+        //如果字符串中不包含目标字符会返回-1
+        if(str.match(reg)){
+            //匹配成功do something
+            return true;
+        }
+        return false;
+    }
+}
+
