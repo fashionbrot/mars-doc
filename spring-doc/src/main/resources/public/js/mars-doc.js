@@ -97,8 +97,8 @@ let log = {
 
 let common = {
     formatValue:function (value){
-        if (value){
-            return "-"
+        if (value=="null" || value==null){
+            return ""
         }else{
             return value;
         }
