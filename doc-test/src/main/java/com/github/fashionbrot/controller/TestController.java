@@ -95,4 +95,11 @@ public class TestController {
         return RespVo.success();
     }
 
+    @ApiOperation("test11接口")
+    @RequestMapping("test11")
+    @ResponseBody
+    private RespVo test11(TestReq req){
+        return RespVo.success();
+    }
+
 }

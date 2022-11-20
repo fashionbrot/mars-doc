@@ -12,6 +12,7 @@
     <script type="text/javascript" src="./js/bootstrap/4.1.0/bootstrap.js"></script>
     <script type="text/javascript" src="./js/mars-doc.js"></script>
     <script type="text/javascript" src="./js/template-web.js"></script>
+    <script type="text/javascript" src="./js/json5.js"></script>
 
     <style>
         .right-content{
@@ -98,20 +99,48 @@
         </div>
     </div>
     <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" id="customRadio1{{method.methodUId}}" name="contentType{{method.methodUId}}">
+        <input type="radio" class="custom-control-input"  id="customRadio1{{method.methodUId}}" name="{{method.methodUId}}contentType" value="1">
         <label class="custom-control-label" for="customRadio1{{method.methodUId}}">x-www-form-urlencoded</label>
     </div>
     <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" id="customRadio2{{method.methodUId}}" name="contentType{{method.methodUId}}">
+        <input type="radio" class="custom-control-input" id="customRadio2{{method.methodUId}}" name="{{method.methodUId}}contentType" value="2">
         <label class="custom-control-label" for="customRadio2{{method.methodUId}}">form-data</label>
     </div>
     <div class="custom-control custom-radio custom-control-inline">
-        <input type="radio" class="custom-control-input" id="customRadio3{{method.methodUId}}" name="contentType{{method.methodUId}}">
+        <input type="radio" class="custom-control-input" id="customRadio3{{method.methodUId}}" name="{{method.methodUId}}contentType" value="3">
         <label class="custom-control-label" for="customRadio3{{method.methodUId}}">raw</label>
     </div>
 
+    <select class="form-select form-select-sm" id="{{method.methodUId}}Raw" style="display: none;" >
+        <option selected>JSON(application/json)</option>
+        <option>Text</option>
+        <option >Text(text/plain)</option>
+        <option >XML(application/xml)</option>
+        <option >XML(text/xml)</option>
+        <option>HTML(text/html)</option>
+        <option>Javascript(application/javascript)</option>
+    </select>
+
+
+    <table class="table table-bordered table-sm">
+        <thead class="thead-light">
+        <tr>
+            <th style="width: 5%;"><input type="checkbox" id="{{method.methodUId}}AllId" />全选</th>
+            <th style="width: 10%;">参数类型</th>
+            <th style="width: 25%;">参数名称</th>
+            <th>参数值</th>
+        </tr>
+        </thead>
+        <tbody id="{{ method.methodUId }}RequestId">
+
+        </tbody>
+    </table>
+
 </div>
 
+<!--<td>{{ $value.name}}</td>
+                   <td>{{ $value.requestType}}</td>
+                   <td>{{ $value.description}}</td>-->
 </body>
 <script>
 
@@ -274,17 +303,126 @@
 
 
 
-        let debugTemplateData={
-            method:method
-        }
+        let debugTemplateData=new Object();
+        debugTemplateData.method = method;
+        debugTemplateData.request= request;
+
+        // console.log("debugTemplateData:"+debugTemplateData)
         let debugHtml = template("debugTemplate",debugTemplateData);
-        console.log(debugHtml);
+        // console.log(debugHtml);
 
         html+=debugHtml;
 
         html+="</div>"
 
         $("#rightContent").append(html);
+
+        $('input[type=radio][name='+methodUId+'contentType]').change(function() {
+            let value=$(this).val();
+            let methodUId = $(this).attr("name").replaceAll("contentType","");
+            if (value==3){
+                $("#"+methodUId+"Raw").show();
+            }else{
+                $("#"+methodUId+"Raw").hide();
+            }
+        });
+
+        initRequest(methodUId,request);
+    }
+
+    function initRequest(methodUId,request){
+        if (request){
+            var list = request.list;
+            var headerHtml="";
+            var queryHtml="";
+            var bodyHtml="";
+            if (list){
+                $.each(list,function (index,r){
+                    if (common.equalsIgnoreCase(r.requestType,"header")){
+                        headerHtml+=initRequestQuery(r,methodUId);
+                    }else if (common.equalsIgnoreCase(r.requestType,"body")){
+                        bodyHtml+=initRequestBody(r,methodUId);
+                    }else if (common.equalsIgnoreCase(r.requestType,"query")){
+                        queryHtml+=initRequestQuery(r,methodUId);
+                    }
+                });
+            }
+            console.log(headerHtml+queryHtml+bodyHtml)
+            $("#"+methodUId+"RequestId").html(headerHtml+queryHtml+bodyHtml);
+        }
+    }
+
+
+
+    function initRequestQuery(request,methodUId){
+        var html="";
+        if (request){
+            html+="<tr>";
+            html+="<td style='line-height: 30px;'><input type='checkbox' name='"+methodUId+"ChildRequest'  /></td>"
+            html+="<td style='line-height: 30px;'>"+request.requestType+"</td>"
+            html+="<td class='input-group-sm'><input type='text' class='form-control' value='"+request.name+"' /></td>"
+            html+="<td class='input-group-sm'><input type='text' class='form-control' placeholder='"+request.description+"' /></td>"
+            html+="</tr>";
+
+            // var child = request.child;
+            // if (child){
+            //     $.each(child,function (index,c){
+            //        html+= initRequestQuery(c,methodUId);
+            //     });
+            // }
+        }
+        return html;
+    }
+    function initRequestBody(request,methodUId){
+        var html="";
+        if (request){
+            html+="<tr>";
+            html+="<td><input type='checkbox' name='"+methodUId+"ChildRequest'  /></td>"
+            html+="<td>"+request.requestType+"</td>"
+            html+="<td>"+request.name+"</td>"
+            html+="<td>";
+
+            let json = "";
+            var child = request.child;
+            if (child){
+                json+="{\n"
+                $.each(child,function (index,c){
+                    json+=initRequestBodyChild(c)+","
+
+                });
+                json+="}"
+            }
+            html+="<textarea class='form-control'>"+json+"</textarea>";
+            html+="</td>";
+            html+="</tr>";
+        }
+        return html;
+    }
+    function initRequestBodyChild(request){
+        if (request){
+            var json="";
+
+            json+="\t\""+request.name+"\":";
+            if (common.like(request.dataType,"String")){
+                json+="\"\"\n";
+            }else{
+                json+="0\n";
+            }
+
+            var child = request.child;
+            if (child && request.collection==null){
+
+            }else if (child && request.collection && request.collection==1){
+                json+="[\n"
+                $.each(child,function (index,r){
+                   json+=(initRequestBodyChild(r));
+                });
+                json+="]\n"
+            }
+
+            return json;
+        }
+        return "";
     }
 
     function getRequestHtml(request){
@@ -357,7 +495,7 @@
             let child = p.child;
             if (child){
                 if (!separator){
-                    separator = "&nbsp;&nbsp;"
+                    separator = "&nbsp;&nbsp;&nbsp;&nbsp;"
                 }else{
                     separator=separator+separator;
                 }
@@ -383,7 +521,7 @@
             let child = p.child;
             if (child){
                 if (!separator){
-                    separator = "&nbsp;&nbsp;"
+                    separator = "&nbsp;&nbsp;&nbsp;&nbsp;"
                 }else{
                     separator=separator+separator;
                 }
