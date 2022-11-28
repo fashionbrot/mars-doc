@@ -363,13 +363,6 @@
             html+="<td class='input-group-sm'><input type='text' class='form-control' value='"+request.name+"' /></td>"
             html+="<td class='input-group-sm'><input type='text' class='form-control' placeholder='"+request.description+"' /></td>"
             html+="</tr>";
-
-            // var child = request.child;
-            // if (child){
-            //     $.each(child,function (index,c){
-            //        html+= initRequestQuery(c,methodUId);
-            //     });
-            // }
         }
         return html;
     }
@@ -381,48 +374,55 @@
             html+="<td>"+request.requestType+"</td>"
             html+="<td>"+request.name+"</td>"
             html+="<td>";
+            debugger
 
-            let json = "";
+            let json={};
             var child = request.child;
             if (child){
-                json+="{\n"
-                $.each(child,function (index,c){
-                    json+=initRequestBodyChild(c)+","
-
-                });
-                json+="}"
+                for (let i = 0; i < child.length; i++) {
+                    let item=child[i];
+                    initRequestBodyChild(item,json)
+                }
             }
-            html+="<textarea class='form-control'>"+json+"</textarea>";
+            let jsonText = JSON.stringify(json, null, '\t');
+            let len = jsonText.split('\n').length
+            html+="<textarea class='form-control' rows='"+len+"' >"+jsonText+"</textarea>";
             html+="</td>";
             html+="</tr>";
         }
         return html;
     }
-    function initRequestBodyChild(request){
+    function initRequestBodyChild(request,json){
         if (request){
-            var json="";
 
-            json+="\t\""+request.name+"\":";
             if (common.like(request.dataType,"String")){
-                json+="\"\"\n";
+                json[""+request.name+":"]="";
             }else{
-                json+="0\n";
+
+                let child = request.child;
+                let collection = request.collection;
+
+                if (collection==1 && child){
+                    let array = [];
+                    let childJson = {}
+                    $.each(child,function (index,r){
+                        initRequestBodyChild(r,childJson);
+                    });
+                    array.push(childJson);
+                    json[""+request.name+":"]=array;
+                }else if (collection==0 && child){
+
+                    let childJson = {}
+                    $.each(child,function (index,r){
+                        initRequestBodyChild(r,childJson);
+                    });
+                    json[""+request.name+":"]=childJson;
+                }else{
+                    json[""+request.name+":"]=0;
+                }
+
             }
-
-            var child = request.child;
-            if (child && request.collection==null){
-
-            }else if (child && request.collection && request.collection==1){
-                json+="[\n"
-                $.each(child,function (index,r){
-                   json+=(initRequestBodyChild(r));
-                });
-                json+="]\n"
-            }
-
-            return json;
         }
-        return "";
     }
 
     function getRequestHtml(request){
