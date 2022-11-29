@@ -17,6 +17,8 @@ sourceSets.main.resources.srcDirs = ["src/main/java","src/main/resources"]
 dependencies {
     api project(":spring-doc")
 
+    implementation "org.springframework.boot:spring-boot-devtools:2.6.4"
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
 

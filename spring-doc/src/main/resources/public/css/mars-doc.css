@@ -212,3 +212,39 @@ body {
     top: -3px;
     left: 11px;
 }
+
+.right-content{
+    padding: 15px;
+}
+.right-content-item{
+    border: 1px solid red;
+    display: none;
+}
+.right-content-item.active{
+    display: block!important;
+}
+
+
+
+
+.right-response-nav{
+    height: 40px;
+    line-height: 40px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+}
+.right-response-nav .active{
+    border: none;
+    height: 100%;
+    background-color: rgba(167, 165, 165, 0.1);
+    border-radius: 0;
+    border-top: 2px solid #000;
+}
+.right-response-nav li{
+    text-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.right-response-content .active{
+    display: block;
+}
