@@ -37,36 +37,36 @@
     <div id="left" class="left" >
 
         <ul id="menu" class="nav nav-list">
-            <li class="detailMenu">
-                <a class="ma1">一级菜单</a>
-                <ul class="submenu">
-                    <li class="menuLi">
-                        <a class="ma2">二级菜单1</a>
-                    </li>
-                    <li class="menuLi">
-                        <a class="ma2">二级菜单2</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="detailMenu">
-                <a class="ma1">二级菜单</a>
-                <ul class="submenu">
-                    <li class="menuLi">
-                        <a class="ma2">二级菜单1</a>
-                    </li>
-                    <li class="menuLi">
-                        <a class="ma2">二级菜单2</a>
-                    </li>
-                </ul>
-            </li>
+<!--            <li class="detailMenu">-->
+<!--                <a class="ma1">一级菜单</a>-->
+<!--                <ul class="submenu">-->
+<!--                    <li class="menuLi">-->
+<!--                        <a class="ma2">二级菜单1</a>-->
+<!--                    </li>-->
+<!--                    <li class="menuLi">-->
+<!--                        <a class="ma2">二级菜单2</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--            <li class="detailMenu">-->
+<!--                <a class="ma1">二级菜单</a>-->
+<!--                <ul class="submenu">-->
+<!--                    <li class="menuLi">-->
+<!--                        <a class="ma2">二级菜单1</a>-->
+<!--                    </li>-->
+<!--                    <li class="menuLi">-->
+<!--                        <a class="ma2">二级菜单2</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </li>-->
         </ul>
 
     </div>
     <!-- 右边内容 -->
     <div id="right" class="tab-content right">
         <ul class="nav nav-tabs right-nav">
-            <li class="active" ><a href="#tab1">第一个TAB</a> <span class="close"></span></li>
-            <li><a href="#tab2" >第二个TAB</a> <span class="close"></span></li>
+<!--            <li class="active" ><a href="#tab1">第一个TAB</a> <span class="close"></span></li>-->
+<!--            <li><a href="#tab2" >第二个TAB</a> <span class="close"></span></li>-->
         </ul>
 
 
@@ -79,8 +79,8 @@
 
 
 <div id="docTemplateId" style="display: none;">
-    <div className='right-content-item active' id="{{methodUId}}">
-        <div>接口&nbsp;名：{{method.description}}</div>
+    <div class='right-content-item active' id="{{methodUId}}">
+        <div>接口&nbsp;&nbsp;&nbsp;&nbsp;名：{{method.description}}</div>
         <div>接口地址：{{method.path}}</div>
         <div>请求方式：{{method.method}}</div>
         <div>请求参数：
@@ -95,26 +95,53 @@
                         <th>示例值</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {{ include 'docTemplateRequest' request.list}}
+                <tbody  id="{{ method.methodUId }}requestBodyHtml">
+
+
                 </tbody>
             </table>
         </div>
-        <div>响应参数：</div>
+        <div>响应参数：
+            <table class="table table-bordered table-sm">
+                <thead>
+                <tr>
+                    <th>参数名称</th>
+                    <th>参数说明</th>
+                    <th>数据类型</th>
+                </tr>
+                </thead>
+                <tbody id="{{ method.methodUId }}responseBodyHtml">
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+        {{include 'debugTemplate' }}
+
     </div>
+
+
+
 </div>
+
+<!--{{@requestBodyHtml }}-->
+
 <script type="text/html" id="docTemplateRequest">
-    {{each request.list as r i}}
+    {{set requestList = request.list}}
+    {{each requestList as r i}}
     <tr>
         <td>{{r.name}}</td>
-        <td>{{r.name}}</td>
-        <td>{{r.name}}</td>
-        <td>{{r.name}}</td>
-        <td>{{r.name}}</td>
-        <td>{{r.name}}</td>
+        <td>{{r.description}}</td>
+        <td>{{r.requestType}}</td>
+        <td>{{r.required}}</td>
+        <td>{{r.dataType}}</td>
+        <td>{{r.example}}</td>
     </tr>
     {{/each}}
 </script>
+
 <div id="docTemplateRequest2" style="display: none">
     {{each request.list as r i}}
     <tr>
@@ -127,6 +154,7 @@
     </tr>
     {{/each}}
 </div>
+
 
 <!--{{if r.child}}-->
 <!--{{include 'docTemplateRequest' request }}-->
@@ -171,7 +199,7 @@
     <table class="table table-bordered table-sm">
         <thead class="thead-light">
         <tr>
-            <th style="width: 5%;"><input type="checkbox" id="{{method.methodUId}}AllId" />全选</th>
+            <th style="width: 5%;"><input type="checkbox"  checked='checked'  id="{{method.methodUId}}AllId" />全选</th>
             <th style="width: 10%;">参数类型</th>
             <th style="width: 25%;">参数名称</th>
             <th>参数值</th>
@@ -220,10 +248,10 @@
     function initLeftMenu(){
         $("#menu .ma1").on("click",function () {
             if ($(this).parent().hasClass("active")){
-                $(this).parent().removeClass("active").find(".submenu").hide(100);
+                $(this).parent().removeClass("active").find(".submenu").hide();
             }else{
-                $(".detailMenu").removeClass("active").find(".submenu").hide(100);
-                $(this).parent().addClass("active").find(".submenu").show(300);
+                $(".detailMenu").removeClass("active").find(".submenu").hide();
+                $(this).parent().addClass("active").find(".submenu").show(100);
             }
         });
 
@@ -331,9 +359,9 @@
         let path = method.path;
         let methodType = method.method;
 
-        $("#rightContent .right-content-item").removeClass("active");
 
-        let html="";
+
+
         let requestList = JSON.parse(storage.get("requestList"));
         let responseList = JSON.parse(storage.get("responseList"));
         let request=null;
@@ -351,49 +379,58 @@
             }
         }
 
-
-
-
-
-        html+="<div class='right-content-item active' id='"+methodUId+"'>"
-        html+="<div>接口名："+methodDescription+"</div>"
-        html+="<div>接口地址："+path+"</div>"
-        html+="<div>请求方式："+methodType+"</div>"
-
-        if (request){
-            console.log(request)
-            let requestHtml = getRequestHtml(request);
-            log.info(requestHtml)
-            html+="<div>请求参数："+requestHtml+"</div>"
-        }
-        if (response){
-            console.log(response)
-            let responseHtml = getResponseHtml(response);
-            log.info(responseHtml)
-            html+="<div>响应参数："+responseHtml+"</div>"
-        }
-
-
-
-
+        $("#rightContent .right-content-item").removeClass("active");
 
         let debugTemplateData=new Object();
         debugTemplateData.method = method;
         debugTemplateData.request = request;
         debugTemplateData.response = response;
 
-        // let docHtml = template("docTemplateId",debugTemplateData);
+        let html="";
+        let requestBodyHtml = "";
+        if (request){
+            requestBodyHtml = getRequestHtml(request);
+        }
+        debugTemplateData.requestBodyHtml = requestBodyHtml;
 
-        // console.log("debugTemplateData:"+debugTemplateData)
-        let debugHtml = template("debugTemplate",debugTemplateData);
-        // console.log(debugHtml);
-        // html+=docHtml;
-        html+=debugHtml;
 
-        html+="</div>"
+        let responseBodyHtml = "";
+        if (response){
+            responseBodyHtml = getResponseHtml(response);
+        }
+        debugTemplateData.responseBodyHtml= responseBodyHtml;
+
+        console.log(debugTemplateData);
+
+        let data={
+            method: method,
+            request: request,
+            response: response
+        }
+
+
+        let docHtml = template("docTemplateId",data);
+        // let debugHtml = template("debugTemplate",debugTemplateData);
+        html+=docHtml;
+        // html+=debugHtml;
+
+        // document.getElementById("rightContent")
 
         $("#rightContent").append(html);
 
+        $("#"+methodUId+"requestBodyHtml").html(requestBodyHtml);
+        $("#"+methodUId+"responseBodyHtml").html(responseBodyHtml);
+
+        initRequestContentType(methodUId);
+
+        initRequest(methodUId,request);
+
+        initResponseHtml(methodUId);
+
+    }
+
+
+    function initRequestContentType(methodUId){
         $('input[type=radio][name='+methodUId+'contentType]').change(function() {
             let value=$(this).val();
             let methodUId = $(this).attr("name").replaceAll("contentType","");
@@ -403,19 +440,14 @@
                 $("#"+methodUId+"Raw").hide();
             }
         });
-
-        initRequest(methodUId,request);
-
-        initResponseHtml(methodUId);
     }
+
+
 
     function initResponseHtml(methodUId){
         $(".right-response-nav li").on("click",function (){
             $(".right-response-nav li").removeClass("active");
             $(this).addClass("active");
-
-
-
         });
 
         var editor = ace.edit(methodUId+"ace_editor");
@@ -440,6 +472,20 @@
             enableLiveAutocompletion: true
         });
         editor.resize()
+
+        initRequestCheckBox(methodUId);
+    }
+
+    function initRequestCheckBox(methodUId){
+        $("#"+methodUId+"AllId").click(function(){
+            $("input[type='checkbox'][name='"+methodUId+"ChildRequest']").each(function(){ //反选
+                if($(this).prop("checked")){
+                    $(this).prop("checked",false);
+                } else{
+                    $(this).prop("checked",true);
+                }
+            });
+        });
     }
 
     function initRequest(methodUId,request){
@@ -470,7 +516,7 @@
         var html="";
         if (request){
             html+="<tr>";
-            html+="<td style='line-height: 30px;'><input type='checkbox' name='"+methodUId+"ChildRequest'  /></td>"
+            html+="<td style='line-height: 30px;'><input type='checkbox' checked='checked' name='"+methodUId+"ChildRequest'  /></td>"
             html+="<td style='line-height: 30px;'>"+request.requestType+"</td>"
             html+="<td class='input-group-sm'><input type='text' class='form-control' value='"+request.name+"' /></td>"
             html+="<td class='input-group-sm'><input type='text' class='form-control' placeholder='"+request.description+"' /></td>"
@@ -538,17 +584,8 @@
     }
 
     function getRequestHtml(request){
-        let h1="<table class=\"table table-bordered table-sm\">";
-        h1+="<thead><tr>";
-        h1+="<th>参数名称</th>";
-        h1+="<th>参数说明</th>";
-        h1+="<th>请求类型</th>";
-        h1+="<th>是否必须</th>";
-        h1+="<th>数据类型</th>";
-        h1+="<th>示例值</th>";
-        h1+="</tr></thead>"
+        let h1="";
         if (request){
-            h1+="<tbody>";
             let list = request.list;
             if (list){
                 for (let ii = 0; ii < list.length; ii++) {
@@ -564,25 +601,14 @@
                     h1+=getRequestChild(r);
                 }
             }
-
-            h1+="</tbody>";
         }
-
-        h1+="</table>"
         return h1;
     }
 
     function getResponseHtml(response){
-        let h2="<table class=\"table table-bordered table-sm\">";
-        h2+="<thead><tr>";
-        h2+="<th>参数名称</th>";
-        h2+="<th>参数说明</th>";
-        h2+="<th>数据类型</th>";
-        h2+="</tr></thead>"
+        let h2="";
         if (response){
-            h2+="<tbody>";
             let list = response.list;
-
             if (list){
                 for (let jj = 0; jj < list.length; jj++) {
                     var r = list[jj];
@@ -594,11 +620,7 @@
                     h2+=getResponseChild(r);
                 }
             }
-
-            h2+="</tbody>";
         }
-
-        h2+="</table>"
         return h2;
     }
 
