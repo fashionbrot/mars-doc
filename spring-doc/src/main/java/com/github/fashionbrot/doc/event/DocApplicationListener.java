@@ -174,11 +174,13 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 }else{
                     continue;
                 }
+                MethodVo methodVo = methodList.get(0);
 
                 long reqCount = requestVoList.stream().filter(m -> m.getMethodId().equals(methodId)).count();
                 if (reqCount == 0) {
                     requestVoList.add(LinkVo.builder()
                             .methodId(methodId)
+                            .methodUId(methodVo.getMethodUId())
                             .list(RequestUtil.getRequest(method))
                             .build());
                 }
@@ -187,6 +189,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (respCount == 0) {
                     responseVoList.add(LinkVo.builder()
                             .methodId(methodId)
+                            .methodUId(methodVo.getMethodUId())
                             .list(ResponseUtil.getResponse(method))
                             .build());
                 }

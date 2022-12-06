@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Mars Doc</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <link href="./css/layui.css" rel="stylesheet" />
+    <link href="./css/iconfont.css" rel="stylesheet" />
+
+    <style>
+
+        .layui-header-search{
+            width: 300px;
+            line-height: 60px;
+            text-align: center;
+            font-size: 16px;
+            top: 11px;
+            padding-right: 10px;
+        }
+        .layui-tab-title .layui-this {
+            background-color: #009688!important;
+            color: #fff!important;
+        }
+        .layui-tab-div{
+            margin: 0px auto !important;
+        }
+        .layui-form-static{
+            min-height: 36px;
+            margin-left: 110px;
+            line-height: 36px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+    <div class="layui-layout layui-layout-admin">
+
+        <!-- header start -->
+        <div class="layui-header layui-bg-green">
+            <div class="layui-logo layui-hide-xs layui-bg-black">Mars Doc 1.0.0</div>
+            <!-- 头部区域（可配合layui 已有的水平导航） -->
+            <div class="layui-header-search layui-layout-right" >
+                    <input type="text" id="search"  placeholder="请输入搜索內容" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <!-- header end -->
+
+        <!-- left start -->
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree" id="leftDivId" lay-shrink="all" lay-filter="navLeft"  lay-allowClose="true">
+                    <li class="layui-nav-item layui-nav-itemed">
+                        <a class="" href="javascript:;">menu group 1</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">menu 1</a></dd>
+                            <dd><a href="javascript:;">menu 2</a></dd>
+                            <dd><a href="javascript:;">menu 3</a></dd>
+                        </dl>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;">menu group 2</a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">list 1</a></dd>
+                            <dd><a href="javascript:;">list 2</a></dd>
+                            <dd><a href="">超链接</a></dd>
+                        </dl>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <!-- left start -->
+
+        <div class="layui-body">
+            <div class="layui-tab layui-tab-div" lay-filter="rightTab" lay-allowClose="true">
+                <ul class="layui-tab-title">
+                    <li class="layui-this" lay-id="1">标题1</li>
+                    <li lay-id="2">标题2</li>
+                    <li lay-id="3">标题3</li>
+                    <li lay-id="4">标题4</li>
+                    <li lay-id="5">标题5</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">1</div>
+                    <div class="layui-tab-item">2</div>
+                    <div class="layui-tab-item">3</div>
+                    <div class="layui-tab-item">4</div>
+                    <div class="layui-tab-item">5</div>
+                </div>
+            </div>
+<!--            <div class="admin-tabs-control iconfont icon-tab-left" ew-event="leftPage"></div>-->
+<!--            <div class="admin-tabs-control iconfont icon-tab-right" ew-event="rightPage"></div>-->
+<!--            <div class="admin-tabs-control iconfont icon-xiangxiazhankai">-->
+<!--                <ul class="layui-nav admin-tabs-select" lay-filter="admin-pagetabs-nav">-->
+<!--                    <li class="layui-nav-item" lay-unselect="">-->
+<!--                        <a href="javascript:;"><span class="layui-nav-more"></span></a>-->
+<!--                        <dl class="layui-nav-child layui-anim-fadein layui-anim layui-anim-upbit">-->
+<!--                            <dd id="closeThisTabs" lay-unselect=""><a href="javascript:;">关闭当前标签页</a></dd>-->
+<!--                            <dd id="closeOtherTabs" lay-unselect=""><a href="javascript:;">关闭其它标签页</a></dd>-->
+<!--                            <dd id="closeAllTabs" lay-unselect=""><a href="javascript:;">关闭全部标签页</a></dd>-->
+<!--                        </dl>-->
+<!--                    </li>-->
+<!--                    <span class="layui-nav-bar" style="left: 20px; top: 35px; width: 0px; opacity: 0;"></span></ul>-->
+<!--            </div>-->
+            <!-- 内容主体区域 -->
+            <div style="padding: 15px;">
+                <div class="layui-card layui-panel">
+                    <!--<div class="layui-card-header">
+                        下面是充数内容，为的是出现滚动条
+                    </div>
+                    <div class="layui-card-body">
+                       <br>你还真滑到了底部呀
+                    </div>-->
+
+
+                </div>
+            </div>
+
+        </div>
+
+
+
+        <!-- 底部固定区域 start -->
+<!--        <div class="layui-footer">-->
+<!--            底部固定区域-->
+<!--        </div>-->
+        <!-- 底部固定区域 end -->
+
+    </div>
+
+    <div style="display: none;" id="leftTemplate">
+        {{each classList as classInfo  classIndex}}
+        <li class="layui-nav-item" >
+            <a class="" href="javascript:;"  >{{classInfo.description}}</a>
+
+            {{if classInfo.methodList!=null }}
+            <dl class="layui-nav-child layui-nav-child-c" >
+                {{each classInfo.methodList as method methodIndex }}
+                    <dd><a href="javascript:;"  class-uid="{{classInfo.classUId}}"  method-uid="{{method.methodUId}}" >
+                        {{if method.method=='POST'}}
+                            <span class="layui-bg-red">POST</span>
+                        {{else if method.method=='GET'}}
+                            <span class="layui-bg-green">GET</span>
+                        {{else}}
+                            <span class="layui-bg-cyan">{{method.method}}</span>
+                        {{/if}}
+                        {{method.description}}
+                    </a></dd>
+                {{/each}}
+            </dl>
+            {{/if}}
+        </li>
+        {{/each}}
+    </div>
+
+    <div style="display: none;" id="rightContentTemplate">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">接口描述:</label>
+            <div class="layui-form-static">
+                {{method.description}}
+            </div>
+        </div>
+        <hr>
+        <div class="layui-form-item">
+            <label class="layui-form-label">接口地址:</label>
+            <div class="layui-form-static">
+                {{method.path}}
+            </div>
+        </div>
+        <hr>
+        <div class="layui-form-item">
+            <label class="layui-form-label">请求方式:</label>
+            <div class="layui-form-static">
+                {{method.method}}
+            </div>
+        </div>
+        <hr>
+        <div class="layui-form-item">
+            <label class="layui-form-label">请求参数:</label>
+            <div >
+                <table lay-filter="parse-table-demo">
+                    <thead>
+                        <tr>
+                            <th>参数名称</th>
+                            <th>参数说明</th>
+                            <th>请求类型</th>
+                            <th>是否必须</th>
+                            <th>数据类型</th>
+                            <th>示例值</th>
+                        </tr>
+                    </thead>
+                    {{request}}
+                    <tbody>
+                        {{if request!=null  }}
+
+                                {{each request as r requestIndex}}
+                                    <tr>
+
+                                    </tr>
+                                {{/each}}
+
+                        {{/if}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+        <div class="layui-form-item">
+            <label class="layui-form-label">响应参数:</label>
+            <div >
+                <table lay-filter="parse-table-demo">
+                    <thead>
+                    <tr>
+                        <th>参数名称</th>
+                        <th>参数说明</th>
+                        <th>数据类型</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <hr>
+
+    </div>
+
+<!--    <td>{{r.name}}</td>-->
+<!--    <td>{{r.description}}</td>-->
+<!--    <td>{{r.requestType}}</td>-->
+<!--    <td>{{r.required}}</td>-->
+<!--    <td>{{r.dataType}}</td>-->
+<!--    <td>{{r.example}}</td>-->
+<!--    {{if r.child!=null }}-->
+<!--    {{/if}}-->
+
+<!--    {{/if}}-->
+
+<!--    {{if response!=null  }}-->
+<!--    {{each response.list as responseInfo  requestIndex}}-->
+<!--    <tr>-->
+<!--        <td>{{responseInfo.name}}</td>-->
+<!--        <td>{{responseInfo.description}}</td>-->
+<!--        <td>{{responseInfo.dataType}}</td>-->
+<!--        {{if responseInfo.child!=null }}-->
+
+<!--        {{/if}}-->
+<!--    </tr>-->
+<!--    {{/each}}-->
+<!--    {{/if}}-->
+
+    <script type="text/javascript" src="./layui.js"></script>
+<!--    <script type="text/javascript" src="./mars-doc.js"></script>-->
+    <script type="text/javascript" src="./template-web.js"></script>
+<script type="text/javascript">
+    // 本地缓存处理
+    let storage = {
+        set: function(key, value) {
+            window.localStorage.setItem(key, JSON.stringify(value));
+        },
+        get: function(key) {
+            let value = window.localStorage.getItem(key);
+            if (value){
+                return JSON.parse(value);
+            }
+            return null;
+        },
+        remove: function(key) {
+            window.localStorage.removeItem(key);
+        },
+        clear: function() {
+            window.localStorage.clear();
+        }
+    };
+    layui.use(['element','jquery', 'layer', 'util','table'], function(){
+        var element = layui.element
+            ,layer = layui.layer
+            ,util = layui.util
+            ,table = layui.table
+            ,$ = layui.$;
+
+        element.on('tab(rightTab)', function(data){
+            console.log("test1:"+this, data);
+        });
+
+        element.on("nav(navLeft)",function (data){
+            let methodUId = $(this).attr("method-uid");
+
+            if (methodUId){
+                let classUId = $(this).attr("class-uid");
+                let title = $(this).text();
+                if (existTab(methodUId)){
+                    layui.element.tabChange('rightTab', methodUId)
+                }else{
+                    let thisMethod = getMethod(classUId,methodUId);
+                    let thisRequest = getRequest(methodUId);
+                    let thisResponse = getResponse(methodUId);
+                    if (thisMethod){
+                        let data ={
+                            method:thisMethod,
+                            request:thisRequest.list,
+                            response:thisResponse.list
+                        }
+                        let rightContentHtml = template("rightContentTemplate",data);
+                        layui.element.tabAdd('rightTab', {title:title, content:rightContentHtml, id: methodUId })
+                        layui.element.tabChange('rightTab', methodUId);
+                        table.init('parse-table-demo', { //转化静态表格
+                            cellMinWidth: 80
+                            //height: 'full-500'
+                        });
+                    }
+                }
+            }
+        });
+
+        function getMethod(classUId,methodUId){
+            let classList = storage.get("classList");
+            if (classList){
+                let classInfo = null;
+                for (let i = 0; i < classList.length; i++) {
+                    let clazz = classList[i];
+                    if (clazz.classUId==classUId ){
+                        classInfo = clazz;
+                        break;
+                    }
+                }
+                let methodInfo = null;
+                if (classInfo){
+                    let methodList = classInfo.methodList;
+                    for (let j = 0; j < methodList.length; j++) {
+                        let method = methodList[j];
+                        if (method.methodUId == methodUId){
+                            methodInfo = method;
+                            break;
+                        }
+                    }
+                }
+                return methodInfo;
+            }
+            return null;
+        }
+        function getRequest(methodUId){
+            let requestList = storage.get("requestList");
+            let request=null;
+            if (requestList){
+                for (let i = 0; i < requestList.length; i++) {
+                    let r = requestList[i];
+                    if (r.methodUId == methodUId){
+                        request = r;
+                        break;
+                    }
+                }
+            }
+            return request;
+        }
+        function getResponse(methodUId){
+            let responseList = storage.get("responseList");
+            let response=null;
+            if (responseList){
+                for (let j = 0; j < responseList.length; j++) {
+                    let r = responseList[j];
+                    if (r.methodUId == methodUId){
+                        response = r;
+                        break;
+                    }
+                }
+            }
+            return response;
+        }
+
+        function existTab(methodUId){
+            let exist=false;
+            $(".layui-tab-title").find("li").each(function(){
+                let id = $(this).attr("lay-id");
+                if (id==methodUId){
+                    exist=true;
+                }
+            });
+            return exist;
+        }
+
+        $.getJSON("./mars/api",{},function (data){
+            if (data){
+                let classList = data.classList;
+                storage.set("classList",classList);
+                storage.set("requestList",data.requestList);
+                storage.set("responseList",data.responseList);
+
+                initLeft();
+            }
+        });
+
+        $("#search").on("click",function (){
+
+        })
+
+
+        function initLeft(){
+            let classList = layui.data("classList");
+            let data={
+                classList:classList
+            }
+            let leftHtml = template("leftTemplate",data);
+            document.getElementById("leftDivId").innerHTML=leftHtml;
+            parent.layui.element.render('nav');
+        }
+
+
+    });
+
+
+
+</script>
+</body>
+</html>

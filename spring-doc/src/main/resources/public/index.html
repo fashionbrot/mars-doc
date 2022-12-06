@@ -78,7 +78,7 @@
 </div>
 
 
-<div id="docTemplateId" style="display: none;">
+<div id="docTemplateId" style="di{{method.path}}splay: none;">
     <div class='right-content-item active' id="{{methodUId}}">
         <div>接口&nbsp;&nbsp;&nbsp;&nbsp;名：{{method.description}}</div>
         <div>接口地址：{{method.path}}</div>
@@ -355,12 +355,6 @@
     function addRightContent(classUId,method){
         let methodId = method.methodId;
         let methodUId = method.methodUId;
-        let methodDescription = method.description;
-        let path = method.path;
-        let methodType = method.method;
-
-
-
 
         let requestList = JSON.parse(storage.get("requestList"));
         let responseList = JSON.parse(storage.get("responseList"));
@@ -381,26 +375,15 @@
 
         $("#rightContent .right-content-item").removeClass("active");
 
-        let debugTemplateData=new Object();
-        debugTemplateData.method = method;
-        debugTemplateData.request = request;
-        debugTemplateData.response = response;
-
-        let html="";
         let requestBodyHtml = "";
         if (request){
             requestBodyHtml = getRequestHtml(request);
         }
-        debugTemplateData.requestBodyHtml = requestBodyHtml;
-
 
         let responseBodyHtml = "";
         if (response){
             responseBodyHtml = getResponseHtml(response);
         }
-        debugTemplateData.responseBodyHtml= responseBodyHtml;
-
-        console.log(debugTemplateData);
 
         let data={
             method: method,
@@ -408,23 +391,14 @@
             response: response
         }
 
-
         let docHtml = template("docTemplateId",data);
-        // let debugHtml = template("debugTemplate",debugTemplateData);
-        html+=docHtml;
-        // html+=debugHtml;
-
-        // document.getElementById("rightContent")
-
-        $("#rightContent").append(html);
+        $("#rightContent").append(docHtml);
 
         $("#"+methodUId+"requestBodyHtml").html(requestBodyHtml);
         $("#"+methodUId+"responseBodyHtml").html(responseBodyHtml);
 
         initRequestContentType(methodUId);
-
         initRequest(methodUId,request);
-
         initResponseHtml(methodUId);
 
     }
