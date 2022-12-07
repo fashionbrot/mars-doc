@@ -51,7 +51,7 @@ public class RequestMappingTest {
         List<MethodVo> requestMapping = RequestMappingUtil.getRequestMapping(Arrays.stream(methods).filter(m-> m.getName().equals("test1")).findFirst().get());
         String str  = requestMapping.stream().sorted(Comparator.comparing(MethodVo::getMethod)).map(m -> m.getMethod()+m.getPath()).collect(Collectors.joining());
         System.out.println(str);
-        String result ="DELETE/test1/test1DELETE/test2/test1GET/test1/test1GET/test2/test1HEAD/test1/test1HEAD/test2/test1OPTIONS/test1/test1OPTIONS/test2/test1PATCH/test1/test1PATCH/test2/test1POST/test1/test1POST/test2/test1PUT/test1/test1PUT/test2/test1TRACE/test1/test1TRACE/test2/test1";
+        String result ="DELETE/test1/test1DELETE/test2/test1GET/test1/test1GET/test2/test1POST/test1/test1POST/test2/test1PUT/test1/test1PUT/test2/test1";
         System.out.println(result);
         Assert.assertEquals(result,str);
     }

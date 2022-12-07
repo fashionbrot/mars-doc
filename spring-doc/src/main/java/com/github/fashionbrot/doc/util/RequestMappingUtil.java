@@ -1,5 +1,6 @@
 package com.github.fashionbrot.doc.util;
 
+import com.github.fashionbrot.doc.enums.MappingEnum;
 import com.github.fashionbrot.doc.util.ObjectUtil;
 import com.github.fashionbrot.doc.util.PathUtil;
 import com.github.fashionbrot.doc.vo.MethodVo;
@@ -72,10 +73,12 @@ public class RequestMappingUtil {
                 RequestMethod[] requestMethods = mapping.method();
                 if (ObjectUtil.isNotEmpty(requestMethods)) {
                     for (RequestMethod request : requestMethods) {
-                        getMapping(mapping.value(), request.name(), methodVoList);
+                        if (request == RequestMethod.GET || request==RequestMethod.PUT || request==RequestMethod.DELETE || request == RequestMethod.POST){
+                            getMapping(mapping.value(), request.name(), methodVoList);
+                        }
                     }
                 } else {
-                    for (RequestMethod request : RequestMethod.values()) {
+                    for (MappingEnum request : MappingEnum.values()) {
                         getMapping(mapping.value(), request.name(), methodVoList);
                     }
                 }

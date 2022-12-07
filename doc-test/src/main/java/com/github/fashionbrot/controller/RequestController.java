@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/request")
 public class RequestController {
 
-    @ApiOperation("request1测试接口")
+    @ApiOperation("request1测试接口,名字能有多长呢")
     @ResponseBody
     @GetMapping("request1")
     public void request1(@ApiModelProperty("test1哦") String test1,@ApiModelProperty("test1哦") String test2){
