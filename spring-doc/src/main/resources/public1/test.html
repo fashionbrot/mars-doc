@@ -7,12 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
 
-    <link href="./css/layui.css" rel="stylesheet" />
-    <link href="./css/iconfont.css" rel="stylesheet" />
+    <link href="./css/layui.css" rel="stylesheet"/>
+    <link href="./css/iconfont.css" rel="stylesheet"/>
+
+    <script type="text/javascript" src="./ace/ace.js"></script>
+    <script type="text/javascript" src="./ace/ext-language_tools.js"></script>
 
     <style>
 
-        .layui-header-search{
+        .layui-header-search {
             width: 300px;
             line-height: 60px;
             text-align: center;
@@ -20,304 +23,469 @@
             top: 11px;
             padding-right: 10px;
         }
+
         .layui-tab-title .layui-this {
-            background-color: #009688!important;
-            color: #fff!important;
+            background-color: #009688 !important;
+            color: #fff !important;
         }
-        .layui-tab-div{
+
+        .layui-tab-div {
             margin: 0px auto !important;
         }
-        .layui-form-static{
+
+        .layui-form-static {
             min-height: 36px;
             margin-left: 110px;
             line-height: 36px;
         }
-        .layui-nav-tree a{
+
+        .layui-nav-tree a {
             font-size: 10px;
         }
-        .layui-nav-tree span{
+
+        .layui-nav-tree span {
             font-size: 10px;
         }
-        .left-method{
-            width: 32px;text-align: center;line-height: 40px;
+
+        .left-method {
+            width: 32px;
+            text-align: center;
+            line-height: 40px;
+        }
+        .padding-left-20{
+            padding-left: 20px;
+        }
+        .padding-right-15{
+            padding-right: 15px;
+        }
+
+        .padding-left-level-2{
+            padding-left: 30px;
+        }
+        .padding-left-level-3{
+            padding-left: 60px;
+        }
+        .padding-left-level-4{
+            padding-left: 90px;
+        }
+        .padding-left-level-5{
+            padding-left: 120px;
+        }
+        .padding-left-level-6{
+            padding-left: 150px;
+        }
+        .padding-left-level-7{
+            padding-left: 180px;
+        }
+        .padding-left-level-8{
+            padding-left: 210px;
+        }
+        .request-table-div{
+            margin: 0 auto;
+            padding-left: 36px;
         }
     </style>
 </head>
 <body>
 
 
+<div class="layui-layout layui-layout-admin">
 
-    <div class="layui-layout layui-layout-admin">
+    <!-- header start -->
+    <div class="layui-header layui-bg-green">
+        <div class="layui-logo layui-hide-xs layui-bg-black">Mars Doc 1.0.0</div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <div class="layui-header-search layui-layout-right">
+            <input type="text" id="search" placeholder="请输入搜索內容" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <!-- header end -->
 
-        <!-- header start -->
-        <div class="layui-header layui-bg-green">
-            <div class="layui-logo layui-hide-xs layui-bg-black">Mars Doc 1.0.0</div>
-            <!-- 头部区域（可配合layui 已有的水平导航） -->
-            <div class="layui-header-search layui-layout-right" >
-                    <input type="text" id="search"  placeholder="请输入搜索內容" autocomplete="off" class="layui-input">
+    <!-- left start -->
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" id="leftDivId" lay-shrink="all" lay-filter="navLeft" lay-allowClose="true">
+
+            </ul>
+        </div>
+    </div>
+    <!-- left start -->
+
+    <div class="layui-body">
+        <div class="layui-tab layui-tab-div" lay-filter="rightTab" lay-allowClose="true">
+            <ul class="layui-tab-title">
+
+            </ul>
+            <div class="layui-tab-content">
+
             </div>
         </div>
-        <!-- header end -->
 
-        <!-- left start -->
-        <div class="layui-side layui-bg-black">
-            <div class="layui-side-scroll">
+        <div style="padding: 15px;">
+            <div class="layui-card layui-panel">
 
-                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-                <ul class="layui-nav layui-nav-tree" id="leftDivId" lay-shrink="all" lay-filter="navLeft"  lay-allowClose="true">
-
-                </ul>
             </div>
         </div>
-        <!-- left start -->
 
-        <div class="layui-body">
-            <div class="layui-tab layui-tab-div" lay-filter="rightTab" lay-allowClose="true">
-                <ul class="layui-tab-title">
-
-                </ul>
-                <div class="layui-tab-content">
-
-                </div>
-            </div>
-<!--            <div class="admin-tabs-control iconfont icon-tab-left" ew-event="leftPage"></div>-->
-<!--            <div class="admin-tabs-control iconfont icon-tab-right" ew-event="rightPage"></div>-->
-<!--            <div class="admin-tabs-control iconfont icon-xiangxiazhankai">-->
-<!--                <ul class="layui-nav admin-tabs-select" lay-filter="admin-pagetabs-nav">-->
-<!--                    <li class="layui-nav-item" lay-unselect="">-->
-<!--                        <a href="javascript:;"><span class="layui-nav-more"></span></a>-->
-<!--                        <dl class="layui-nav-child layui-anim-fadein layui-anim layui-anim-upbit">-->
-<!--                            <dd id="closeThisTabs" lay-unselect=""><a href="javascript:;">关闭当前标签页</a></dd>-->
-<!--                            <dd id="closeOtherTabs" lay-unselect=""><a href="javascript:;">关闭其它标签页</a></dd>-->
-<!--                            <dd id="closeAllTabs" lay-unselect=""><a href="javascript:;">关闭全部标签页</a></dd>-->
-<!--                        </dl>-->
-<!--                    </li>-->
-<!--                    <span class="layui-nav-bar" style="left: 20px; top: 35px; width: 0px; opacity: 0;"></span></ul>-->
-<!--            </div>-->
-            <!-- 内容主体区域 -->
-            <div style="padding: 15px;">
-                <div class="layui-card layui-panel">
-
-                </div>
-            </div>
-
-        </div>
-        <!-- 底部固定区域 start -->
-<!--        <div class="layui-footer">-->
-<!--            底部固定区域-->
-<!--        </div>-->
-        <!-- 底部固定区域 end -->
     </div>
 
-    <div style="display: none;" id="leftTemplate">
-        {{each classList as classInfo  classIndex}}
-        <li class="layui-nav-item" >
-            <a class="" href="javascript:;"  >{{classInfo.description}}</a>
-            {{if classInfo.methodList!=null }}
-            <dl class="layui-nav-child layui-nav-child-r"  >
-                {{each classInfo.methodList as method methodIndex }}
-                    <dd style="display: flex;">
-                        <span class="left-method">{{method.method}}</span>
-                        <a href="javascript:;"  class-uid="{{classInfo.classUId}}"  method-uid="{{method.methodUId}}" method-name="{{method.description}}" >
-                           {{method.description}}
-                        </a>
-                    </dd>
+</div>
+
+<div style="display: none;" id="leftTemplate">
+    {{each classList as classInfo classIndex}}
+    <li class="layui-nav-item">
+        <a class="" href="javascript:;">{{classInfo.description}}</a>
+        {{if classInfo.methodList!=null }}
+        <dl class="layui-nav-child layui-nav-child-r">
+            {{each classInfo.methodList as method methodIndex }}
+            <dd style="display: flex;">
+                <span class="left-method">{{method.method}}</span>
+                <a href="javascript:;"
+                   class-uid="{{classInfo.classUId}}"
+                   method-id="{{method.methodId}}"
+                   method-name="{{method.description}}"
+                   method-method="{{method.method}}"
+                >
+                    {{method.description}}
+                </a>
+            </dd>
+            {{/each}}
+        </dl>
+        {{/if}}
+    </li>
+    {{/each}}
+</div>
+
+<script type="text/html" id="rightContentTemplate">
+
+    <div>
+        <label class="layui-form-label">接口描述:</label>
+        <div class="layui-form-static">
+            {{method.description}}
+        </div>
+    </div>
+    <hr>
+    <div>
+        <label class="layui-form-label">接口地址:</label>
+        <div class="layui-form-static">
+            {{method.path}}
+        </div>
+    </div>
+    <hr>
+    <div>
+        <label class="layui-form-label">请求方式:</label>
+        <div class="layui-form-static">
+            {{method.method}}
+        </div>
+    </div>
+    <hr>
+    <div>
+        <label class="layui-form-label">请求参数:</label>
+        <div class="layui-form-static"></div>
+    </div>
+    <div class="request-table-div">
+        <table lay-filter="{{method.methodUId}}requestTable" class="layui-table">
+            <thead>
+            <tr>
+                <th lay-data="{field:'name', width:'26%',templet:'#nameTemplet'}">参数名称</th>
+                <th lay-data="{field:'description',  width:'26%'}">参数说明</th>
+                <th lay-data="{field:'requestType', width:'8%'}">请求类型</th>
+                <th lay-data="{field:'required', width:'8%'}">是否必须</th>
+                <th lay-data="{field:'dataType', width:'22%'}">数据类型</th>
+                <th lay-data="{field:'example', width:'10%'}">示例值</th>
+                <th lay-data="{field:'child',hide:'true'}"></th>
+                <th lay-data="{field:'collection',hide:'true'}"></th>
+                <th lay-data="{field:'level',hide:'true'}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{if formatRequest!=null && formatRequest.length>0}}
+                {{each formatRequest rl requestListIndex}}
+                    <tr>
+                        <td>{{rl.name}}</td>
+                        <td>{{rl.description}}</td>
+                        <td>{{rl.requestType|toLowerCase}}</td>
+                        <td>{{rl.required}}</td>
+                        <td>{{rl.dataType}}</td>
+                        <td>{{rl.example!=null?rl.example:''}}</td>
+                        <td>{{rl.child}}</td>
+                        <td>{{rl.collection}}</td>
+                        <td>{{rl.level}}</td>
+                    </tr>
                 {{/each}}
-            </dl>
             {{/if}}
-        </li>
-        {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <label class="layui-form-label">响应参数:</label>
+        <div class="layui-form-static"></div>
+    </div>
+    <div class="request-table-div">
+        <table lay-filter="{{method.methodUId}}responseTable" class="layui-table">
+            <thead>
+            <tr>
+                <th lay-data="{field:'name', width:'33%',templet:'#nameTemplet'}">参数名称</th>
+                <th lay-data="{field:'description',  width:'34%'}">参数说明</th>
+                <th lay-data="{field:'dataType', width:'33%'}">数据类型</th>
+                <th lay-data="{field:'child',hide:'true'}"></th>
+                <th lay-data="{field:'collection',hide:'true'}"></th>
+                <th lay-data="{field:'level',hide:'true'}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            {{if formatResponse!=null && formatResponse.length>0}}
+                {{each formatResponse rl requestListIndex}}
+                <tr>
+                    <td>{{rl.name}}</td>
+                    <td>{{rl.description}}</td>
+                    <td>{{rl.dataType}}</td>
+                    <td>{{rl.child}}</td>
+                    <td>{{rl.collection}}</td>
+                    <td>{{rl.level}}</td>
+                </tr>
+                {{/each}}
+            {{/if}}
+            </tbody>
+        </table>
+    </div>
+    <hr>
+    <div>
+        <label class="layui-form-label">响应示例:</label>
+        <div class="layui-form-static"></div>
     </div>
 
-    <div style="display: none;" id="rightContentTemplate">
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">接口描述:</label>
-            <div class="layui-form-static">
-                {{method.description}}
-            </div>
+    <div class="request-table-div">
+        <div class="" id="{{ method.methodUId }}ace_editor" style="height: 100px;    overflow: visible!important;" >
         </div>
-        <hr>
-        <div class="layui-form-item">
-            <label class="layui-form-label">接口地址:</label>
-            <div class="layui-form-static">
-                {{method.path}}
-            </div>
-        </div>
-        <hr>
-        <div class="layui-form-item">
-            <label class="layui-form-label">请求方式:</label>
-            <div class="layui-form-static">
-                {{method.method}}
-            </div>
-        </div>
-        <hr>
-        <div class="layui-form-item">
-            <label class="layui-form-label">请求参数:</label>
-        </div>
-        <div style="padding-left: 36px;padding-right: 10px;">
-            <table lay-filter="parse-table-demo">
-                <thead>
-                <tr>
-                    <th lay-data="{ width:'20%'}">参数名称</th>
-                    <th lay-data="{ width:'20%'}">参数说明</th>
-                    <th lay-data="{ width:'20%'}">请求类型</th>
-                    <th lay-data="{ width:'10%'}">是否必须</th>
-                    <th lay-data="{ width:'15%'}">数据类型</th>
-                    <th lay-data="{ width:'15%'}">示例值</th>
-                </tr>
-                </thead>
-                <tbody>
-                {{if request!=null  }}
-                    {{if request.list!=null  }}
-                    {{each request.list as r requestIndex}}
-                        <tr>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                            <td>6</td>
-                        </tr>
-                    {{/each}}
-                    {{/if}}
-                {{/if}}
-                </tbody>
-            </table>
-        </div>
-        <hr>
-        <div class="layui-form-item">
-            <label class="layui-form-label">响应参数:</label>
-        </div>
-        <div style="padding-left: 36px;padding-right: 10px;">
-            <table lay-filter="parse-table-demo" >
-                <thead>
-                <tr>
-                    <th>参数名称</th>
-                    <th>参数说明</th>
-                    <th>数据类型</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
-        </div>
-        <hr>
-
     </div>
 
-<!--    <td>{{r.name}}</td>-->
-<!--    <td>{{r.description}}</td>-->
-<!--    <td>{{r.requestType}}</td>-->
-<!--    <td>{{r.required}}</td>-->
-<!--    <td>{{r.dataType}}</td>-->
-<!--    <td>{{r.example}}</td>-->
-<!--    {{if r.child!=null }}-->
-<!--    {{/if}}-->
 
-<!--    {{/if}}-->
+</script>
 
-<!--    {{if response!=null  }}-->
-<!--    {{each response.list as responseInfo  requestIndex}}-->
-<!--    <tr>-->
-<!--        <td>{{responseInfo.name}}</td>-->
-<!--        <td>{{responseInfo.description}}</td>-->
-<!--        <td>{{responseInfo.dataType}}</td>-->
-<!--        {{if responseInfo.child!=null }}-->
+<script type="text/html" id="nameTemplet">
+    {{# if( d.child && d.child.length>0 ){ }}
+        {{# if(d.level>1){ }}
+        <i class="padding-left-level-{{d.level}}"></i>
+        {{# } }}
+        <i class="layui-icon layui-icon-down"></i>
+        <i class="iconfont icon-leimu "></i>
+        {{d.name}}
+    {{#  } else { }}
+        {{# if(d.level>1){ }}
+        <i class="padding-left-level-{{d.level}}"></i>
+        {{# } }}
+         <i class="padding-left-20"></i>
+        <i class="icon iconfont icon-shuxing"></i>
+        {{d.name}}
+    {{#  } }}
+</script>
 
-<!--        {{/if}}-->
-<!--    </tr>-->
-<!--    {{/each}}-->
-<!--    {{/if}}-->
 
-    <script type="text/javascript" src="./layui.js"></script>
+
+<script type="text/javascript" src="./layui.js"></script>
 <!--    <script type="text/javascript" src="./mars-doc.js"></script>-->
-    <script type="text/javascript" src="./template-web.js"></script>
+<script type="text/javascript" src="./template-web.js"></script>
 <script type="text/javascript">
 
-    let json={"version":null,"info":{"baseUrl":"","version":"1.0.0","description":""},"classList":[{"classUId":"31c2d5a3ef3929bd58105b8cc16a3f6d","classId":"com.github.fashionbrot.controller.TestController","description":"test接口类","priority":0,"methodList":[{"methodUId":"29391624be78ce3f5b81aedff96a5f6","description":"test9接口","path":"/test/test9","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"7aaff4c0c8898f8a5a324c77308b25f","description":"test9接口","path":"/test/test9","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"56404ed8e47cecfc916fca60963a5e26","description":"test9接口","path":"/test/test9","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"503aa272e521d6d95efd81f91ca6c44","description":"test9接口","path":"/test/test9","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"474a119ad52eb0bd1ad91fd45210bdb8","description":"test9接口","path":"/t1/test9","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"86ca2b31a9bcba8b8e88b43da28d7a","description":"test9接口","path":"/t1/test9","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"c2ef88e4f447eac847de39a4e291f","description":"test9接口","path":"/t1/test9","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"b0f47deeb8e9a172b666a68e90975caa","description":"test9接口","path":"/t1/test9","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test9"},{"methodUId":"e91cb7707ceb1f3d37a78baac0ad1","description":"test3接口","path":"/test/test3","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test3"},{"methodUId":"4df37c1be9d395ec514d61705760d5e2","description":"test3接口","path":"/t1/test3","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test3"},{"methodUId":"f7f6dd73af1bad5bb745d8707c9769","description":"test10接口","path":"/test/test10","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"99197915a05d32a78927721a2b77e032","description":"test10接口","path":"/test/test10","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"4aadbacb3e8a5510ca2d51b17e71c65a","description":"test10接口","path":"/test/test10","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"d775151a81834d1261d611e105c5b5c","description":"test10接口","path":"/test/test10","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"efe82ea4afb29a27c3cbfe339b92aeb","description":"test10接口","path":"/t1/test10","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"30cc4d93a13093bbea85c887ced66ae3","description":"test10接口","path":"/t1/test10","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"f1db8f416d6fe9b51367d9d99850bd72","description":"test10接口","path":"/t1/test10","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"c7231794aeb11fa6642bdced7697af6","description":"test10接口","path":"/t1/test10","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test10"},{"methodUId":"c0212aa3662d87719427b1f7ed1b35","description":"test5接口","path":"/test/test5","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"4f1fff3825254d39eb3482e1daa892dc","description":"test5接口","path":"/test/test5","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"41fb16e4cac99be618e93d7271df771c","description":"test5接口","path":"/test/test5","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"926bf053cbc2bb30607c1da18935c751","description":"test5接口","path":"/test/test5","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"1fef62ad49b72eaab6261145132a437b","description":"test5接口","path":"/t1/test5","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"83a956188b3eaab9e34773e9c0346e25","description":"test5接口","path":"/t1/test5","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"d48a4567bae56ea560de7d63442dab60","description":"test5接口","path":"/t1/test5","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"a6c89c85d72791c82e75783a549984bb","description":"test5接口","path":"/t1/test5","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test5"},{"methodUId":"36304bb54411df1a6082c11aa62e0ab","description":"test6接口","path":"/test/test6","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"7a5e1714a0626c4a797f1897426ffe91","description":"test6接口","path":"/test/test6","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"677f4075d2ab26e5432112a98789882d","description":"test6接口","path":"/test/test6","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"4ea894b7c410ddcf3420a43fa47622d9","description":"test6接口","path":"/test/test6","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"c46d217ae9aa66c9b0f7e675b3ddf449","description":"test6接口","path":"/t1/test6","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"8f3db3aca0ab6ffb3683f5b7186a9a0","description":"test6接口","path":"/t1/test6","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"d8a2287442b416ce4966aefee3f6c0","description":"test6接口","path":"/t1/test6","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"ed9f5c3a58c0b46381d0c7b663273e5b","description":"test6接口","path":"/t1/test6","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test6"},{"methodUId":"8a57712a37a223a6b22e56c23ae5010","description":"test7接口","path":"/test/test7","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"6e47cf7e8d2426a6fce8e91baccd9de9","description":"test7接口","path":"/test/test7","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"21a062eacb52945871f14ad988ff4","description":"test7接口","path":"/test/test7","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"cd5428f5b3cdea8f7cccc5255fb2f","description":"test7接口","path":"/test/test7","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"e631dc2f6f32d0c1c6a5cece7a491f","description":"test7接口","path":"/t1/test7","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"cfd43d834b641f69f4726d2f47be43","description":"test7接口","path":"/t1/test7","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"1f654217ea2c2511181c9af725c658d7","description":"test7接口","path":"/t1/test7","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"f8dabe97db58301f2c2ddee63d63e1","description":"test7接口","path":"/t1/test7","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test7"},{"methodUId":"21cb3d62dab0612ee740f943776af083","description":"test8接口","path":"/test/test8","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"8f324b986669ce6e8c6b9f46f1a6518d","description":"test8接口","path":"/test/test8","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"05badf49b45eeb8ca701416b2da65d4","description":"test8接口","path":"/test/test8","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"491d20e4594ec5abc1367b281ac0c097","description":"test8接口","path":"/test/test8","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"57c5d7eff9806e5fe7fe3ed91e722176","description":"test8接口","path":"/t1/test8","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"d3479783b06f4aaca0e712223bde8a","description":"test8接口","path":"/t1/test8","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"6d4ce6e5c4ed49cae13ff54a75a3a9d7","description":"test8接口","path":"/t1/test8","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"6c3d19477e3b1be3d73997741ffb8e8f","description":"test8接口","path":"/t1/test8","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test8"},{"methodUId":"5b640294722257492a42b5074cf71d","description":"test4接口","path":"/test/test4","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"cedabcbcc1455fee3668d6ab34f6970","description":"test4接口","path":"/test/test4","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"b5ed3b939295cfc3df65221842a1f081","description":"test4接口","path":"/test/test4","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"865bf3f1b9553d7caadcb9afff3343","description":"test4接口","path":"/test/test4","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"66ec3b91978fd85029a7dbcc3435dcd","description":"test4接口","path":"/t1/test4","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"d0c19090a8ad246847eeebc75a38a7","description":"test4接口","path":"/t1/test4","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"e76cadde436656b76d69f6ebfbd69552","description":"test4接口","path":"/t1/test4","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"8acd9b596ae498a9ae2078935a3ee57e","description":"test4接口","path":"/t1/test4","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test4"},{"methodUId":"d054266e6bb2527b96f404b653052ad","description":"test11接口","path":"/test/test11","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"3e326960adb77c72f09ff32a48f4c43d","description":"test11接口","path":"/test/test11","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"b811238bb32d67379e59771afdfc00","description":"test11接口","path":"/test/test11","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"fbc1cd7413d3475886039ad25263184","description":"test11接口","path":"/test/test11","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"c2c137f13d5093d66dfb22f9186bcc","description":"test11接口","path":"/t1/test11","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"5c55674a821ff99c2da3c873cc6f7dc6","description":"test11接口","path":"/t1/test11","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"ecf9e6663923e22ae129c817fc490","description":"test11接口","path":"/t1/test11","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"d8cc4461c1f2d0c14055b6f9fc6378d","description":"test11接口","path":"/t1/test11","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test11"},{"methodUId":"92a0b82d74d95a5cc5a33f3d9d1f0e","description":"test2接口","path":"/test/test2","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test2"},{"methodUId":"2833f60c8797260a754dfe73b76c8c6","description":"test2接口","path":"/t1/test2","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test2"},{"methodUId":"44d890dd6fb2ee446f2fb12b5fe883","description":"test1接口","path":"/test/test1","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test1"},{"methodUId":"c4a788137856c6a5257df16f8ceaf8ad","description":"test1接口","path":"/t1/test1","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.TestController#test1"}]},{"classUId":"85735c3ad9291443fd7ddc622b788c","classId":"com.github.fashionbrot.controller.BannerController","description":"banner接口类","priority":0,"methodList":[{"methodUId":"b1ead93a365f19a76f5ca24b13b32d","description":"test1接口","path":"test1","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#test1"},{"methodUId":"22364423a74e40c02cdcb69841ffd2f1","description":"test3接口","path":"test3","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#test3"},{"methodUId":"d193835055ce7af86dc5c1f47bae198f","description":"list接口","path":"list","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#list"},{"methodUId":"2e29ad6ff6d8bebe2c67c443cd6946a","description":"list接口","path":"list","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#list"},{"methodUId":"63b48241da4b530fe73b7be1f7364","description":"list接口","path":"list","method":"DELETE","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#list"},{"methodUId":"0abe3a763e619c326a26b5511a479dc","description":"list接口","path":"list","method":"PUT","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#list"},{"methodUId":"57bae670a3a9c1a381905ba2160a977","description":"test2接口","path":"test2","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.BannerController#test2"}]},{"classUId":"3deea9b9a2ef4c65f7a52b2f8b42bf8","classId":"com.github.fashionbrot.controller.RequestController","description":"requestTest接口","priority":0,"methodList":[{"methodUId":"e6868e3f9f8687e9d2eb9aa58b5d977","description":"request4测试接口","path":"/request/request4","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.RequestController#request4"},{"methodUId":"5973a41a18e686e8f11eaf2ea6465d","description":"request2测试接口","path":"/request/request2","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.RequestController#request1"},{"methodUId":"492ca98e6b494ca2e1e8d8638f49758","description":"request3测试接口","path":"/request/request3","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.RequestController#request3"},{"methodUId":"dc538826b7fa6d95778eefeb113b427c","description":"request5测试接口","path":"/request/request5","method":"POST","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.RequestController#request5"},{"methodUId":"ea6440cb8ca29ad259a172ce2a75d58","description":"request1测试接口,名字能有多长呢","path":"/request/request1","method":"GET","contentType":null,"priority":0,"methodId":"com.github.fashionbrot.controller.RequestController#request1"}]}],"requestList":[{"methodId":"com.github.fashionbrot.controller.TestController#test9","methodUId":"29391624be78ce3f5b81aedff96a5f6","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test3","methodUId":"e91cb7707ceb1f3d37a78baac0ad1","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test10","methodUId":"f7f6dd73af1bad5bb745d8707c9769","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test5","methodUId":"c0212aa3662d87719427b1f7ed1b35","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#test1","methodUId":"b1ead93a365f19a76f5ca24b13b32d","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request4","methodUId":"e6868e3f9f8687e9d2eb9aa58b5d977","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"requestReq1","description":"requestReq1哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"QUERY","ref":null,"collection":0,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"name":"requestReq1List","description":"requestReq1List哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test6","methodUId":"36304bb54411df1a6082c11aa62e0ab","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#test3","methodUId":"22364423a74e40c02cdcb69841ffd2f1","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test7","methodUId":"8a57712a37a223a6b22e56c23ae5010","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#list","methodUId":"d193835055ce7af86dc5c1f47bae198f","list":[{"name":"req","description":"测试表Entity","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test8","methodUId":"21cb3d62dab0612ee740f943776af083","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request1","methodUId":"5973a41a18e686e8f11eaf2ea6465d","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request3","methodUId":"492ca98e6b494ca2e1e8d8638f49758","list":[{"name":"requestReq1","description":"RequestReq1 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test4","methodUId":"5b640294722257492a42b5074cf71d","list":[{"name":"req","description":"测试表Entity","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request5","methodUId":"dc538826b7fa6d95778eefeb113b427c","list":[{"name":"requestReq1","description":"RequestReq2 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"requestReq1","description":"requestReq1哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"BODY","ref":null,"collection":0,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]},{"name":"requestReq1List","description":"requestReq1List哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#test2","methodUId":"57bae670a3a9c1a381905ba2160a977","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"com.github.fashionbrot.controller.TestController#test11","methodUId":"d054266e6bb2527b96f404b653052ad","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test2","methodUId":"92a0b82d74d95a5cc5a33f3d9d1f0e","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"com.github.fashionbrot.controller.TestController#test1","methodUId":"44d890dd6fb2ee446f2fb12b5fe883","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}],"responseList":[{"methodId":"com.github.fashionbrot.controller.TestController#test9","methodUId":"29391624be78ce3f5b81aedff96a5f6","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity[]","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test3","methodUId":"e91cb7707ceb1f3d37a78baac0ad1","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test10","methodUId":"f7f6dd73af1bad5bb745d8707c9769","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.MultiTest","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"m1","description":"m1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"m2","description":"m3哦","required":false,"dataType":"long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test1","description":"子类哦","required":false,"dataType":"com.github.fashionbrot.entity.Test1","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"t1","description":"t1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"t2","description":"t2哦","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"t3","description":"t3哦","required":false,"dataType":"long","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test5","methodUId":"c0212aa3662d87719427b1f7ed1b35","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#test1","methodUId":"b1ead93a365f19a76f5ca24b13b32d","list":[{"name":"String","description":"","required":false,"dataType":"java.lang.String","example":"","requestType":null,"ref":null,"collection":null,"child":null}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request4","methodUId":"e6868e3f9f8687e9d2eb9aa58b5d977","list":[]},{"methodId":"com.github.fashionbrot.controller.TestController#test6","methodUId":"36304bb54411df1a6082c11aa62e0ab","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#test3","methodUId":"22364423a74e40c02cdcb69841ffd2f1","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test7","methodUId":"8a57712a37a223a6b22e56c23ae5010","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"com.github.fashionbrot.controller.BannerController#list","methodUId":"d193835055ce7af86dc5c1f47bae198f","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test8","methodUId":"21cb3d62dab0612ee740f943776af083","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity[]","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request1","methodUId":"5973a41a18e686e8f11eaf2ea6465d","list":[]},{"methodId":"com.github.fashionbrot.controller.RequestController#request3","methodUId":"492ca98e6b494ca2e1e8d8638f49758","list":[]},{"methodId":"com.github.fashionbrot.controller.TestController#test4","methodUId":"5b640294722257492a42b5074cf71d","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.RequestController#request5","methodUId":"dc538826b7fa6d95778eefeb113b427c","list":[]},{"methodId":"com.github.fashionbrot.controller.BannerController#test2","methodUId":"57bae670a3a9c1a381905ba2160a977","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test11","methodUId":"d054266e6bb2527b96f404b653052ad","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"T","example":null,"requestType":"","ref":null,"collection":0,"child":[]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test2","methodUId":"92a0b82d74d95a5cc5a33f3d9d1f0e","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"com.github.fashionbrot.controller.TestController#test1","methodUId":"44d890dd6fb2ee446f2fb12b5fe883","list":[{"name":"String","description":"","required":false,"dataType":"java.lang.String","example":"","requestType":null,"ref":null,"collection":null,"child":null}]}]}
+    template.defaults.imports.toLowerCase=function (s){
+        if(s){
+            return s.toLowerCase();
+        }
+        return "";
+    }
+
+
     // 本地缓存处理
     let storage = {
-        set: function(key, value) {
+        set: function (key, value) {
             window.localStorage.setItem(key, JSON.stringify(value));
         },
-        get: function(key) {
+        get: function (key) {
             let value = window.localStorage.getItem(key);
-            if (value){
-                return JSON.parse(value);
+            if (value) {
+                return strToJson(value);
             }
             return null;
         },
-        remove: function(key) {
+        remove: function (key) {
             window.localStorage.removeItem(key);
         },
-        clear: function() {
+        clear: function () {
             window.localStorage.clear();
         }
     };
-    layui.use(['element','jquery', 'layer', 'util','table'], function(){
-        var element = layui.element
-            ,layer = layui.layer
-            ,util = layui.util
-            ,table = layui.table
-            ,$ = layui.$;
 
-        element.on('tab(rightTab)', function(data){
-            console.log("test1:"+this, data);
+    function strToJson(str) {
+        var json = eval('' + str + '');
+        return json;
+    }
+
+    layui.use(['element', 'jquery', 'layer', 'util', 'table'], function () {
+        var element = layui.element , layer = layui.layer, util = layui.util, table = layui.table, $ = layui.$;
+
+        element.on('tab(rightTab)', function (data) {
+            console.log("test1:" + this, data);
         });
 
-        element.on("nav(navLeft)",function (data){
+        element.on("nav(navLeft)", function (data) {
             console.log(this)
-            let methodUId = $(this).attr("method-uid");
+            let methodId = $(this).attr("method-id");
+            let methodMethod = $(this).attr("method-method");
 
-            if (methodUId){
-                let classUId = $(this).attr("class-uid");
-                let title = $(this).attr("method-name");
-                if (existTab(methodUId)){
+            let methodUId = methodId+"#"+methodMethod;
+            if (methodUId) {
+
+                if (existTab(methodUId)) {
                     layui.element.tabChange('rightTab', methodUId)
-                }else{
-                    let thisMethod = getMethod(classUId,methodUId);
-                    let thisRequest = getRequest(methodUId);
-                    let thisResponse = getResponse(methodUId);
+                } else {
+
+                    let classUId = $(this).attr("class-uid");
+                    let title = $(this).attr("method-name");
+                    if (!title){
+                        return;
+                    }
+
+                    let thisMethod = getMethod(classUId, methodId,methodMethod);
                     if (thisMethod){
-                        let data ={
-                            method:thisMethod,
-                            request:thisRequest,
-                            response:thisResponse
+                        thisMethod.methodUId = methodUId;
+                    }
+
+                    let thisRequest = getRequest(methodId);
+                    let thisResponse = getResponse(methodId);
+                    if (thisMethod) {
+
+                        let data = {
+                            method: thisMethod,
+                            request: thisRequest,
+                            response: thisResponse,
+                            formatRequest:formatParam(thisRequest),
+                            formatResponse:formatParam(thisResponse)
                         }
-                        let rightContentHtml = template("rightContentTemplate",data);
-                        layui.element.tabAdd('rightTab', {title:title, content:rightContentHtml, id: methodUId })
+                        console.log("data:", data);
+                        let rightContentHtml = template("rightContentTemplate", data);
+                        console.log("rightContentHtml:", rightContentHtml);
+                        layui.element.tabAdd('rightTab', {title: title, content: rightContentHtml, id: methodUId})
                         layui.element.tabChange('rightTab', methodUId);
-                        table.init('parse-table-demo', { //转化静态表格
-                            cellMinWidth: 50,
-                            size: 'sm'
-                            //height: 'full-500'
+
+                        table.init(methodUId + 'requestTable', { //转化静态表格
+                            // height: 'full-500'
+                            size: 'sm',
+                            text: {
+                                none: '暂无参数'
+                            },
                         });
+                        table.init(methodUId + 'responseTable', { //转化静态表格
+                            // height: 'full-500'
+                            size: 'sm',
+                            text: {
+                                none: '暂无返回值'
+                            },
+                        });
+
+                        let responseJson = getResponseJson(thisResponse,methodUId);
+
+                        var editor = ace.edit(methodUId+"ace_editor");
+                        if (responseJson){
+                            editor.setValue(responseJson.jsonText);
+                        }else {
+                            editor.setValue("{}");
+                        }
+                        editor.setTheme("ace/theme/tomorrow");
+                        editor.session.setMode("ace/mode/html");
+                        editor.setAutoScrollEditorIntoView(false);
+                        if (responseJson){
+                            editor.setOption("maxLines", responseJson.line);
+                        }else{
+                            editor.setOption("maxLines", 3);
+                        }
+                        editor.setOptions({
+                            autoScrollEditorIntoView: true,
+                            copyWithEmptySelection: true,
+                        });
+                        // 单独设置setOptions方法
+                        editor.setOption("mergeUndoDeltas", "always");
+                        editor.resize();
+
+
+
                     }
                 }
             }
         });
 
-        function getMethod(classUId,methodUId){
+        function getResponseJson(response){
+            let json={};
+            var child = response.list;
+            if (child){
+                for (let i = 0; i < child.length; i++) {
+                    let item=child[i];
+                    appendJson(item,json)
+                }
+            }
+
+            let jsonText = JSON.stringify(json, null, '\t');
+            let len = jsonText.split('\n').length;
+            json.jsonText= jsonText;
+            json.line = len;
+            return json;
+        }
+
+        function appendJson(request,json){
+            if (request){
+                if (like(request.dataType,"String")){
+                    json[""+request.name+":"]="";
+                }else{
+
+                    let child = request.child;
+                    let collection = request.collection;
+
+                    if (collection==1 && child){
+                        let array = [];
+                        let childJson = {}
+                        $.each(child,function (index,r){
+                            appendJson(r,childJson);
+                        });
+                        array.push(childJson);
+                        json[""+request.name+":"]=array;
+                    }else if (collection==0 && child){
+
+                        let childJson = {}
+                        $.each(child,function (index,r){
+                            appendJson(r,childJson);
+                        });
+                        json[""+request.name+":"]=childJson;
+                    }else{
+                        json[""+request.name+":"]=0;
+                    }
+                }
+            }
+        }
+
+        function getMethod(classUId, methodId,methodMethod) {
             let classList = storage.get("classList");
-            if (classList){
-                let classInfo = null;
+            if (classList) {
+                let classInfo = {};
                 for (let i = 0; i < classList.length; i++) {
                     let clazz = classList[i];
-                    if (clazz.classUId==classUId ){
+                    if (clazz.classUId == classUId) {
                         classInfo = clazz;
                         break;
                     }
                 }
-                let methodInfo = null;
-                if (classInfo){
+                let methodInfo = {};
+                if (classInfo) {
                     let methodList = classInfo.methodList;
-                    for (let j = 0; j < methodList.length; j++) {
-                        let method = methodList[j];
-                        if (method.methodUId == methodUId){
-                            methodInfo = method;
-                            break;
+                    if (methodList){
+                        for (let j = 0; j < methodList.length; j++) {
+                            let method = methodList[j];
+                            if (method.methodId == methodId && method.method== methodMethod) {
+                                methodInfo = method;
+                                break;
+                            }
                         }
                     }
                 }
@@ -325,13 +493,14 @@
             }
             return null;
         }
-        function getRequest(methodUId){
+
+        function getRequest(methodId) {
             let requestList = storage.get("requestList");
-            let request=null;
-            if (requestList){
+            let request = {};
+            if (requestList) {
                 for (let i = 0; i < requestList.length; i++) {
                     let r = requestList[i];
-                    if (r.methodUId == methodUId){
+                    if (r.methodId == methodId) {
                         request = r;
                         break;
                     }
@@ -339,13 +508,14 @@
             }
             return request;
         }
-        function getResponse(methodUId){
+
+        function getResponse(methodId) {
             let responseList = storage.get("responseList");
-            let response=null;
-            if (responseList){
+            let response = {};
+            if (responseList) {
                 for (let j = 0; j < responseList.length; j++) {
                     let r = responseList[j];
-                    if (r.methodUId == methodUId){
+                    if (r.methodId == methodId) {
                         response = r;
                         break;
                     }
@@ -354,16 +524,18 @@
             return response;
         }
 
-        function existTab(methodUId){
-            let exist=false;
-            $(".layui-tab-title").find("li").each(function(){
+        function existTab(methodUId) {
+            let exist = false;
+            $(".layui-tab-title").find("li").each(function () {
                 let id = $(this).attr("lay-id");
-                if (id==methodUId){
-                    exist=true;
+                if (id == methodUId) {
+                    exist = true;
                 }
             });
             return exist;
         }
+
+        let json={"version":null,"info":{"baseUrl":"","version":"1.0.0","description":""},"classList":[{"classUId":"31c2d5a3ef3929bd58105b8cc16a3f6d","classId":"com.github.fashionbrot.controller.TestController","description":"test接口类","priority":100,"methodList":[{"description":"test9接口","path":"/test/test9","method":"GET","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/test/test9","method":"POST","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/test/test9","method":"DELETE","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/test/test9","method":"PUT","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"GET","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"POST","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"DELETE","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"PUT","contentType":null,"priority":0,"methodId":"78e2d7248499874ad4f6ecde380f4"},{"description":"test3接口","path":"/test/test3","method":"GET","contentType":null,"priority":0,"methodId":"37de5736ebd12718aa2ff6d534df5abc"},{"description":"test3接口","path":"/t1/test3","method":"GET","contentType":null,"priority":0,"methodId":"37de5736ebd12718aa2ff6d534df5abc"},{"description":"test10接口","path":"/test/test10","method":"GET","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/test/test10","method":"POST","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/test/test10","method":"DELETE","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/test/test10","method":"PUT","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"GET","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"POST","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"DELETE","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"PUT","contentType":null,"priority":0,"methodId":"b1c234bf23dbc134dfc15c724eee71a9"},{"description":"test5接口","path":"/test/test5","method":"GET","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/test/test5","method":"POST","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/test/test5","method":"DELETE","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/test/test5","method":"PUT","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"GET","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"POST","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"DELETE","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"PUT","contentType":null,"priority":0,"methodId":"689f14407fcd64d5679ee5b572b998a6"},{"description":"test6接口","path":"/test/test6","method":"GET","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/test/test6","method":"POST","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/test/test6","method":"DELETE","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/test/test6","method":"PUT","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"GET","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"POST","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"DELETE","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"PUT","contentType":null,"priority":0,"methodId":"652e484d817534e59a6d433580a28c97"},{"description":"test7接口","path":"/test/test7","method":"GET","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/test/test7","method":"POST","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/test/test7","method":"DELETE","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/test/test7","method":"PUT","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"GET","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"POST","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"DELETE","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"PUT","contentType":null,"priority":0,"methodId":"443986fa658d9820f9930b61daf52b3"},{"description":"test8接口","path":"/test/test8","method":"GET","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/test/test8","method":"POST","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/test/test8","method":"DELETE","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/test/test8","method":"PUT","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"GET","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"POST","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"DELETE","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"PUT","contentType":null,"priority":0,"methodId":"7a24b7ae192e18b3b35739bf84c967d"},{"description":"test4接口","path":"/test/test4","method":"GET","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/test/test4","method":"POST","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/test/test4","method":"DELETE","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/test/test4","method":"PUT","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"GET","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"POST","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"DELETE","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"PUT","contentType":null,"priority":0,"methodId":"bca5296dd987189f78a064582e13fd25"},{"description":"test11接口","path":"/test/test11","method":"GET","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/test/test11","method":"POST","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/test/test11","method":"DELETE","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/test/test11","method":"PUT","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"GET","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"POST","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"DELETE","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"PUT","contentType":null,"priority":0,"methodId":"ed15726778ba78fdbf88786267fdeb"},{"description":"test2接口","path":"/test/test2","method":"GET","contentType":null,"priority":0,"methodId":"4c86c55a202435d4c3cace1e7641b9ed"},{"description":"test2接口","path":"/t1/test2","method":"GET","contentType":null,"priority":0,"methodId":"4c86c55a202435d4c3cace1e7641b9ed"},{"description":"test1接口","path":"/test/test1","method":"GET","contentType":null,"priority":0,"methodId":"a8f54a2a9fe28a5dc5168bc1b3baff64"},{"description":"test1接口","path":"/t1/test1","method":"GET","contentType":null,"priority":0,"methodId":"a8f54a2a9fe28a5dc5168bc1b3baff64"}]},{"classUId":"85735c3ad9291443fd7ddc622b788c","classId":"com.github.fashionbrot.controller.BannerController","description":"banner接口类","priority":99,"methodList":[{"description":"test1接口","path":"test1","method":"GET","contentType":null,"priority":0,"methodId":"da22925097ce3fdf2f6c45d947a4ea83"},{"description":"test3接口","path":"test3","method":"GET","contentType":null,"priority":0,"methodId":"835e37575cea538129ff2cde6be6a34"},{"description":"list接口","path":"list","method":"GET","contentType":null,"priority":0,"methodId":"48b849935b9f4c5873eea39e5992bb"},{"description":"list接口","path":"list","method":"POST","contentType":null,"priority":0,"methodId":"48b849935b9f4c5873eea39e5992bb"},{"description":"list接口","path":"list","method":"DELETE","contentType":null,"priority":0,"methodId":"48b849935b9f4c5873eea39e5992bb"},{"description":"list接口","path":"list","method":"PUT","contentType":null,"priority":0,"methodId":"48b849935b9f4c5873eea39e5992bb"},{"description":"test2接口","path":"test2","method":"GET","contentType":null,"priority":0,"methodId":"75121a6b26965e2446e926d32060e8c"}]},{"classUId":"3deea9b9a2ef4c65f7a52b2f8b42bf8","classId":"com.github.fashionbrot.controller.RequestController","description":"requestTest接口","priority":98,"methodList":[{"description":"request1测试接口,名字能有多长呢","path":"/request/request1","method":"GET","contentType":null,"priority":100,"methodId":"85204c46394472dbc550cd1debb3185c"},{"description":"request2测试接口","path":"/request/request2","method":"GET","contentType":null,"priority":80,"methodId":"249d5eed23c7f34b11187af2a971f267"},{"description":"request3测试接口","path":"/request/request3","method":"POST","contentType":null,"priority":70,"methodId":"c58fa86463d6e12ea76954b08e43734b"},{"description":"request4测试接口","path":"/request/request4","method":"GET","contentType":null,"priority":60,"methodId":"88ed69338768c4b9d135312ae13618"},{"description":"request5测试接口","path":"/request/request5","method":"POST","contentType":null,"priority":50,"methodId":"b212c931fb9cf5586d719034396f1289"}]}],"requestList":[{"methodId":"78e2d7248499874ad4f6ecde380f4","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"37de5736ebd12718aa2ff6d534df5abc","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"b1c234bf23dbc134dfc15c724eee71a9","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"689f14407fcd64d5679ee5b572b998a6","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"da22925097ce3fdf2f6c45d947a4ea83","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"88ed69338768c4b9d135312ae13618","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"requestReq1","description":"requestReq1哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"QUERY","ref":null,"collection":0,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"name":"requestReq1List","description":"requestReq1List哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"652e484d817534e59a6d433580a28c97","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"835e37575cea538129ff2cde6be6a34","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"443986fa658d9820f9930b61daf52b3","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"48b849935b9f4c5873eea39e5992bb","list":[{"name":"req","description":"测试表Entity","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"7a24b7ae192e18b3b35739bf84c967d","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"249d5eed23c7f34b11187af2a971f267","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"c58fa86463d6e12ea76954b08e43734b","list":[{"name":"requestReq1","description":"RequestReq1 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]},{"methodId":"bca5296dd987189f78a064582e13fd25","list":[{"name":"req","description":"测试表Entity","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"b212c931fb9cf5586d719034396f1289","list":[{"name":"requestReq1","description":"RequestReq2 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"requestReq1","description":"requestReq1哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"BODY","ref":null,"collection":0,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]},{"name":"requestReq1List","description":"requestReq1List哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"75121a6b26965e2446e926d32060e8c","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"ed15726778ba78fdbf88786267fdeb","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"4c86c55a202435d4c3cace1e7641b9ed","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"85204c46394472dbc550cd1debb3185c","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test1哦","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"a8f54a2a9fe28a5dc5168bc1b3baff64","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}],"responseList":[{"methodId":"78e2d7248499874ad4f6ecde380f4","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity[]","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"37de5736ebd12718aa2ff6d534df5abc","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"b1c234bf23dbc134dfc15c724eee71a9","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.MultiTest","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"m1","description":"m1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"m2","description":"m3哦","required":false,"dataType":"long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test1","description":"子类哦","required":false,"dataType":"com.github.fashionbrot.entity.Test1","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"t1","description":"t1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"t2","description":"t2哦","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"t3","description":"t3哦","required":false,"dataType":"long","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"689f14407fcd64d5679ee5b572b998a6","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"da22925097ce3fdf2f6c45d947a4ea83","list":[{"name":"String","description":"","required":false,"dataType":"java.lang.String","example":"","requestType":null,"ref":null,"collection":null,"child":null}]},{"methodId":"88ed69338768c4b9d135312ae13618","list":[]},{"methodId":"652e484d817534e59a6d433580a28c97","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"835e37575cea538129ff2cde6be6a34","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"443986fa658d9820f9930b61daf52b3","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"48b849935b9f4c5873eea39e5992bb","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"7a24b7ae192e18b3b35739bf84c967d","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity[]","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"249d5eed23c7f34b11187af2a971f267","list":[]},{"methodId":"c58fa86463d6e12ea76954b08e43734b","list":[]},{"methodId":"bca5296dd987189f78a064582e13fd25","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"b212c931fb9cf5586d719034396f1289","list":[]},{"methodId":"75121a6b26965e2446e926d32060e8c","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"ed15726778ba78fdbf88786267fdeb","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"T","example":null,"requestType":"","ref":null,"collection":0,"child":[]}]},{"methodId":"4c86c55a202435d4c3cace1e7641b9ed","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"85204c46394472dbc550cd1debb3185c","list":[]},{"methodId":"a8f54a2a9fe28a5dc5168bc1b3baff64","list":[{"name":"String","description":"","required":false,"dataType":"java.lang.String","example":"","requestType":null,"ref":null,"collection":null,"child":null}]}]}
 
         // $.getJSON("./mars/api",{},function (data){
         //     if (data){
@@ -371,16 +543,17 @@
         //     }
         // });
         initJSON(json);
-        function initJSON(json){
-            if (json){
-                if (json.classList){
-                    storage.set("classList",json.classList);
+
+        function initJSON(json) {
+            if (json) {
+                if (json.classList) {
+                    storage.set("classList", json.classList);
                 }
-                if(json.requestList){
-                    storage.set("requestList",json.requestList);
+                if (json.requestList) {
+                    storage.set("requestList", json.requestList);
                 }
-                if (json.responseList){
-                    storage.set("responseList",json.responseList);
+                if (json.responseList) {
+                    storage.set("responseList", json.responseList);
                 }
                 initLeft(null);
             }
@@ -394,50 +567,87 @@
             }
         });
 
-        function like(str,keyWord){
+        function like(str, keyWord) {
             var reg = new RegExp(keyWord);
             //如果字符串中不包含目标字符会返回-1
-            if(str.match(reg)){
+            if (str.match(reg)) {
                 //匹配成功do something
                 return true;
             }
             return false;
         }
 
-        function initLeft(searchInput){
-            let classList = layui.data("classList");
-            if (searchInput && classList){
-                let newClassList=new Array();
+        function initLeft(searchInput) {
+            let classList = storage.get("classList");
+            if (searchInput && classList) {
+                let newClassList = new Array();
                 for (let i = 0; i < classList.length; i++) {
                     let classInfo = classList[i];
-                    let newMethodList=new Array();
-                    if (classInfo.methodList){
+                    let newMethodList = new Array();
+                    if (classInfo.methodList) {
                         let methodList = classInfo.methodList;
                         for (let j = 0; j < methodList.length; j++) {
                             let methodInfo = methodList[j];
-                            if (like(methodInfo.description,searchInput)){
+                            if (like(methodInfo.description, searchInput)) {
                                 newMethodList.push(methodInfo);
                             }
                         }
                     }
-                    if (newMethodList.length>0){
+                    if (newMethodList.length > 0) {
                         classInfo.methodList = newMethodList;
                         newClassList.push(classInfo);
                     }
                 }
                 classList = newClassList;
             }
-            let data={
-                classList:classList
+            let data = {
+                classList: classList
             }
-            let leftHtml = template("leftTemplate",data);
-            document.getElementById("leftDivId").innerHTML=leftHtml;
+            let leftHtml = template("leftTemplate", data);
+            document.getElementById("leftDivId").innerHTML = leftHtml;
             parent.layui.element.render('nav');
         }
 
 
-    });
+        function formatParam(request){
+            let requestList = new Array();
+            if (request){
+                let list=request.list;
+                if (list){
+                    let level=1;
+                    for (let i = 0; i < list.length; i++) {
+                        let r = list[i];
+                        r.level=level;
+                        requestList.push(r);
+                        getChild(requestList,level,r);
+                    }
+                }
+            }
+            return requestList;
+        }
 
+        function getChild(requestList,level,request){
+            if (request.child && request.child.length>0){
+                let newLevel=level+1;
+                let list= request.child;
+                for (let j = 0; j < list.length; j++) {
+                    let r = list[j];
+                    r.level=newLevel;
+                    requestList.push(r);
+                    getChild(requestList,newLevel,r);
+                }
+            }
+        }
+
+        function guid() {
+            function S4() {
+                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+        }
+
+
+    });
 
 
 </script>

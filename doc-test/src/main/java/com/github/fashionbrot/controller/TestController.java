@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 
-@Api("test接口类")
+@Api(value = "test接口类",priority = 100)
 @Controller
 @RequestMapping(value = {"/test", "t1"})
 public class TestController {

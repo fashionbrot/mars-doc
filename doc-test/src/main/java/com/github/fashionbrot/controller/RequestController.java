@@ -10,19 +10,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-@Api("requestTest接口")
+@Api(value = "requestTest接口",priority = 98)
 @Controller
 @RequestMapping("/request")
 public class RequestController {
 
-    @ApiOperation("request1测试接口,名字能有多长呢")
+    @ApiOperation(value = "request1测试接口,名字能有多长呢",priority = 100)
     @ResponseBody
     @GetMapping("request1")
     public void request1(@ApiModelProperty("test1哦") String test1,@ApiModelProperty("test1哦") String test2){
 
     }
 
-    @ApiOperation("request2测试接口")
+    @ApiOperation(value = "request2测试接口",priority = 80)
     @ResponseBody
     @GetMapping("request2")
     public void request1(RequestReq1 requestReq1){
@@ -30,21 +30,22 @@ public class RequestController {
     }
 
 
-    @ApiOperation("request3测试接口")
+    @ApiOperation(value = "request3测试接口",priority = 70)
     @ResponseBody
     @PostMapping("request3")
     public void request3(@RequestBody RequestReq1 requestReq1){
 
     }
 
-    @ApiOperation("request4测试接口")
+    @ApiOperation(value = "request4测试接口",priority = 60)
     @ResponseBody
     @GetMapping("request4")
     public void request4( RequestReq2 requestReq1){
 
     }
 
-    @ApiOperation("request5测试接口")
+
+    @ApiOperation(value = "request5测试接口",priority = 50)
     @ResponseBody
     @PostMapping("request5")
     public void request5(@RequestBody RequestReq2 requestReq1){

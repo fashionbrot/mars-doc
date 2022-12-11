@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 
-@Api("banner接口类")
+@Api(value = "banner接口类",priority = 99)
 @Controller
 public class BannerController {
 

@@ -15,7 +15,5 @@ public class LinkVo {
 
     private String methodId ;
 
-    private String methodUId;
-
     private List<ParameterVo> list;
 }

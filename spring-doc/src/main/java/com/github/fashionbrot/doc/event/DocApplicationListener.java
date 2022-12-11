@@ -139,7 +139,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
                 String classId = declaringClass.getName();
-                String methodId = declaringClass.getName()+"#"+method.getName();
+                String methodId = Md5Util.md5(method.toString());
 
                 String className = declaringClass.getName();
                 int priority = 0;
@@ -169,18 +169,15 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         vo.setMethodId(methodId);
                         vo.setDescription(methodDescription);
                         vo.setPriority(methodPriority);
-                        vo.setMethodUId(Md5Util.md5(vo.getMethodId()+vo.getPath()+vo.getMethod()));
                     }
                 }else{
                     continue;
                 }
-                MethodVo methodVo = methodList.get(0);
 
                 long reqCount = requestVoList.stream().filter(m -> m.getMethodId().equals(methodId)).count();
                 if (reqCount == 0) {
                     requestVoList.add(LinkVo.builder()
                             .methodId(methodId)
-                            .methodUId(methodVo.getMethodUId())
                             .list(RequestUtil.getRequest(method))
                             .build());
                 }
@@ -189,7 +186,6 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (respCount == 0) {
                     responseVoList.add(LinkVo.builder()
                             .methodId(methodId)
-                            .methodUId(methodVo.getMethodUId())
                             .list(ResponseUtil.getResponse(method))
                             .build());
                 }
@@ -211,7 +207,16 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
             }
         }
-        docVo.setClassList(classVoList);
+        if (ObjectUtil.isNotEmpty(classVoList)){
+            for (int i = 0; i < classVoList.size(); i++) {
+                ClassVo classVo = classVoList.get(i);
+                if (classVo!=null && ObjectUtil.isNotEmpty(classVo.getMethodList())){
+                    classVo.setMethodList(classVo.getMethodList().stream().sorted(Comparator.comparing(MethodVo::getPriority).reversed()).collect(Collectors.toList()));
+                }
+            }
+        }
+
+        docVo.setClassList(classVoList.stream().sorted(Comparator.comparing(ClassVo::getPriority).reversed()).collect(Collectors.toList()));
         docVo.setRequestList(requestVoList);
         docVo.setResponseList(responseVoList);
         docVo.setInfo(InfoVo.builder()
