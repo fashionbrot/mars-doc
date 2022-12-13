@@ -125,9 +125,6 @@ public class RequestUtil {
         List<ParameterVo> parameterVoList = new ArrayList<>();
 
         List<ParameterVo> apiImplicitParamList = parseApiImplicitParam(method);
-        if (ObjectUtil.isNotEmpty(apiImplicitParamList)){
-            parameterVoList.addAll(parameterVoList);
-        }
 
         if (ObjectUtil.isNotEmpty(parameters)) {
             for (int i = 0; i < parameters.length; i++) {
@@ -203,7 +200,9 @@ public class RequestUtil {
 
             }
         }
-
+        if (ObjectUtil.isNotEmpty(parameterVoList) && ObjectUtil.isNotEmpty(apiImplicitParamList)){
+            parameterVoList.addAll(apiImplicitParamList);
+        }
         return parameterVoList;
     }
 
@@ -233,9 +232,9 @@ public class RequestUtil {
 
     public static boolean checkParamType(String paramType){
         if (ParamTypeEnum.BODY.name().equalsIgnoreCase(paramType) || ParamTypeEnum.QUERY.name().equalsIgnoreCase(paramType)){
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public static ParameterVo buildParameterVo(ApiImplicitParam param){

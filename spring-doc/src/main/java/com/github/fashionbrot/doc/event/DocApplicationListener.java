@@ -139,7 +139,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
                 String classId = declaringClass.getName();
-                String methodId = Md5Util.md5(method.toString());
+                String methodId = "M"+Md5Util.md5(method.toString());
 
                 String className = declaringClass.getName();
                 int priority = 0;
