@@ -10,6 +10,7 @@
     <link href="./css/layui.css" rel="stylesheet"/>
     <link href="./css/iconfont.css" rel="stylesheet"/>
 
+    <script type="text/javascript" src="./jquery.min.js"></script>
     <script type="text/javascript" src="./ace/ace.js"></script>
     <script type="text/javascript" src="./ace/ext-language_tools.js"></script>
 
@@ -97,6 +98,14 @@
             height:auto !important;
         }
 
+        .debug-span-value {
+            color: #4dc095;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .debug-request-table input[type=checkbox]{
+            width: 15px;height: 15px;
+        }
     </style>
 </head>
 <body>
@@ -279,62 +288,96 @@
 
 
     <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-        <button class="layui-btn">{{method.method}}</button>
-        <input type="text" name="title"  autocomplete="off" class="layui-input" value="{{method.path}}" />
-        <button class="layui-btn"  type="button"> 发 送 </button>
+        <button class="layui-btn"   >{{method.method}}</button>
+        <input type="text" name="title"  autocomplete="off" id="methodPath{{method.methodUId}}" class="layui-input" value="{{method.path}}" />
+        <button class="layui-btn" lay-active="sendRequest" method-uid="{{method.methodUId}}" request-method="{{method.method}}"  type="button"> 发 送 </button>
     </div>
 
     <form class="layui-form" action="">
         <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
 
-                <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"   value="x-www-form-urlencoded" title="x-www-form-urlencoded">
-                <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="form-data" title="form-data" >
-                <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}" value="raw" title="raw" >
+            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"   value="x-www-form-urlencoded" title="x-www-form-urlencoded">
+            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="form-data" title="form-data" >
+            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}" value="raw" title="raw" >
 
 
-                <select class="form-select form-select-sm " lay-ignore id="raw{{method.methodUId}}" style="display:none;" >
-                    <option selected>JSON(application/json)</option>
-                    <option>Text</option>
-                    <option >Text(text/plain)</option>
-                    <option >XML(application/xml)</option>
-                    <option >XML(text/xml)</option>
-                    <option>HTML(text/html)</option>
-                    <option>Javascript(application/javascript)</option>
-                </select>
+            <select class="form-select form-select-sm " lay-ignore id="raw{{method.methodUId}}" style="display:none;" >
+                <option selected>JSON(application/json)</option>
+                <option>Text</option>
+                <option >Text(text/plain)</option>
+                <option >XML(application/xml)</option>
+                <option >XML(text/xml)</option>
+                <option>HTML(text/html)</option>
+                <option>Javascript(application/javascript)</option>
+            </select>
         </div>
 
+<!--        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >-->
+<!--            <table lay-filter="{{method.methodUId}}debugRequestTable" class="layui-table"  lay-size="lg">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th lay-data="{type: 'checkbox',width:'4%',LAY_CHECKED:true}">全选</th>-->
+<!--                    <th lay-data="{field:'requestType', width:'8%'}">参数类型</th>-->
+<!--                    <th lay-data="{field:'name',  width:'20%',templet:'#debugRequestName'}">参数名</th>-->
+<!--                    <th lay-data="{field:'description', width:'68%',templet:'#debugRequestValue'}">参数值</th>-->
+<!--                    <th lay-data="{field:'child',hide:'true'}"></th>-->
+<!--                    <th lay-data="{field:'jsonText',hide:'true'}"></th>-->
+<!--                    <th lay-data="{field:'jsonLine',hide:'true'}"></th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                {{if debugRequest!=null && debugRequest.length>0}}-->
+<!--                {{each debugRequest rl requestListIndex}}-->
+
+<!--                        <tr>-->
+<!--                            <td></td>-->
+<!--                            <td>{{rl.requestType|toLowerCase}}</td>-->
+<!--                            <td>{{rl.name}}</td>-->
+<!--                            <td>{{rl.description}}</td>-->
+<!--                            <td>{{rl.child}}</td>-->
+<!--                            <td>{{rl.jsonText}}</td>-->
+<!--                            <td>{{rl.jsonLine}}</td>-->
+<!--                        </tr>-->
+
+<!--                {{/each}}-->
+<!--                {{/if}}-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+
+
         <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-            <table lay-filter="{{method.methodUId}}debugRequestTable" class="layui-table" lay-size="lg">
+            <table  class="layui-table debug-request-table"  lay-size="lg">
                 <thead>
-                <tr>
-                    <th lay-data="{type: 'checkbox',width:'4%',LAY_CHECKED:true}">全选</th>
-                    <th lay-data="{field:'requestType', width:'33%'}">参数类型</th>
-                    <th lay-data="{field:'name',  width:'30%',templet:'#debugRequestName'}">参数名</th>
-                    <th lay-data="{field:'description', width:'33%',templet:'#debugRequestValue'}">参数值</th>
-                    <th lay-data="{field:'child',hide:'true'}"></th>
-                    <th lay-data="{field:'jsonText',hide:'true'}"></th>
-                    <th lay-data="{field:'jsonLine',hide:'true'}"></th>
-                </tr>
+                    <tr>
+                        <th style="width: 4%;" ><input type="checkbox" request-checkbox-all="change" checked="checked" lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></th>
+                        <th style="width: 10%;" >参数类型</th>
+                        <th style="width: 17%;" >参数名</th>
+                        <th style="width: 66%;" >参数值</th>
+                    </tr>
                 </thead>
                 <tbody>
                 {{if debugRequest!=null && debugRequest.length>0}}
                 {{each debugRequest rl requestListIndex}}
 
-                        <tr>
-                            <td></td>
-                            <td>{{rl.requestType|toLowerCase}}</td>
-                            <td>{{rl.name}}</td>
-                            <td>{{rl.description}}</td>
-                            <td>{{rl.child}}</td>
-                            <td>{{rl.jsonText}}</td>
-                            <td>{{rl.jsonLine}}</td>
-                        </tr>
+                    <tr>
+                        <td><input type="checkbox"  checked="checked"  lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></td>
+                        <td>{{rl.requestType|toLowerCase}}</td>
+                        <td><input type="text" class="layui-input" value="{{rl.name}}" /></td>
+                        {{if rl.requestType=='BODY'}}
+                            <td><textarea class="layui-textarea" rows="{{rl.jsonLine}}" placeholder="{{rl.description}}" >{{rl.jsonText}}</textarea></td>
+                        {{else}}
+                            <td><input type="text" class="layui-input" value="" placeholder="{{rl.description}}" /></td>
+                        {{/if}}
+                    </tr>
 
                 {{/each}}
                 {{/if}}
                 </tbody>
             </table>
+
         </div>
+
 
     </form>
 
@@ -346,6 +389,20 @@
                 <li>Header</li>
                 <li>Curl</li>
             </ul>
+            <div style="right: 30px;position: absolute;margin-top: -31px;z-index: 9999;" id="responsestatusb144f10b3b5a388b4180dfbf33aa7f80">
+                <span class="debug-span-label" style="margin-right:30px;font-weight: bold;">
+                    <div class="checkbox" style="display: inline;">
+                        <label><input id="checkboxShowDescriptionb144f10b3b5a388b4180dfbf33aa7f80" type="checkbox" checked="checked">显示说明</label>
+                    </div>
+                </span>
+                <span
+                    class="debug-span-label">响应码:</span><span class="debug-span-value">200 OK</span><span
+                    class="debug-span-label">耗时:</span><span class="debug-span-value">18 ms</span><span
+                    class="debug-span-label">大小:</span><span class="debug-span-value">44 b</span><span
+                    class="debug-span-label" style="margin-left:10px;" id="bigScreenb144f10b3b5a388b4180dfbf33aa7f80"><i
+                    class="icon-text-width iconfont icon-quanping" style="cursor: pointer;"></i>
+                </span>
+            </div>
             <div class="layui-tab-content" style="width: 100%;">
                 <div class="layui-tab-item layui-show">
                     <div id="debugResponseContent{{method.methodUId}}">
@@ -469,7 +526,9 @@
         return json;
     }
 
-    layui.use(['element', 'jquery', 'layer', 'util', 'table','form'], function () {
+
+
+    layui.use(['element', 'jquery', 'layer', 'util', 'table','form','util'], function () {
         var element = layui.element , layer = layui.layer, util = layui.util, table = layui.table, $ = layui.$,form = layui.form;
 
         element.on('tab(rightTab)', function (data) {
@@ -488,6 +547,32 @@
                 document.getElementById("raw"+methodUId).style.display='none'
             }
         });
+
+        util.event('lay-active',{
+            sendRequest:function (){
+                let methodUId = $(this).attr("method-uid");
+                console.log(methodUId);
+
+                let requestMethod = $(this).attr("request-method");
+                let requestPath = $(this).parent().find("[id='methodPath"+methodUId+"']").val()
+
+                let checkboxList = layui.table.checkStatus('debugRequestTableId'+methodUId);
+
+                console.log(requestMethod,requestPath,checkboxList,form);
+            }
+        })
+
+        util.event('request-checkbox-all',{
+           change:function (){
+               let name = this.name;
+               if (this.checked){
+                   $("input[name='"+name+"']").prop("checked",true);
+               }else{
+                   $("input[name='"+name+"']").removeAttr("checked");
+               }
+           }
+        });
+
 
 
 
@@ -552,14 +637,21 @@
 
                         initResponseJson(thisResponse,methodUId);
 
-                        table.init(methodUId + 'debugRequestTable', { //转化静态表格
-                            text: {
-                                none: ''
-                            },
-                        });
+                        // table.init(methodUId + 'debugRequestTable', { //转化静态表格
+                        //     id:'debugRequestTableId'+methodUId,
+                        //     text: {
+                        //         none: ''
+                        //     },
+                        // });
                         initDebugResponseContent(thisResponse,methodUId,"debugResponseContent"+methodUId);
 
+                        $("#debugRequestCheckboxAll"+methodUId).on("click",function (){
+                            console.log($(this).attr("checked"));
+                        })
 
+                        $("#debugRequestCheckboxAllM75d6729a5b0a38616904da54fb92de4#GET").on("change",function(){
+                            console.log($(this).attr("checked"));
+                        });
 
                     }
                 }
