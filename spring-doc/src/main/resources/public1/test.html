@@ -13,7 +13,7 @@
     <script type="text/javascript" src="./jquery.min.js"></script>
     <script type="text/javascript" src="./ace/ace.js"></script>
     <script type="text/javascript" src="./ace/ext-language_tools.js"></script>
-
+    <script type="text/javascript" src="./json5.js"></script>
     <style>
 
         .layui-header-search {
@@ -103,6 +103,12 @@
             font-size: 12px;
             font-weight: bold;
         }
+        .debug-span-value-error {
+            color: red;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         .debug-request-table input[type=checkbox]{
             width: 15px;height: 15px;
         }
@@ -242,6 +248,7 @@
         </table>
     </div>
     <hr>
+
     <div>
         <label class="layui-form-label">响应参数:</label>
         <div class="layui-form-static"></div>
@@ -259,7 +266,7 @@
             </tr>
             </thead>
             <tbody>
-            {{if formatResponse!=null && formatResponse.length>0}}
+                {{if formatResponse!=null && formatResponse.length>0}}
                 {{each formatResponse rl requestListIndex}}
                 <tr>
                     <td>{{rl.name}}</td>
@@ -270,7 +277,7 @@
                     <td>{{rl.level}}</td>
                 </tr>
                 {{/each}}
-            {{/if}}
+                {{/if}}
             </tbody>
         </table>
     </div>
@@ -287,13 +294,16 @@
     <hr>
 
 
-    <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-        <button class="layui-btn"   >{{method.method}}</button>
-        <input type="text" name="title"  autocomplete="off" id="methodPath{{method.methodUId}}" class="layui-input" value="{{method.path}}" />
-        <button class="layui-btn" lay-active="sendRequest" method-uid="{{method.methodUId}}" request-method="{{method.method}}"  type="button"> 发 送 </button>
-    </div>
 
     <form class="layui-form" action="">
+
+        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
+            <button class="layui-btn"   >{{method.method}}</button>
+            <input type="text" name="title"  autocomplete="off" id="methodPath{{method.methodUId}}" class="layui-input" value="{{method.path}}" />
+            <button class="layui-btn" lay-active="sendRequest" method-uid="{{method.methodUId}}" request-method="{{method.method}}"  type="button"> 发 送 </button>
+        </div>
+
+
         <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
 
             <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"   value="x-www-form-urlencoded" title="x-www-form-urlencoded">
@@ -302,52 +312,20 @@
 
 
             <select class="form-select form-select-sm " lay-ignore id="raw{{method.methodUId}}" style="display:none;" >
-                <option selected>JSON(application/json)</option>
-                <option>Text</option>
-                <option >Text(text/plain)</option>
-                <option >XML(application/xml)</option>
-                <option >XML(text/xml)</option>
-                <option>HTML(text/html)</option>
-                <option>Javascript(application/javascript)</option>
+                <option value="application/json" selected>JSON(application/json)</option>
+                <option value="text">Text</option>
+                <option value="text/plain">Text(text/plain)</option>
+                <option value="application/xml">XML(application/xml)</option>
+                <option value="text/xml">XML(text/xml)</option>
+                <option value="text/html">HTML(text/html)</option>
+                <option value="application/javascript">Javascript(application/javascript)</option>
             </select>
         </div>
 
-<!--        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >-->
-<!--            <table lay-filter="{{method.methodUId}}debugRequestTable" class="layui-table"  lay-size="lg">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                    <th lay-data="{type: 'checkbox',width:'4%',LAY_CHECKED:true}">全选</th>-->
-<!--                    <th lay-data="{field:'requestType', width:'8%'}">参数类型</th>-->
-<!--                    <th lay-data="{field:'name',  width:'20%',templet:'#debugRequestName'}">参数名</th>-->
-<!--                    <th lay-data="{field:'description', width:'68%',templet:'#debugRequestValue'}">参数值</th>-->
-<!--                    <th lay-data="{field:'child',hide:'true'}"></th>-->
-<!--                    <th lay-data="{field:'jsonText',hide:'true'}"></th>-->
-<!--                    <th lay-data="{field:'jsonLine',hide:'true'}"></th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                {{if debugRequest!=null && debugRequest.length>0}}-->
-<!--                {{each debugRequest rl requestListIndex}}-->
-
-<!--                        <tr>-->
-<!--                            <td></td>-->
-<!--                            <td>{{rl.requestType|toLowerCase}}</td>-->
-<!--                            <td>{{rl.name}}</td>-->
-<!--                            <td>{{rl.description}}</td>-->
-<!--                            <td>{{rl.child}}</td>-->
-<!--                            <td>{{rl.jsonText}}</td>-->
-<!--                            <td>{{rl.jsonLine}}</td>-->
-<!--                        </tr>-->
-
-<!--                {{/each}}-->
-<!--                {{/if}}-->
-<!--                </tbody>-->
-<!--            </table>-->
-<!--        </div>-->
 
 
         <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-            <table  class="layui-table debug-request-table"  lay-size="lg">
+            <table  class="layui-table debug-request-table" lay-size="lg">
                 <thead>
                     <tr>
                         <th style="width: 4%;" ><input type="checkbox" request-checkbox-all="change" checked="checked" lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></th>
@@ -356,13 +334,13 @@
                         <th style="width: 66%;" >参数值</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="debugRequestTableId{{method.methodUId}}" >
                 {{if debugRequest!=null && debugRequest.length>0}}
                 {{each debugRequest rl requestListIndex}}
 
                     <tr>
                         <td><input type="checkbox"  checked="checked"  lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></td>
-                        <td>{{rl.requestType|toLowerCase}}</td>
+                        <td  >{{rl.requestType|toLowerCase}}</td>
                         <td><input type="text" class="layui-input" value="{{rl.name}}" /></td>
                         {{if rl.requestType=='BODY'}}
                             <td><textarea class="layui-textarea" rows="{{rl.jsonLine}}" placeholder="{{rl.description}}" >{{rl.jsonText}}</textarea></td>
@@ -379,79 +357,66 @@
         </div>
 
 
-    </form>
-
-    <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-        <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="width: 100%;margin-bottom: 100px;">
-            <ul class="layui-tab-title">
-                <li class="layui-this">响应内容</li>
-                <li>Raw</li>
-                <li>Header</li>
-                <li>Curl</li>
-            </ul>
-            <div style="right: 30px;position: absolute;margin-top: -31px;z-index: 9999;" id="responsestatusb144f10b3b5a388b4180dfbf33aa7f80">
-                <span class="debug-span-label" style="margin-right:30px;font-weight: bold;">
-                    <div class="checkbox" style="display: inline;">
-                        <label><input id="checkboxShowDescriptionb144f10b3b5a388b4180dfbf33aa7f80" type="checkbox" checked="checked">显示说明</label>
-                    </div>
-                </span>
-                <span
-                    class="debug-span-label">响应码:</span><span class="debug-span-value">200 OK</span><span
-                    class="debug-span-label">耗时:</span><span class="debug-span-value">18 ms</span><span
-                    class="debug-span-label">大小:</span><span class="debug-span-value">44 b</span><span
-                    class="debug-span-label" style="margin-left:10px;" id="bigScreenb144f10b3b5a388b4180dfbf33aa7f80"><i
-                    class="icon-text-width iconfont icon-quanping" style="cursor: pointer;"></i>
-                </span>
-            </div>
-            <div class="layui-tab-content" style="width: 100%;">
-                <div class="layui-tab-item layui-show">
-                    <div id="debugResponseContent{{method.methodUId}}">
-
-                    </div>
+        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
+            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="width: 100%;margin-bottom: 100px;">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">响应内容</li>
+                    <li>Raw</li>
+                    <li>Header</li>
+                    <li>Curl</li>
+                </ul>
+                <div style="right: 30px;position: absolute;margin-top: -31px;z-index: 9999;" id="responseStatus{{method.methodUId}}">
+                    <!--<span class="debug-span-label" style="margin-right:30px;font-weight: bold;">
+                        <div class="checkbox" style="display: inline;">
+                            <label><input id="checkboxShowDescriptionb144f10b3b5a388b4180dfbf33aa7f80" type="checkbox" checked="checked">显示说明</label>
+                        </div>
+                    </span>-->
+                    <span class="debug-span-label">响应码:</span>
+                    <span class="debug-span-value"></span>
+                    <span class="debug-span-label">耗时:</span>
+                    <span class="debug-span-value"></span>ms
+                    <span class="debug-span-label">大小:</span>
+                    <span class="debug-span-value"></span>
                 </div>
-                <div class="layui-tab-item">
-                    <textarea class="layui-textarea" rows="10">
+                <div class="layui-tab-content" style="width: 100%;">
+                    <div class="layui-tab-item layui-show">
+                        <div id="debugResponseContent{{method.methodUId}}">
+
+                        </div>
+                    </div>
+                    <div class="layui-tab-item">
+                    <textarea class="layui-textarea" rows="10" id="debugResponseRawContent{{method.methodUId}}">
 
                     </textarea>
-                </div>
-                <div class="layui-tab-item">
-                    <table class="table table-hover table-bordered table-text-center">
-                        <tbody>
-                        <tr>
-                            <th>请求头</th>
-                            <th>value</th>
-                        </tr>
-                        <tr>
-                            <th class="active">connection</th>
-                            <td> keep-alive</td>
-                        </tr>
-                        <tr>
-                            <th class="active">content-type</th>
-                            <td> application/json;charset=UTF-8</td>
-                        </tr>
-                        <tr>
-                            <th class="active">date</th>
-                            <td> Tue, 13 Dec 2022 13</td>
-                        </tr>
-                        <tr>
-                            <th class="active">server</th>
-                            <td> nginx/1.16.1</td>
-                        </tr>
-                        <tr>
-                            <th class="active">transfer-encoding</th>
-                            <td> chunked</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="layui-tab-item">
-                    <code>
-                        111111111111
-                    </code>
+                    </div>
+                    <div class="layui-tab-item">
+                        <table class="layui-table debug-request-table"  >
+                            <thead>
+                            <tr>
+                                <th>请求头</th>
+                                <th>value</th>
+                            </tr>
+                            </thead>
+                            <tbody id="responseHeader{{method.methodUId}}">
+                            <tr>
+                                <th class="active">connection</th>
+                                <td> keep-alive</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="layui-tab-item">
+                        <code>
+
+                        </code>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+
+    </form>
+
 
 
 
@@ -486,6 +451,32 @@
     {{#  } }}
 </script>
 
+<script type="text/html" id="responseHeaderTemplate">
+    {{each list h index}}
+        <tr>
+            <th class="active">{{h.key}}</th>
+            <td>{{h.value}}</td>
+        </tr>
+    {{/each}}
+</script>
+<script type="text/html" id="responseStatusTemplate">
+    {{if responseStatus==200}}
+        <span class="debug-span-label">响应码:</span>
+        <span class="debug-span-value">{{responseStatus}} ok</span>
+        <span class="debug-span-label">耗时:</span>
+        <span class="debug-span-value">{{responseTime}}ms</span>
+        <span class="debug-span-label">大小:</span>
+        <span class="debug-span-value">{{responseSpace}}</span>
+    {{else}}
+        <span class="debug-span-label">响应码:</span>
+        <span class="debug-span-value-error">{{responseStatus}}</span>
+        <span class="debug-span-label">耗时:</span>
+        <span class="debug-span-value-error">{{responseTime}}ms</span>
+        <span class="debug-span-label">大小:</span>
+        <span class="debug-span-value-error">{{responseSpace}}</span>
+    {{/if}}
+
+</script>
 
 
 <script type="text/javascript" src="./layui.js"></script>
@@ -526,10 +517,22 @@
         return json;
     }
 
+    String.prototype.equalsIgnoreCase = function(anotherString) {
+        if(this === anotherString){
+            return true;
+        }
+        if(typeof(anotherString)==='string'){
+            return this.toLowerCase() == anotherString.toLowerCase(); //
+        }
+        return false;
+    };
+
 
 
     layui.use(['element', 'jquery', 'layer', 'util', 'table','form','util'], function () {
         var element = layui.element , layer = layui.layer, util = layui.util, table = layui.table, $ = layui.$,form = layui.form;
+
+        let responseEditorMap =new Map();
 
         element.on('tab(rightTab)', function (data) {
             console.log("test1:" + this, data);
@@ -550,17 +553,234 @@
 
         util.event('lay-active',{
             sendRequest:function (){
+
+                let $this = $(this);
+
                 let methodUId = $(this).attr("method-uid");
                 console.log(methodUId);
 
                 let requestMethod = $(this).attr("request-method");
                 let requestPath = $(this).parent().find("[id='methodPath"+methodUId+"']").val()
 
-                let checkboxList = layui.table.checkStatus('debugRequestTableId'+methodUId);
+                let debugRequestTableBody = $(this).parent().parent().find("[id='debugRequestTableId"+methodUId+"']");
 
-                console.log(requestMethod,requestPath,checkboxList,form);
+                let requestContentType = $('input[name="'+methodUId+'contentType"]:checked').val();
+                let isStream = false;
+                if ("raw".equalsIgnoreCase(requestContentType)){
+                    isStream = true;
+                    requestContentType =$(this).parent().parent().find("[id='raw"+methodUId+"']").val();
+                }
+                console.log("requestContentType:"+requestContentType)
+                let headerData= {};
+                let bodyData = {};
+                let formData = {};
+
+                let trs = debugRequestTableBody.find("tr");
+                if (trs){
+                    for (let i = 0; i < trs.length; i++) {
+                        let tr = trs[i];
+                        let checkbox = $(tr).find("input[type='checkbox']").is(':checked');
+                        if (checkbox){
+                            let tds = $(tr).children('td');
+                            let requestType = $(tds[1]).text();
+                            if ("query".equalsIgnoreCase(requestType)){
+                                let queryName = $(tds[2]).find("input").val();
+                                let queryValue= $(tds[3]).find("input").val();
+                                formData[queryName]=queryValue;
+                            }else if ("body".equalsIgnoreCase(requestType)){
+
+                                let queryName = $(tds[2]).find("input").val();
+                                let queryValue= $(tds[3]).find("textarea").val();
+                                try {
+                                    JSON5.parse(queryValue);
+                                }catch (e){
+                                    console.error("parseJson error");
+                                    layer.msg('parse json:'+ queryValue+",失败", {icon: 2});
+                                    return false;
+                                }
+                                bodyData = Object.assign(bodyData,JSON5.parse(queryValue));
+
+                            }else if ("header".equalsIgnoreCase(requestType)){
+                                let queryName = $(tds[2]).find("input").val();
+                                let queryValue= $(tds[3]).find("input").val();
+                                headerData[queryName]=queryValue;
+                            }
+                            console.log(requestType);
+                        }
+
+                    }
+                }
+
+                console.log("formData:"+JSON.stringify(formData),"bodyData:"+JSON.stringify(bodyData)+"headerData:"+JSON.stringify(headerData));
+
+                let startDate  = (new Date()).getTime();
+                sendRequest("./" + requestPath,
+                    requestMethod,
+                    Object.assign(formData, bodyData),
+                    headerData,
+                    "json",
+                    isStream,
+                    function (response, status, xhr) {
+
+                        console.log("success")
+                        console.log(response);	//服务器返回的信息
+                        console.log(status);	//服务器返回的信息
+                        console.log(xhr)
+                        console.log(xhr.status);	//状态码,   要看其他的直接 输出 xhr 就行
+                        console.log(xhr.getAllResponseHeaders()); //响应头部
+                        console.log("response:" + response, "status:" + status, "xhr:" + xhr)
+
+                        writerResponseContent($this,methodUId,xhr);
+                        writeResponseHeader($this,methodUId,xhr);
+                        writeResponseStatus($this,methodUId,xhr,startDate);
+
+                    }
+                    , function (xhr, status, error) {
+                        console.error("error")
+                        console.log(xhr,status,error);
+                        writerResponseContent($this,methodUId,xhr);
+                        writeResponseHeader($this,methodUId,xhr);
+
+                        writeResponseStatus($this,methodUId,xhr,startDate)
+                    })
+
             }
         })
+
+        function writerResponseContent($this,methodUId,xhr){
+            let responseText = xhr.responseText;
+            if (responseText){
+                var contentType=xhr.getResponseHeader("Content-Type");
+                var contentDisposition=xhr.getResponseHeader("Content-Disposition");
+                console.log("response contentType",contentType+" contentDisposition:"+contentDisposition);
+                let mode = "json"
+                let jsonText =responseText;
+                if (jsonText){
+
+                    try {
+                        jsonText = JSON5.stringify(JSON5.parse(jsonText),null,"\t");
+                    }catch (e){
+                        console.log(e);
+                        mode="text";
+                    }
+                    let jsonLine = jsonText.split('\n').length;
+
+
+
+                    let responseEditor = responseEditorMap.get(methodUId);
+                    responseEditor.setTheme("ace/theme/xcode");
+                    responseEditor.session.setMode("ace/mode/"+mode);
+                    responseEditor.setOption("maxLines", jsonLine + 10);
+                    responseEditor.setOption("minLines", jsonLine)
+                    responseEditor.setValue(jsonText);
+                    responseEditor.setReadOnly(true);
+                    responseEditor.clearSelection();
+                    responseEditor.resize();
+
+                    $this.parent().parent().find("[id='debugResponseRawContent"+methodUId+"']").html(jsonText);
+                }else{
+                    let responseEditor = responseEditorMap.get(methodUId);
+                    responseEditor.setValue('');
+                    responseEditor.resize();
+                    $this.parent().parent().find("[id='debugResponseRawContent"+methodUId+"']").html('');
+                }
+
+            }else{
+                let responseEditor = responseEditorMap.get(methodUId);
+                responseEditor.setValue('');
+                responseEditor.resize();
+                $this.parent().parent().find("[id='debugResponseRawContent"+methodUId+"']").html('');
+            }
+        }
+
+
+
+        function writeResponseHeader($this,methodUId,xhr){
+            let responseHeaders = xhr.getAllResponseHeaders();
+            if (responseHeaders) {
+                let hss = responseHeaders.split("\r\n");
+                let hsList = new Array();
+                for (let i = 0; i < hss.length; i++) {
+                    let hs = hss[i];
+                    if (hs) {
+                        let key = hs.substring(0, hs.indexOf(":"));
+                        let value = hs.substring(hs.indexOf(":"), hs.length);
+                        hsList.push({key: key, value: value})
+                    }
+                }
+                let hsHtml = template("responseHeaderTemplate", {list: hsList})
+                $this.parent().parent().find("[id='responseHeader"+methodUId+"']").html(hsHtml);
+            }
+        }
+
+        function writeResponseStatus($this,methodUId,xhr,startDate){
+            let responseStatus = xhr.status;
+            let endDate = (new Date()).getTime();
+            let responseTime = endDate-startDate;
+            let responseText = xhr.responseText;
+            let responseSpace = "0 b";
+            if (responseText){
+                responseSpace = getTextSpace(responseText);
+            }
+            let html = template("responseStatusTemplate",{responseStatus:responseStatus,responseTime:responseTime,responseSpace:responseSpace})
+            $this.parent().parent().find("[id='responseStatus"+methodUId+"']").html(html);
+        }
+
+        function getTextSpace(text){
+            if (!text){
+                text="";
+            }
+            let limit = unescape(encodeURIComponent(text)).length;
+
+            let size = "";
+            if(limit < 0.1 * 1024){                            //小于0.1KB，则转化成B
+                size = limit.toFixed(2) + "B"
+            }else if(limit < 0.1 * 1024 * 1024){            //小于0.1MB，则转化成KB
+                size = (limit/1024).toFixed(2) + "KB"
+            }else if(limit < 0.1 * 1024 * 1024 * 1024){        //小于0.1GB，则转化成MB
+                size = (limit/(1024 * 1024)).toFixed(2) + "MB"
+            }else{                                            //其他转化成GB
+                size = (limit/(1024 * 1024 * 1024)).toFixed(2) + "GB"
+            }
+            let sizeStr = size + "";                        //转成字符串
+            let index = sizeStr.indexOf(".");                    //获取小数点处的索引
+            let dou = sizeStr.substr(index + 1 ,2)            //获取小数点后两位的值
+            if(dou == "00"){                                //判断后两位是否为00，如果是则删除00
+                return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
+            }
+            return size;
+        }
+
+        function sendRequest(url,method,data,headers,dataType,isStream,successCallback,errorCallback){
+            let loading = null;
+            let config = {
+                url: url,
+                type: method,
+                dataType: dataType,
+                data: data,
+                async:true,
+                headers:headers,
+                beforeSend: function () {
+                    loading = layer.load(0, {shade: [0.5,'#fff']});
+                },
+                success: function(response,status,xhr) {
+
+                    layer.close(loading);
+                    successCallback(response,status,xhr);
+                },error:function (xhr, status, error) {
+                    layer.close(loading);
+                    errorCallback(xhr,status,error);
+                }
+            };
+            if (isStream){
+                let newConfig={
+                    contentType: "application/json",
+                    data: JSON.stringify(data)
+                }
+                config = $.extend(config, newConfig);
+            }
+            $.ajax(config)
+        }
 
         util.event('request-checkbox-all',{
            change:function (){
@@ -572,6 +792,8 @@
                }
            }
         });
+
+
 
 
 
@@ -613,7 +835,7 @@
                         }
                         console.log("data:", data);
                         let rightContentHtml = template("rightContentTemplate", data);
-                        console.log("rightContentHtml:", rightContentHtml);
+                        // console.log("rightContentHtml:", rightContentHtml);
                         layui.element.tabAdd('rightTab', {title: title, content: rightContentHtml, id: methodUId})
                         layui.element.tabChange('rightTab', methodUId);
 
@@ -637,12 +859,6 @@
 
                         initResponseJson(thisResponse,methodUId);
 
-                        // table.init(methodUId + 'debugRequestTable', { //转化静态表格
-                        //     id:'debugRequestTableId'+methodUId,
-                        //     text: {
-                        //         none: ''
-                        //     },
-                        // });
                         initDebugResponseContent(thisResponse,methodUId,"debugResponseContent"+methodUId);
 
                         $("#debugRequestCheckboxAll"+methodUId).on("click",function (){
@@ -679,11 +895,11 @@
             editor.clearSelection();
             editor.resize();
         }
-
+        var editor=null;
         function initDebugResponseContent(thisResponse,methodUId,debugResponseContentId){
             let responseJson = getResponseJson(thisResponse,methodUId);
 
-            var editor = ace.edit(debugResponseContentId);
+            editor = ace.edit(debugResponseContentId);
             if (responseJson){
                 editor.setValue(responseJson.jsonText);
             }else {
@@ -705,8 +921,8 @@
             $("#"+debugResponseContentId).css('height',rows_editor+"px");
             editor.setReadOnly(true);
             editor.clearSelection();
-
             editor.resize();
+            responseEditorMap.set(methodUId,editor);
         }
 
         function getResponseJson(response){
@@ -831,12 +1047,12 @@
 
         let json = {"version":null,"info":{"baseUrl":"","version":"1.0.0","description":""},"classList":[{"classUId":"31c2d5a3ef3929bd58105b8cc16a3f6d","classId":"com.github.fashionbrot.controller.TestController","description":"test接口类","priority":100,"methodList":[{"description":"test9接口","path":"/test/test9","method":"GET","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/test/test9","method":"POST","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/test/test9","method":"DELETE","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/test/test9","method":"PUT","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"GET","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"POST","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"DELETE","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test9接口","path":"/t1/test9","method":"PUT","contentType":null,"priority":0,"methodId":"M78e2d7248499874ad4f6ecde380f4"},{"description":"test10接口","path":"/test/test10","method":"GET","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/test/test10","method":"POST","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/test/test10","method":"DELETE","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/test/test10","method":"PUT","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"GET","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"POST","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"DELETE","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test10接口","path":"/t1/test10","method":"PUT","contentType":null,"priority":0,"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9"},{"description":"test5接口","path":"/test/test5","method":"GET","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/test/test5","method":"POST","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/test/test5","method":"DELETE","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/test/test5","method":"PUT","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"GET","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"POST","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"DELETE","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test5接口","path":"/t1/test5","method":"PUT","contentType":null,"priority":0,"methodId":"M689f14407fcd64d5679ee5b572b998a6"},{"description":"test7接口","path":"/test/test7","method":"GET","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/test/test7","method":"POST","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/test/test7","method":"DELETE","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/test/test7","method":"PUT","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"GET","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"POST","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"DELETE","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test7接口","path":"/t1/test7","method":"PUT","contentType":null,"priority":0,"methodId":"M443986fa658d9820f9930b61daf52b3"},{"description":"test4接口","path":"/test/test4","method":"GET","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/test/test4","method":"POST","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/test/test4","method":"DELETE","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/test/test4","method":"PUT","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"GET","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"POST","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"DELETE","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test4接口","path":"/t1/test4","method":"PUT","contentType":null,"priority":0,"methodId":"Mbca5296dd987189f78a064582e13fd25"},{"description":"test11接口","path":"/test/test11","method":"GET","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/test/test11","method":"POST","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/test/test11","method":"DELETE","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/test/test11","method":"PUT","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"GET","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"POST","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"DELETE","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test11接口","path":"/t1/test11","method":"PUT","contentType":null,"priority":0,"methodId":"Med15726778ba78fdbf88786267fdeb"},{"description":"test1接口","path":"/test/test1","method":"GET","contentType":null,"priority":0,"methodId":"Ma8f54a2a9fe28a5dc5168bc1b3baff64"},{"description":"test1接口","path":"/t1/test1","method":"GET","contentType":null,"priority":0,"methodId":"Ma8f54a2a9fe28a5dc5168bc1b3baff64"},{"description":"test3接口","path":"/test/test3","method":"GET","contentType":null,"priority":0,"methodId":"M37de5736ebd12718aa2ff6d534df5abc"},{"description":"test3接口","path":"/t1/test3","method":"GET","contentType":null,"priority":0,"methodId":"M37de5736ebd12718aa2ff6d534df5abc"},{"description":"test6接口","path":"/test/test6","method":"GET","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/test/test6","method":"POST","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/test/test6","method":"DELETE","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/test/test6","method":"PUT","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"GET","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"POST","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"DELETE","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test6接口","path":"/t1/test6","method":"PUT","contentType":null,"priority":0,"methodId":"M652e484d817534e59a6d433580a28c97"},{"description":"test8接口","path":"/test/test8","method":"GET","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/test/test8","method":"POST","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/test/test8","method":"DELETE","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/test/test8","method":"PUT","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"GET","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"POST","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"DELETE","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test8接口","path":"/t1/test8","method":"PUT","contentType":null,"priority":0,"methodId":"M7a24b7ae192e18b3b35739bf84c967d"},{"description":"test2接口","path":"/test/test2","method":"GET","contentType":null,"priority":0,"methodId":"M4c86c55a202435d4c3cace1e7641b9ed"},{"description":"test2接口","path":"/t1/test2","method":"GET","contentType":null,"priority":0,"methodId":"M4c86c55a202435d4c3cace1e7641b9ed"}]},{"classUId":"85735c3ad9291443fd7ddc622b788c","classId":"com.github.fashionbrot.controller.BannerController","description":"banner接口类","priority":99,"methodList":[{"description":"test3接口","path":"test3","method":"GET","contentType":null,"priority":0,"methodId":"M835e37575cea538129ff2cde6be6a34"},{"description":"list接口","path":"list","method":"GET","contentType":null,"priority":0,"methodId":"M48b849935b9f4c5873eea39e5992bb"},{"description":"list接口","path":"list","method":"POST","contentType":null,"priority":0,"methodId":"M48b849935b9f4c5873eea39e5992bb"},{"description":"list接口","path":"list","method":"DELETE","contentType":null,"priority":0,"methodId":"M48b849935b9f4c5873eea39e5992bb"},{"description":"list接口","path":"list","method":"PUT","contentType":null,"priority":0,"methodId":"M48b849935b9f4c5873eea39e5992bb"},{"description":"test2接口","path":"test2","method":"GET","contentType":null,"priority":0,"methodId":"M75121a6b26965e2446e926d32060e8c"},{"description":"test1接口","path":"test1","method":"GET","contentType":null,"priority":0,"methodId":"Mda22925097ce3fdf2f6c45d947a4ea83"}]},{"classUId":"3deea9b9a2ef4c65f7a52b2f8b42bf8","classId":"com.github.fashionbrot.controller.RequestController","description":"requestTest接口","priority":98,"methodList":[{"description":"request1测试接口,名字能有多长呢","path":"/request/request1","method":"GET","contentType":null,"priority":100,"methodId":"M85204c46394472dbc550cd1debb3185c"},{"description":"request2测试接口","path":"/request/request2","method":"GET","contentType":null,"priority":80,"methodId":"M249d5eed23c7f34b11187af2a971f267"},{"description":"request3测试接口","path":"/request/request3","method":"POST","contentType":null,"priority":70,"methodId":"Mc58fa86463d6e12ea76954b08e43734b"},{"description":"request4测试接口","path":"/request/request4","method":"GET","contentType":null,"priority":60,"methodId":"M88ed69338768c4b9d135312ae13618"},{"description":"request5测试接口","path":"/request/request5","method":"POST","contentType":null,"priority":50,"methodId":"Mb212c931fb9cf5586d719034396f1289"}]},{"classUId":"bb741327321abf67447135cbc1385d59","classId":"com.github.fashionbrot.controller.HeaderController","description":"header接口","priority":1,"methodList":[{"description":"request1测试接口","path":"/header/request1","method":"GET","contentType":null,"priority":100,"methodId":"M75d6729a5b0a38616904da54fb92de4"},{"description":"request2测试接口","path":"/header/request2","method":"GET","contentType":null,"priority":80,"methodId":"M7b8a287c277cd66b693cddfa23fd3634"},{"description":"request3测试接口","path":"/header/request3","method":"POST","contentType":null,"priority":70,"methodId":"M565b517f496c60a53ad7a8fe727bb1a"}]}],"requestList":[{"methodId":"M78e2d7248499874ad4f6ecde380f4","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M75d6729a5b0a38616904da54fb92de4","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test1哦","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"token","description":"token header","required":false,"dataType":"String","example":"","requestType":"header","ref":null,"collection":null,"child":null}]},{"methodId":"M835e37575cea538129ff2cde6be6a34","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"Mc58fa86463d6e12ea76954b08e43734b","list":[{"name":"requestReq1","description":"RequestReq1 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M689f14407fcd64d5679ee5b572b998a6","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M88ed69338768c4b9d135312ae13618","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"requestReq1","description":"requestReq1哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"QUERY","ref":null,"collection":0,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"name":"requestReq1List","description":"requestReq1List哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M443986fa658d9820f9930b61daf52b3","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"Mbca5296dd987189f78a064582e13fd25","list":[{"name":"req","description":"测试表Entity","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"M85204c46394472dbc550cd1debb3185c","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test1哦","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"Med15726778ba78fdbf88786267fdeb","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"Ma8f54a2a9fe28a5dc5168bc1b3baff64","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"M37de5736ebd12718aa2ff6d534df5abc","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M565b517f496c60a53ad7a8fe727bb1a","list":[{"name":"requestReq1","description":"RequestReq1 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]},{"name":"token","description":"token header","required":false,"dataType":"String","example":"","requestType":"header","ref":null,"collection":null,"child":null}]},{"methodId":"Mb212c931fb9cf5586d719034396f1289","list":[{"name":"requestReq1","description":"RequestReq2 哦哦","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"requestReq1","description":"requestReq1哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"BODY","ref":null,"collection":0,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]},{"name":"requestReq1List","description":"requestReq1List哦","required":false,"dataType":"com.github.fashionbrot.req.RequestReq1","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"M652e484d817534e59a6d433580a28c97","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M249d5eed23c7f34b11187af2a971f267","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"M48b849935b9f4c5873eea39e5992bb","list":[{"name":"req","description":"测试表Entity","required":true,"dataType":null,"example":null,"requestType":"BODY","ref":null,"collection":null,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"BODY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"BODY","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"M7a24b7ae192e18b3b35739bf84c967d","list":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2-list","required":false,"dataType":"com.github.fashionbrot.req.Test2Req","example":null,"requestType":"QUERY","ref":null,"collection":1,"child":[{"name":"test2Req","description":"test2Req 哦哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}]},{"methodId":"M7b8a287c277cd66b693cddfa23fd3634","list":[{"name":"test1","description":"test1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"test2","description":"test2哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null},{"name":"token","description":"token header","required":false,"dataType":"String","example":"","requestType":"header","ref":null,"collection":null,"child":null}]},{"methodId":"M75121a6b26965e2446e926d32060e8c","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"Mda22925097ce3fdf2f6c45d947a4ea83","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]},{"methodId":"M4c86c55a202435d4c3cace1e7641b9ed","list":[{"name":"test","description":"","required":false,"dataType":"String","example":null,"requestType":"QUERY","ref":null,"collection":null,"child":null}]}],"responseList":[{"methodId":"M78e2d7248499874ad4f6ecde380f4","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity[]","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"M75d6729a5b0a38616904da54fb92de4","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"T","example":null,"requestType":"","ref":null,"collection":0,"child":[]}]},{"methodId":"M835e37575cea538129ff2cde6be6a34","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"Mb1c234bf23dbc134dfc15c724eee71a9","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.MultiTest","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"m1","description":"m1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"m2","description":"m3哦","required":false,"dataType":"long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test1","description":"子类哦","required":false,"dataType":"com.github.fashionbrot.entity.Test1","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"t1","description":"t1哦","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"t2","description":"t2哦","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"t3","description":"t3哦","required":false,"dataType":"long","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"Mc58fa86463d6e12ea76954b08e43734b","list":[]},{"methodId":"M689f14407fcd64d5679ee5b572b998a6","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"M88ed69338768c4b9d135312ae13618","list":[]},{"methodId":"M443986fa658d9820f9930b61daf52b3","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"Mbca5296dd987189f78a064582e13fd25","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"M85204c46394472dbc550cd1debb3185c","list":[]},{"methodId":"Med15726778ba78fdbf88786267fdeb","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"T","example":null,"requestType":"","ref":null,"collection":0,"child":[]}]},{"methodId":"Ma8f54a2a9fe28a5dc5168bc1b3baff64","list":[{"name":"String","description":"","required":false,"dataType":"java.lang.String","example":"","requestType":null,"ref":null,"collection":null,"child":null}]},{"methodId":"M37de5736ebd12718aa2ff6d534df5abc","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"M565b517f496c60a53ad7a8fe727bb1a","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"T","example":null,"requestType":"","ref":null,"collection":0,"child":[]}]},{"methodId":"Mb212c931fb9cf5586d719034396f1289","list":[]},{"methodId":"M652e484d817534e59a6d433580a28c97","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.vo.RespVo2","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]},{"methodId":"M249d5eed23c7f34b11187af2a971f267","list":[]},{"methodId":"M48b849935b9f4c5873eea39e5992bb","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"java.util.List","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"M7a24b7ae192e18b3b35739bf84c967d","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity[]","example":null,"requestType":"","ref":null,"collection":1,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"M7b8a287c277cd66b693cddfa23fd3634","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"T","example":null,"requestType":"","ref":null,"collection":0,"child":[]}]},{"methodId":"M75121a6b26965e2446e926d32060e8c","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]},{"methodId":"Mda22925097ce3fdf2f6c45d947a4ea83","list":[{"name":"String","description":"","required":false,"dataType":"java.lang.String","example":"","requestType":null,"ref":null,"collection":null,"child":null}]},{"methodId":"M4c86c55a202435d4c3cace1e7641b9ed","list":[{"name":"code","description":"0成功,其他失败","required":false,"dataType":"int","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"msg","description":"成功失败消息","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"data","description":"返回的数据","required":false,"dataType":"com.github.fashionbrot.entity.TestEntity","example":null,"requestType":"","ref":null,"collection":0,"child":[{"name":"test1","description":"测试参数1","required":false,"dataType":"java.lang.String","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test2","description":"测试参数2","required":false,"dataType":"java.lang.Integer","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test3","description":"测试参数3","required":false,"dataType":"java.lang.Short","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test4","description":"测试参数4","required":false,"dataType":"java.lang.Long","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test5","description":"测试参数5","required":false,"dataType":"java.lang.Double","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test6","description":"测试参数6","required":false,"dataType":"java.math.BigDecimal","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test7","description":"测试参数7","required":false,"dataType":"java.lang.Float","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test8","description":"测试参数8","required":false,"dataType":"java.lang.Boolean","example":null,"requestType":"","ref":null,"collection":null,"child":null},{"name":"test9","description":"测试参数9","required":false,"dataType":"java.lang.Byte","example":null,"requestType":"","ref":null,"collection":null,"child":null}]}]}]}
 
-        // $.getJSON("./mars/api",{},function (data){
-        //     if (data){
-        //         initJSON(data);
-        //     }
-        // });
-        initJSON(json);
+        $.getJSON("./mars/api",{},function (data){
+            if (data){
+                initJSON(data);
+            }
+        });
+        // initJSON(json);
 
         function initJSON(json) {
             if (json) {
@@ -977,6 +1193,41 @@
                 return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
             }
             return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+        }
+
+        function getCharset(){
+            let charSet = "";
+            if (isIe()){
+                charSet = document.charset;
+            }else if (isFireFox()){
+                charSet = document.characterSet;
+            }else{
+                charSet = document.characterSet;
+            }
+            return charSet;
+
+            //判断是否IE
+            function isIe() {
+                let i = navigator.userAgent.toLowerCase().indexOf("msie");
+                return i >= 0;
+            }
+            //判断是否firefox
+            function isFireFox() {
+                let i = navigator.userAgent.toLowerCase().indexOf("firefox");
+                return i >= 0;
+            }
+        }
+
+        String.prototype.getByteLength = function() {
+            let len = 0;
+            for (let i=0; i<this.length; i++) {
+                if (this.charCodeAt(i)>127 || this.charCodeAt(i)==94) {
+                    len += 2;
+                } else {
+                    len ++;
+                }
+            }
+            return len;
         }
 
 
