@@ -56,4 +56,8 @@ public class DocConfigurationProperties {
     private String ignoreClass;
 
 
+    private String groupName;
+
+    private String baseUrl;
+
 }

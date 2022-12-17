@@ -27,4 +27,7 @@ public class DocVo implements Serializable {
 
     private List<LinkVo> responseList;
 
+    private String baseUrl;
+
+    private String groupName;
 }

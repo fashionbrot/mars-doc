@@ -20,10 +20,15 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,6 +46,40 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     private Environment environment;
 
     private DocConfigurationProperties docConfigurationProperties;
+
+    private static List<DocVo> docVoList = new ArrayList<>();
+
+
+    public static List<DocVo> getDocVoList() {
+        if (ObjectUtil.isNotEmpty(docVoList)){
+            DocVo docVo = docVoList.get(docVoList.size() - 1);
+            if (ObjectUtil.isEmpty(docVo.getBaseUrl())){
+                if (ObjectUtil.isEmpty(docVo.getBaseUrl())){
+                    try {
+                        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+                        if (request!=null) {
+                            String baseUrl = request.getScheme() + "://" +request.getServerName() + ":" + request.getServerPort() +request.getContextPath();
+                            docVo.setBaseUrl(baseUrl);
+                        }
+                    }catch (Exception e){
+
+                    }
+                }
+            }
+        }
+        return docVoList;
+    }
+
+    private void setDocVoList(DocVo docVo) {
+        long count = docVoList.stream().filter(m -> m.getGroupName().equals(docVo.getGroupName())).count();
+        if (count==0){
+            if (ObjectUtil.isEmpty(docVo.getGroupName())){
+                docVo.setGroupName("default");
+            }
+
+            docVoList.add(docVo);
+        }
+    }
 
     private Set<Class> loadClassSet = new HashSet<>();
 
@@ -83,6 +122,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
             return;
         }
 
+
         if (!checkSpringProfilesActive(docConfigurationProperties.getSpringProfilesActive(),environment)){
             return;
         }
@@ -98,6 +138,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
         DocVo docVo = DocVo.builder().build();
+        docVo.setBaseUrl(docConfigurationProperties.getContextPath());
 
         List<LinkVo> requestVoList = new ArrayList<>();
         List<LinkVo> responseVoList = new ArrayList<>();
@@ -225,9 +266,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         .description("")
                 .build());
 
-        MarsDocController.docVo = docVo;
-//        System.out.println(JSON.toJSONString(docVo));
-
+        setDocVoList(docVo);
     }
 
 
