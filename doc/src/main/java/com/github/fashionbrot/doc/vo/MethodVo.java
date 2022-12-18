@@ -31,7 +31,7 @@ public class MethodVo implements Serializable {
     /**
      * 请求类型
      */
-    private String contentType;
+    private String requestContentType;
 
     /**
      * 优先级

@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -19,21 +21,6 @@ public class RequestMappingUtil {
 
 
 
-
-    public static String[] getMappingValue(Annotation annotation,Method method){
-        Object invoke = null;
-        try {
-            invoke = method.invoke(annotation, null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        if (invoke instanceof String[]){
-            return (String[]) invoke;
-        }
-        return null;
-    }
     /**
      * 根据method 获取  requestMapping
      * @param method  method
@@ -42,6 +29,8 @@ public class RequestMappingUtil {
     public static List<MethodVo> getRequestMapping(Method method) {
 
         Class<?> declaringClass = method.getDeclaringClass();
+
+
 
 
         RequestMapping classRequestMapping = declaringClass.getDeclaredAnnotation(RequestMapping.class);
@@ -113,7 +102,7 @@ public class RequestMappingUtil {
                 }
                 methodVoList.add(MethodVo.builder()
                         .method(method)
-                        .path(path)
+                        .path(PathUtil.formatPath(null, path))
                         .build());
             }
         }

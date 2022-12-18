@@ -22,7 +22,7 @@ import java.util.List;
 public class TestController {
 
 
-    @ApiOperation("test1接口")
+    @ApiOperation(value = "test1接口",priority = 100)
     @GetMapping("test1")
     @ResponseBody
     private String test1(String test){
@@ -30,21 +30,21 @@ public class TestController {
     }
 
 
-    @ApiOperation("test2接口")
+    @ApiOperation(value = "test2接口",priority = 99)
     @GetMapping("test2")
     @ResponseBody
     private RespVo<TestEntity> test2(String test){
         return RespVo.success();
     }
 
-    @ApiOperation("test3接口")
+    @ApiOperation(value = "test3接口",priority = 98)
     @GetMapping("test3")
     @ResponseBody
     private RespVo<List<TestEntity>> test3(TestReq req){
         return RespVo.success();
     }
 
-    @ApiOperation("test4接口")
+    @ApiOperation(value = "test4接口",priority = 97)
     @RequestMapping("test4")
     @ResponseBody
     private RespVo<List<TestEntity>> test4(@RequestBody TestReq req){

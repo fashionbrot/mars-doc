@@ -11,10 +11,12 @@ public class PathUtil {
 
     public static String formatPath(String classPath, String methodPath){
         String path = "";
-        if (classPath.startsWith(MarsDocConst.REQUEST_SEPARATOR)){
-            path = classPath;
-        }else {
-            path = MarsDocConst.REQUEST_SEPARATOR+classPath;
+        if(ObjectUtil.isNotEmpty(classPath)){
+            if (classPath.startsWith(MarsDocConst.REQUEST_SEPARATOR)){
+                path = classPath;
+            }else {
+                path = MarsDocConst.REQUEST_SEPARATOR+classPath;
+            }
         }
         if (methodPath.startsWith(MarsDocConst.REQUEST_SEPARATOR)){
             path += methodPath;

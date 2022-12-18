@@ -20,6 +20,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -196,6 +198,16 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
                 List<MethodVo> methodList = RequestMappingUtil.getRequestMapping(method);
+
+                String requestContentType = "x-www-form-urlencoded";
+                Parameter[] parameters = method.getParameters();
+                if (ObjectUtil.isNotEmpty(parameters)){
+                    long requestBodyCount = Arrays.stream(parameters).filter(m -> m.getDeclaredAnnotation(RequestBody.class)!=null ).count();
+                    if (requestBodyCount>0){
+                        requestContentType = "raw";
+                    }
+                }
+
                 if (ObjectUtil.isNotEmpty(methodList)) {
 
                     String methodDescription = method.getName();
@@ -207,6 +219,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                     }
 
                     for (MethodVo vo : methodList) {
+                        vo.setRequestContentType(requestContentType);
                         vo.setMethodId(methodId);
                         vo.setDescription(methodDescription);
                         vo.setPriority(methodPriority);

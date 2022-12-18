@@ -310,9 +310,9 @@
 
         <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
 
-            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"   value="x-www-form-urlencoded" title="x-www-form-urlencoded">
+            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="x-www-form-urlencoded" title="x-www-form-urlencoded">
             <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="form-data" title="form-data" >
-            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}" value="raw" title="raw" >
+            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="raw" title="raw" >
 
 
             <select class="form-select form-select-sm " lay-ignore id="raw{{method.methodUId}}" style="display:none;" >
@@ -378,7 +378,7 @@
                     <span class="debug-span-label">响应码:</span>
                     <span class="debug-span-value"></span>
                     <span class="debug-span-label">耗时:</span>
-                    <span class="debug-span-value"></span>ms
+                    <span class="debug-span-value">ms</span>
                     <span class="debug-span-label">大小:</span>
                     <span class="debug-span-value"></span>
                 </div>
@@ -618,7 +618,8 @@
                 console.log("formData:"+JSON.stringify(formData),"bodyData:"+JSON.stringify(bodyData)+"headerData:"+JSON.stringify(headerData));
 
                 let startDate  = (new Date()).getTime();
-                sendRequest("./" + requestPath,
+                let requestUrl = storage.get("group-base-url")+requestPath;
+                sendRequest(requestUrl,
                     requestMethod,
                     Object.assign(formData, bodyData),
                     headerData,
@@ -722,7 +723,7 @@
             let endDate = (new Date()).getTime();
             let responseTime = endDate-startDate;
             let responseText = xhr.responseText;
-            let responseSpace = "0 b";
+            let responseSpace = "0B";
             if (responseText){
                 responseSpace = getTextSpace(responseText);
             }
@@ -843,6 +844,9 @@
                         layui.element.tabAdd('rightTab', {title: title, content: rightContentHtml, id: methodUId})
                         layui.element.tabChange('rightTab', methodUId);
 
+                        $("input:radio[name='"+methodUId+"contentType'][value="+ thisMethod.requestContentType +"]").attr("checked", "true");
+
+                        form.render();
                         table.init(methodUId + 'requestTable', { //转化静态表格
                             // height: 'full-500'
                             size: 'sm',
@@ -859,7 +863,7 @@
                         });
 
 
-                        form.render();
+
 
                         initResponseJson(thisResponse,methodUId);
 
@@ -1080,6 +1084,9 @@
         function initJSON(json) {
 
             if (json) {
+                if (json.baseUrl){
+                    storage.set("group-base-url",json.baseUrl);
+                }
                 // $("#groupName").val(json.groupName);
                 if (json.classList) {
                     storage.set("classList", json.classList);
