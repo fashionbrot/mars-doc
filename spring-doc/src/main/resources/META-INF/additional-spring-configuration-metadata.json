@@ -10,6 +10,11 @@
   "properties": [
     {
       "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.base-url",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
       "name": "mars.doc.context-path",
       "description": "项目名",
       "type": "java.lang.String"
@@ -18,6 +23,11 @@
       "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
       "name": "mars.doc.description",
       "description": "文档注释",
+      "type": "java.lang.String"
+    },
+    {
+      "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
+      "name": "mars.doc.group-name",
       "type": "java.lang.String"
     },
     {
@@ -41,8 +51,7 @@
       "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",
       "name": "mars.doc.spring-profiles-active",
       "description": "环境",
-      "type": "java.lang.String",
-      "defaultValue":"default"
+      "type": "java.lang.String"
     },
     {
       "sourceType": "com.github.fashionbrot.doc.DocConfigurationProperties",

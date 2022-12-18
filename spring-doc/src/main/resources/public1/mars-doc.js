@@ -105,8 +105,15 @@ let common = {
     },
     // 判断字符串是否为空
     isEmpty: function (value) {
-        if (value == null || this.trim(value) == "") {
+        if (typeof value =='object'){
+            for(let key in value){
+                return false;
+            }
             return true;
+        }else if (typeof value=='string'){
+            if (value == null || this.trim(value) == "") {
+                return true;
+            }
         }
         return false;
     },
@@ -152,6 +159,67 @@ let common = {
             return true;
         }
         return false;
+    }, guid: function()  {
+        function S4() {
+            return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+        }
+        return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+    }, getCharset : function() {
+        let charSet = "";
+        if (isIe()){
+            charSet = document.charset;
+        }else if (isFireFox()){
+            charSet = document.characterSet;
+        }else{
+            charSet = document.characterSet;
+        }
+        return charSet;
+
+        //判断是否IE
+        function isIe() {
+            let i = navigator.userAgent.toLowerCase().indexOf("msie");
+            return i >= 0;
+        }
+        //判断是否firefox
+        function isFireFox() {
+            let i = navigator.userAgent.toLowerCase().indexOf("firefox");
+            return i >= 0;
+        }
+    },getByteLength : function(text) {
+        let len = 0;
+        if (common.isNotEmpty(text)){
+            for (let i=0; i<text.length; i++) {
+                if (text.charCodeAt(i)>127 || text.charCodeAt(i)==94) {
+                    len += 2;
+                } else {
+                    len ++;
+                }
+            }
+        }
+        return len;
+    },getTextSpace: function (text){
+        if (common.isEmpty(text)){
+            text="";
+        }
+        let limit = unescape(encodeURIComponent(text)).length;
+
+        let size = "";
+        if(limit < 0.1 * 1024){                            //小于0.1KB，则转化成B
+            size = limit.toFixed(2) + "B"
+        }else if(limit < 0.1 * 1024 * 1024){            //小于0.1MB，则转化成KB
+            size = (limit/1024).toFixed(2) + "KB"
+        }else if(limit < 0.1 * 1024 * 1024 * 1024){        //小于0.1GB，则转化成MB
+            size = (limit/(1024 * 1024)).toFixed(2) + "MB"
+        }else{                                            //其他转化成GB
+            size = (limit/(1024 * 1024 * 1024)).toFixed(2) + "GB"
+        }
+        let sizeStr = size + "";                        //转成字符串
+        let index = sizeStr.indexOf(".");                    //获取小数点处的索引
+        let dou = sizeStr.substr(index + 1 ,2)            //获取小数点后两位的值
+        if(dou == "00"){                                //判断后两位是否为00，如果是则删除00
+            return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
+        }
+        return size;
     }
 }
 

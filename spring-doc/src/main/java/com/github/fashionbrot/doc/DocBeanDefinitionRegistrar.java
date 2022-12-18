@@ -37,7 +37,10 @@ public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 .username(environment.getProperty(DocConfigurationProperties.USERNAME))
                 .password(environment.getProperty(DocConfigurationProperties.PASSWORD))
                 .scanBasePackage(environment.getProperty(DocConfigurationProperties.SCAN_BASE_PACKAGE))
+                .groupName(environment.getProperty(DocConfigurationProperties.GROUP_NAME))
+                .baseUrl(environment.getProperty(DocConfigurationProperties.BASE_URL))
                 .build();
+
         BeanUtil.registerSingleton(registry, DocConfigurationProperties.BEAN_NAME, properties);
 
 

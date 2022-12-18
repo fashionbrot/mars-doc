@@ -61,7 +61,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
                         if (request!=null) {
                             String baseUrl = request.getScheme() + "://" +request.getServerName() + ":" + request.getServerPort() +request.getContextPath();
-                            docVo.setBaseUrl(baseUrl);
+                            docVo.setBaseUrl(PathUtil.formatUrl(baseUrl));
                         }
                     }catch (Exception e){
 
@@ -140,7 +140,8 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
 
         DocVo docVo = DocVo.builder().build();
-        docVo.setBaseUrl(docConfigurationProperties.getContextPath());
+        docVo.setBaseUrl(PathUtil.formatUrl(docConfigurationProperties.getBaseUrl()));
+        docVo.setGroupName(docConfigurationProperties.getGroupName());
 
         List<LinkVo> requestVoList = new ArrayList<>();
         List<LinkVo> responseVoList = new ArrayList<>();

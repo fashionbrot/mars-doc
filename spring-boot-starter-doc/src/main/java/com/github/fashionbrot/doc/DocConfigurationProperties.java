@@ -29,6 +29,8 @@ public class DocConfigurationProperties {
     public static final String USERNAME = BASE_PACKAGE + "username";
     public static final String PASSWORD = BASE_PACKAGE + "username";
     public static final String IGNORE_CLASS = BASE_PACKAGE+"ignore-class";
+    public static final String GROUP_NAME = BASE_PACKAGE +"group-name";
+    public static final String BASE_URL = BASE_PACKAGE +"base-url";
 
     /**
      * 环境
@@ -59,5 +61,8 @@ public class DocConfigurationProperties {
      */
     private String ignoreClass;
 
+    private String groupName;
+
+    private String baseUrl;
 
 }

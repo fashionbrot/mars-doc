@@ -14,6 +14,8 @@
     <script type="text/javascript" src="./ace/ace.js"></script>
     <script type="text/javascript" src="./ace/ext-language_tools.js"></script>
     <script type="text/javascript" src="./json5.js"></script>
+    <script type="text/javascript" src="./mars-doc.js"></script>
+
     <style>
 
         .layui-header-search {
@@ -292,7 +294,7 @@
     </div>
 
     <div class="request-table-div">
-        <div class="" id="{{ method.methodUId }}ace_editor" style="height: 100px;    overflow: visible!important;" >
+        <div class="" id="{{ method.methodUId }}ace_editor" style="height: 100px;overflow: visible!important;" >
         </div>
     </div>
     <hr>
@@ -389,9 +391,12 @@
                         </div>
                     </div>
                     <div class="layui-tab-item">
-                    <textarea class="layui-textarea" rows="10" id="debugResponseRawContent{{method.methodUId}}">
+                    <!--<textarea class="layui-textarea" rows="10" id="debugResponseRawContent{{method.methodUId}}">
 
-                    </textarea>
+                    </textarea>-->
+                        <pre id="debugResponseRawContent{{method.methodUId}}" class="layui-code" lay-height="300px" >
+
+                        </pre>
                     </div>
                     <div class="layui-tab-item">
                         <table class="layui-table debug-request-table"  >
@@ -495,53 +500,43 @@
         return "";
     }
 
-
-    // 本地缓存处理
-    let storage = {
-        set: function (key, value) {
-            window.localStorage.setItem(key, JSON.stringify(value));
-        },
-        get: function (key) {
-            let value = window.localStorage.getItem(key);
-            if (value) {
-                return strToJson(value);
+    function json5Parse(text){
+        if (common.isNotEmpty(text)){
+            try {
+                return JSON5.parse(text);
+            }catch (e){
+                log.error("json5Parse error",e)
             }
-            return null;
-        },
-        remove: function (key) {
-            window.localStorage.removeItem(key);
-        },
-        clear: function () {
-            window.localStorage.clear();
         }
-    };
-
-    function strToJson(str) {
-        var json = eval('' + str + '');
-        return json;
+        return "";
     }
 
-    String.prototype.equalsIgnoreCase = function(anotherString) {
-        if(this === anotherString){
-            return true;
+    function json5Stringify(obj, replacer, space){
+        if (obj!=null){
+            try {
+                return JSON5.stringify(obj,replacer,space);
+            }catch (e){
+                log.error("json5Stringify error",e)
+            }
         }
-        if(typeof(anotherString)==='string'){
-            return this.toLowerCase() == anotherString.toLowerCase(); //
-        }
-        return false;
-    };
+        return "";
+    }
 
 
-
-    layui.use(['element', 'jquery', 'layer', 'util', 'table','form','util'], function () {
-        var element = layui.element , layer = layui.layer, util = layui.util, table = layui.table, $ = layui.$,form = layui.form;
+    layui.use(['element', 'jquery', 'layer', 'util', 'table','form','util','code'], function () {
+        var element = layui.element ,
+            layer = layui.layer,
+            util = layui.util,
+            table = layui.table,
+            $ = layui.$,
+            form = layui.form,
+            code =  layer.code;
 
         let responseEditorMap =new Map();
 
         element.on('tab(rightTab)', function (data) {
             console.log("test1:" + this, data);
         });
-
 
         form.on('radio', function(data){
 
@@ -555,13 +550,14 @@
             }
         });
 
+
         util.event('lay-active',{
             sendRequest:function (){
 
                 let $this = $(this);
 
                 let methodUId = $(this).attr("method-uid");
-                console.log(methodUId);
+                log.log(methodUId);
 
                 let requestMethod = $(this).attr("request-method");
                 let requestPath = $(this).parent().find("[id='methodPath"+methodUId+"']").val()
@@ -570,11 +566,11 @@
 
                 let requestContentType = $('input[name="'+methodUId+'contentType"]:checked').val();
                 let isStream = false;
-                if ("raw".equalsIgnoreCase(requestContentType)){
+                if (common.equalsIgnoreCase("raw",requestContentType)){
                     isStream = true;
                     requestContentType =$(this).parent().parent().find("[id='raw"+methodUId+"']").val();
                 }
-                console.log("requestContentType:"+requestContentType)
+                log.log("requestContentType:"+requestContentType)
                 let headerData= {};
                 let bodyData = {};
                 let formData = {};
@@ -587,11 +583,11 @@
                         if (checkbox){
                             let tds = $(tr).children('td');
                             let requestType = $(tds[1]).text();
-                            if ("query".equalsIgnoreCase(requestType)){
+                            if (common.equalsIgnoreCase("query",requestType)){
                                 let queryName = $(tds[2]).find("input").val();
                                 let queryValue= $(tds[3]).find("input").val();
                                 formData[queryName]=queryValue;
-                            }else if ("body".equalsIgnoreCase(requestType)){
+                            }else if (common.equalsIgnoreCase("body",requestType)){
 
                                 let queryName = $(tds[2]).find("input").val();
                                 let queryValue= $(tds[3]).find("textarea").val();
@@ -604,7 +600,7 @@
                                 }
                                 bodyData = Object.assign(bodyData,JSON5.parse(queryValue));
 
-                            }else if ("header".equalsIgnoreCase(requestType)){
+                            }else if (common.equalsIgnoreCase("header",requestType)){
                                 let queryName = $(tds[2]).find("input").val();
                                 let queryValue= $(tds[3]).find("input").val();
                                 headerData[queryName]=queryValue;
@@ -615,7 +611,7 @@
                     }
                 }
 
-                console.log("formData:"+JSON.stringify(formData),"bodyData:"+JSON.stringify(bodyData)+"headerData:"+JSON.stringify(headerData));
+                log.log("formData:"+json5Stringify(formData)," bodyData:"+json5Stringify(bodyData)+" headerData:"+json5Stringify(headerData));
 
                 let startDate  = (new Date()).getTime();
                 let requestUrl = storage.get("group-base-url")+requestPath;
@@ -627,25 +623,14 @@
                     isStream,
                     function (response, status, xhr) {
 
-                        console.log("success")
-                        console.log(response);	//服务器返回的信息
-                        console.log(status);	//服务器返回的信息
-                        console.log(xhr)
-                        console.log(xhr.status);	//状态码,   要看其他的直接 输出 xhr 就行
-                        console.log(xhr.getAllResponseHeaders()); //响应头部
-                        console.log("response:" + response, "status:" + status, "xhr:" + xhr)
-
                         writerResponseContent($this,methodUId,xhr);
                         writeResponseHeader($this,methodUId,xhr);
                         writeResponseStatus($this,methodUId,xhr,startDate);
-
                     }
                     , function (xhr, status, error) {
-                        console.error("error")
-                        console.log(xhr,status,error);
+
                         writerResponseContent($this,methodUId,xhr);
                         writeResponseHeader($this,methodUId,xhr);
-
                         writeResponseStatus($this,methodUId,xhr,startDate)
                     })
 
@@ -657,7 +642,7 @@
             if (responseText){
                 var contentType=xhr.getResponseHeader("Content-Type");
                 var contentDisposition=xhr.getResponseHeader("Content-Disposition");
-                console.log("response contentType",contentType+" contentDisposition:"+contentDisposition);
+                log.log("response contentType",contentType+" contentDisposition:"+contentDisposition);
                 let mode = "json"
                 let jsonText =responseText;
                 if (jsonText){
@@ -665,12 +650,14 @@
                     try {
                         jsonText = JSON5.stringify(JSON5.parse(jsonText),null,"\t");
                     }catch (e){
-                        console.log(e);
-                        mode="text";
+                        log.error(e);
+                        if (common.startWith(jsonText,"<!doctype html>")){
+                            mode = "html";
+                        }else{
+                            mode="text";
+                        }
                     }
                     let jsonLine = jsonText.split('\n').length;
-
-
 
                     let responseEditor = responseEditorMap.get(methodUId);
                     responseEditor.setTheme("ace/theme/xcode");
@@ -683,6 +670,10 @@
                     responseEditor.resize();
 
                     $this.parent().parent().find("[id='debugResponseRawContent"+methodUId+"']").html(jsonText);
+                    layui.code({
+                        elem: '#debugResponseRawContent'+methodUId,
+                    });
+
                 }else{
                     let responseEditor = responseEditorMap.get(methodUId);
                     responseEditor.setValue('');
@@ -725,36 +716,13 @@
             let responseText = xhr.responseText;
             let responseSpace = "0B";
             if (responseText){
-                responseSpace = getTextSpace(responseText);
+                responseSpace = common.getTextSpace(responseText);
             }
             let html = template("responseStatusTemplate",{responseStatus:responseStatus,responseTime:responseTime,responseSpace:responseSpace})
             $this.parent().parent().find("[id='responseStatus"+methodUId+"']").html(html);
         }
 
-        function getTextSpace(text){
-            if (!text){
-                text="";
-            }
-            let limit = unescape(encodeURIComponent(text)).length;
 
-            let size = "";
-            if(limit < 0.1 * 1024){                            //小于0.1KB，则转化成B
-                size = limit.toFixed(2) + "B"
-            }else if(limit < 0.1 * 1024 * 1024){            //小于0.1MB，则转化成KB
-                size = (limit/1024).toFixed(2) + "KB"
-            }else if(limit < 0.1 * 1024 * 1024 * 1024){        //小于0.1GB，则转化成MB
-                size = (limit/(1024 * 1024)).toFixed(2) + "MB"
-            }else{                                            //其他转化成GB
-                size = (limit/(1024 * 1024 * 1024)).toFixed(2) + "GB"
-            }
-            let sizeStr = size + "";                        //转成字符串
-            let index = sizeStr.indexOf(".");                    //获取小数点处的索引
-            let dou = sizeStr.substr(index + 1 ,2)            //获取小数点后两位的值
-            if(dou == "00"){                                //判断后两位是否为00，如果是则删除00
-                return sizeStr.substring(0, index) + sizeStr.substr(index + 3, 2)
-            }
-            return size;
-        }
 
         function sendRequest(url,method,data,headers,dataType,isStream,successCallback,errorCallback){
             let loading = null;
@@ -798,13 +766,8 @@
            }
         });
 
-
-
-
-
-
         element.on("nav(navLeft)", function (data) {
-            console.log(this)
+
             let methodId = $(this).attr("method-id");
             let methodMethod = $(this).attr("method-method");
 
@@ -838,7 +801,7 @@
                             formatResponse:formatParam(thisResponse),
                             debugRequest:getDebugFormatParam(thisRequest)
                         }
-                        console.log("data:", data);
+                        log.log("data:", data);
                         let rightContentHtml = template("rightContentTemplate", data);
                         // console.log("rightContentHtml:", rightContentHtml);
                         layui.element.tabAdd('rightTab', {title: title, content: rightContentHtml, id: methodUId})
@@ -847,86 +810,83 @@
                         $("input:radio[name='"+methodUId+"contentType'][value="+ thisMethod.requestContentType +"]").attr("checked", "true");
 
                         form.render();
-                        table.init(methodUId + 'requestTable', { //转化静态表格
-                            // height: 'full-500'
-                            size: 'sm',
-                            text: {
-                                none: '暂无参数'
-                            },
-                        });
-                        table.init(methodUId + 'responseTable', { //转化静态表格
-                            // height: 'full-500'
-                            size: 'sm',
-                            text: {
-                                none: '暂无返回值'
-                            },
-                        });
 
-
-
-
+                        initTable(methodUId + 'requestTable','sm','无参数');
+                        initTable(methodUId + 'responseTable','sm','无返回值');
                         initResponseJson(thisResponse,methodUId);
-
                         initDebugResponseContent(thisResponse,methodUId,"debugResponseContent"+methodUId);
-
-                        $("#debugRequestCheckboxAll"+methodUId).on("click",function (){
-                            console.log($(this).attr("checked"));
-                        })
-
-                        $("#debugRequestCheckboxAllM75d6729a5b0a38616904da54fb92de4#GET").on("change",function(){
-                            console.log($(this).attr("checked"));
-                        });
 
                     }
                 }
             }
         });
 
+        function initTable(id,size,textNone){
+            table.init(id, { //转化静态表格
+                // height: 'full-500'
+                size: size,
+                text: {
+                    none: textNone
+                },
+            });
+        }
+
         function initResponseJson(thisResponse,methodUId){
             let responseJson = getResponseJson(thisResponse,methodUId);
-
-            var editor = ace.edit(methodUId+"ace_editor");
-            if (responseJson){
-                editor.setValue(responseJson.jsonText);
+            let jsonText = null;
+            let jsonLine = 5;
+            if (common.isNotEmpty(responseJson)){
+                jsonText = responseJson.jsonText;
+                jsonLine = responseJson.jsonLine;
+            }
+            let editor = ace.edit(methodUId+"ace_editor");
+            if (common.isNotEmpty(jsonText) && "{}"!=jsonText){
+                editor.setValue(jsonText);
             }else {
-                editor.setValue("{\n\t}");
+                editor.setValue("");
             }
             editor.setTheme("ace/theme/xcode");
             editor.session.setMode("ace/mode/json5");
             editor.setAutoScrollEditorIntoView(false);
             if (responseJson){
-                editor.setOption("maxLines", responseJson.jsonLine);
+                editor.setOption("maxLines", jsonLine);
             }else{
-                editor.setOption("maxLines", 3);
+                editor.setOption("maxLines", 5);
             }
             editor.setReadOnly(true);
             editor.clearSelection();
             editor.resize();
         }
-        var editor=null;
+
         function initDebugResponseContent(thisResponse,methodUId,debugResponseContentId){
             let responseJson = getResponseJson(thisResponse,methodUId);
+            let jsonText = null;
+            let jsonLine = 5;
+            if (common.isNotEmpty(responseJson)){
+                jsonText = responseJson.jsonText;
+                jsonLine = responseJson.jsonLine;
+            }
 
-            editor = ace.edit(debugResponseContentId);
-            if (responseJson){
-                editor.setValue(responseJson.jsonText);
+            let editor = ace.edit(debugResponseContentId);
+            if (common.isNotEmpty(jsonText)  && "{}"!=jsonText ){
+                editor.setValue(jsonText);
             }else {
-                editor.setValue("{\n\t}");
+                editor.setValue("");
             }
             editor.setTheme("ace/theme/xcode");
             editor.session.setMode("ace/mode/json5");
-            // editor.setAutoScrollEditorIntoView(false);
+            editor.setAutoScrollEditorIntoView(false);
             if (responseJson){
-                editor.setOption("maxLines", responseJson.jsonLine+10);
-                editor.setOption("minLines",responseJson.jsonLine)
+                editor.setOption("maxLines", jsonLine+10);
+                editor.setOption("minLines", jsonLine)
             }else{
                 editor.setOption("maxLines", 13);
                 editor.setOption("minLines",3)
             }
-            var length_editor = editor.session.getLength();
-            var rows_editor = length_editor * 16;
-            console.log(rows_editor);
-            $("#"+debugResponseContentId).css('height',rows_editor+"px");
+            // var length_editor = editor.session.getLength();
+            // var rows_editor = length_editor * 16;
+            //
+            // $("#"+debugResponseContentId).css('height',rows_editor+"px");
             editor.setReadOnly(true);
             editor.clearSelection();
             editor.resize();
@@ -943,7 +903,7 @@
                 }
             }
 
-            let jsonText = JSON.stringify(json, null, '\t');
+            let jsonText = json5Stringify(json, null, '\t');
             let len = jsonText.split('\n').length;
             json.jsonText= jsonText;
             json.jsonLine = len;
@@ -954,10 +914,9 @@
 
         function appendJson(request,json){
             if (request){
-                if (like(request.dataType,"String")){
-                    json[""+request.name+":"]="";
+                if (common.like(request.dataType,"String")){
+                    json[request.name]="";
                 }else{
-
                     let child = request.child;
                     let collection = request.collection;
 
@@ -968,23 +927,23 @@
                             appendJson(r,childJson);
                         });
                         array.push(childJson);
-                        json[""+request.name+":"]=array;
+                        json[request.name]=array;
                     }else if (collection==0 && child){
 
                         let childJson = {}
                         $.each(child,function (index,r){
                             appendJson(r,childJson);
                         });
-                        json[""+request.name+":"]=childJson;
+                        json[request.name]=childJson;
                     }else{
-                        json[""+request.name+":"]=0;
+                        json[request.name]=0;
                     }
                 }
             }
         }
 
         function getMethod(classUId, methodId,methodMethod) {
-            let classList = storage.get("classList");
+            let classList = json5Parse(storage.get("classList"));
             if (classList) {
                 let classInfo = {};
                 for (let i = 0; i < classList.length; i++) {
@@ -1013,7 +972,7 @@
         }
 
         function getRequest(methodId) {
-            let requestList = storage.get("requestList");
+            let requestList = json5Parse(storage.get("requestList"));
             let request = {};
             if (requestList) {
                 for (let i = 0; i < requestList.length; i++) {
@@ -1028,7 +987,7 @@
         }
 
         function getResponse(methodId) {
-            let responseList = storage.get("responseList");
+            let responseList = json5Parse(storage.get("responseList"));
             let response = {};
             if (responseList) {
                 for (let j = 0; j < responseList.length; j++) {
@@ -1087,15 +1046,15 @@
                 if (json.baseUrl){
                     storage.set("group-base-url",json.baseUrl);
                 }
-                // $("#groupName").val(json.groupName);
+
                 if (json.classList) {
-                    storage.set("classList", json.classList);
+                    storage.set("classList", json5Stringify(json.classList));
                 }
                 if (json.requestList) {
-                    storage.set("requestList", json.requestList);
+                    storage.set("requestList", json5Stringify(json.requestList) );
                 }
                 if (json.responseList) {
-                    storage.set("responseList", json.responseList);
+                    storage.set("responseList", json5Stringify(json.responseList));
                 }
                 initLeft(null);
             }
@@ -1109,18 +1068,9 @@
             }
         });
 
-        function like(str, keyWord) {
-            var reg = new RegExp(keyWord);
-            //如果字符串中不包含目标字符会返回-1
-            if (str.match(reg)) {
-                //匹配成功do something
-                return true;
-            }
-            return false;
-        }
 
         function initLeft(searchInput) {
-            let classList = storage.get("classList");
+            let classList = json5Parse(storage.get("classList"));
             if (searchInput && classList) {
                 let newClassList = new Array();
                 for (let i = 0; i < classList.length; i++) {
@@ -1130,7 +1080,7 @@
                         let methodList = classInfo.methodList;
                         for (let j = 0; j < methodList.length; j++) {
                             let methodInfo = methodList[j];
-                            if (like(methodInfo.description, searchInput)) {
+                            if (common.like(methodInfo.description, searchInput)) {
                                 newMethodList.push(methodInfo);
                             }
                         }
@@ -1190,7 +1140,7 @@
                     for (let i = 0; i < list.length; i++) {
                         let r = list[i];
                         r.level=level;
-                        if ( (r.requestType=='BODY' || r.requestType=='body') && r.child!=null && r.child.length>0){
+                        if (common.equalsIgnoreCase(r.requestType,"body")  && r.child!=null && r.child.length>0){
                             let childJson = getDebugRequestJson(r);
                             if (childJson){
                                 r.jsonText = childJson.jsonText;
@@ -1213,54 +1163,14 @@
                 }
             }
 
-            let jsonText = JSON.stringify(json, null, '\t');
+            let jsonText = json5Stringify(json, null, '\t');
             let len = jsonText.split('\n').length;
             json.jsonText= jsonText;
             json.jsonLine = len;
             return json;
         }
 
-        function guid() {
-            function S4() {
-                return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-            }
-            return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
-        }
 
-        function getCharset(){
-            let charSet = "";
-            if (isIe()){
-                charSet = document.charset;
-            }else if (isFireFox()){
-                charSet = document.characterSet;
-            }else{
-                charSet = document.characterSet;
-            }
-            return charSet;
-
-            //判断是否IE
-            function isIe() {
-                let i = navigator.userAgent.toLowerCase().indexOf("msie");
-                return i >= 0;
-            }
-            //判断是否firefox
-            function isFireFox() {
-                let i = navigator.userAgent.toLowerCase().indexOf("firefox");
-                return i >= 0;
-            }
-        }
-
-        String.prototype.getByteLength = function() {
-            let len = 0;
-            for (let i=0; i<this.length; i++) {
-                if (this.charCodeAt(i)>127 || this.charCodeAt(i)==94) {
-                    len += 2;
-                } else {
-                    len ++;
-                }
-            }
-            return len;
-        }
 
 
     });

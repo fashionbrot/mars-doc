@@ -26,4 +26,19 @@ public class PathUtil {
         return path;
     }
 
+    public static String formatUrl (String url){
+        if (ObjectUtil.isNotEmpty(url)){
+            for (;;){
+                if (url.endsWith(MarsDocConst.REQUEST_SEPARATOR)){
+                    url = url.substring(0,url.length()-1);
+                }else{
+                    break;
+                }
+            }
+            return url;
+        }
+        return "";
+    }
+
+
 }
