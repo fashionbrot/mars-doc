@@ -6,6 +6,7 @@ import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.req.RequestReq1;
 import com.github.fashionbrot.req.RequestReq2;
+import com.github.fashionbrot.vo.RespVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,8 +49,9 @@ public class RequestController {
     @ApiOperation(value = "request5测试接口",priority = 50)
     @ResponseBody
     @PostMapping("request5")
-    public void request5(@RequestBody RequestReq2 requestReq1){
+    public RespVo<Integer> request5(@RequestBody RequestReq2 requestReq1){
 
+        return RespVo.success(1);
     }
 
 

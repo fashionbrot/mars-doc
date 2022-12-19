@@ -9,112 +9,15 @@
 
     <link href="./css/layui.css" rel="stylesheet"/>
     <link href="./css/iconfont.css" rel="stylesheet"/>
+    <link href="./css/mars-doc.css" rel="stylesheet"/>
 
     <script type="text/javascript" src="./jquery.min.js"></script>
     <script type="text/javascript" src="./ace/ace.js"></script>
     <script type="text/javascript" src="./ace/ext-language_tools.js"></script>
     <script type="text/javascript" src="./json5.js"></script>
     <script type="text/javascript" src="./mars-doc.js"></script>
+、
 
-    <style>
-
-        .layui-header-search {
-            width: 300px;
-            line-height: 60px;
-            text-align: center;
-            font-size: 16px;
-            top: 11px;
-            padding-right: 10px;
-        }
-
-        .nav-right-top>.layui-tab-title>.layui-this {
-            background-color: #009688 !important;
-            color: #fff !important;
-        }
-
-        .layui-tab-div {
-            margin: 0px auto !important;
-        }
-
-        .layui-form-static {
-            min-height: 36px;
-            margin-left: 110px;
-            line-height: 36px;
-        }
-
-        .layui-nav-tree a {
-            font-size: 10px;
-        }
-
-        .layui-nav-tree span {
-            font-size: 10px;
-        }
-
-        .left-method {
-            width: 32px;
-            text-align: center;
-            line-height: 40px;
-        }
-        .padding-left-20{
-            padding-left: 20px;
-        }
-        .padding-right-15{
-            padding-right: 15px;
-        }
-
-        .padding-left-level-2{
-            padding-left: 30px;
-        }
-        .padding-left-level-3{
-            padding-left: 60px;
-        }
-        .padding-left-level-4{
-            padding-left: 90px;
-        }
-        .padding-left-level-5{
-            padding-left: 120px;
-        }
-        .padding-left-level-6{
-            padding-left: 150px;
-        }
-        .padding-left-level-7{
-            padding-left: 180px;
-        }
-        .padding-left-level-8{
-            padding-left: 210px;
-        }
-        .request-table-div{
-            margin: 0 auto;
-            /*padding-left: 36px;*/
-        }
-        .layui-form-label {
-            position: relative;
-            float: left;
-            display: block;
-            padding: 9px 0px;
-            font-weight: 400;
-            line-height: 20px;
-            text-align: left;
-        }
-        .layui-table-cell {
-            height:auto !important;
-        }
-
-        .debug-span-value {
-            color: #4dc095;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .debug-span-value-error {
-            color: red;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .debug-request-table input[type=checkbox]{
-            width: 15px;height: 15px;
-        }
-    </style>
 </head>
 <body>
 
@@ -124,7 +27,7 @@
     <!-- header start -->
     <div class="layui-header layui-bg-green">
         <div class="layui-logo layui-hide-xs layui-bg-black">
-            <select class="layui-select" id="groupName" style="width: 85%;height: 25px;">
+            <select class="layui-select group-name" id="groupName" >
                 <option value="default">default</option>
             </select>
         </div>
@@ -152,7 +55,7 @@
             <ul class="layui-tab-title">
 
             </ul>
-            <div class="layui-tab-content" style="padding: 15px 40px 15px 40px;">
+            <div class="layui-tab-content right-content-div" >
 
             </div>
         </div>
@@ -194,241 +97,250 @@
 
 <script type="text/html" id="rightContentTemplate">
 
-    <div>
-        <label class="layui-form-label">接口描述:</label>
-        <div class="layui-form-static">
-            {{method.description}}
-        </div>
-    </div>
-    <hr>
-    <div>
-        <label class="layui-form-label">接口地址:</label>
-        <div class="layui-form-static">
-            {{method.path}}
-        </div>
-    </div>
-    <hr>
-    <div>
-        <label class="layui-form-label">请求方式:</label>
-        <div class="layui-form-static">
-            {{method.method}}
-        </div>
-    </div>
-    <hr>
-    <div>
-        <label class="layui-form-label">请求参数:</label>
-        <div class="layui-form-static"></div>
-    </div>
-    <div class="request-table-div">
-        <table lay-filter="{{method.methodUId}}requestTable" class="layui-table">
-            <thead>
-            <tr>
-                <th lay-data="{field:'name', width:'26%',templet:'#nameTemplet'}">参数名称</th>
-                <th lay-data="{field:'description',  width:'26%'}">参数说明</th>
-                <th lay-data="{field:'requestType', width:'8%'}">请求类型</th>
-                <th lay-data="{field:'required', width:'8%'}">是否必须</th>
-                <th lay-data="{field:'dataType', width:'22%'}">数据类型</th>
-                <th lay-data="{field:'example', width:'10%'}">示例值</th>
-                <th lay-data="{field:'child',hide:'true'}"></th>
-                <th lay-data="{field:'collection',hide:'true'}"></th>
-                <th lay-data="{field:'level',hide:'true'}"></th>
-            </tr>
-            </thead>
-            <tbody>
-            {{if formatRequest!=null && formatRequest.length>0}}
-                {{each formatRequest rl requestListIndex}}
-                    <tr>
-                        <td>{{rl.name}}</td>
-                        <td>{{rl.description}}</td>
-                        <td>{{rl.requestType|toLowerCase}}</td>
-                        <td>{{rl.required}}</td>
-                        <td>{{rl.dataType}}</td>
-                        <td>{{rl.example!=null?rl.example:''}}</td>
-                        <td>{{rl.child}}</td>
-                        <td>{{rl.collection}}</td>
-                        <td>{{rl.level}}</td>
-                    </tr>
-                {{/each}}
-            {{/if}}
-            </tbody>
-        </table>
-    </div>
-    <hr>
+    <div class="layui-tab layui-tab-card right-content-nav " style="margin-top: 30px;">
+        <ul class="layui-tab-title right-left-nav"  style="">
+            <li class="layui-this" style="border: 1px solid #eee;">文档</li>
+            <li >调试</li>
+        </ul>
+        <div class="layui-tab-content right-left-content" style="" >
+            <div class="layui-tab-item layui-show">
 
-    <div>
-        <label class="layui-form-label">响应参数:</label>
-        <div class="layui-form-static"></div>
-    </div>
-    <div class="request-table-div">
-        <table lay-filter="{{method.methodUId}}responseTable" class="layui-table">
-            <thead>
-            <tr>
-                <th lay-data="{field:'name', width:'33%',templet:'#nameTemplet'}">参数名称</th>
-                <th lay-data="{field:'description',  width:'34%'}">参数说明</th>
-                <th lay-data="{field:'dataType', width:'33%'}">数据类型</th>
-                <th lay-data="{field:'child',hide:'true'}"></th>
-                <th lay-data="{field:'collection',hide:'true'}"></th>
-                <th lay-data="{field:'level',hide:'true'}"></th>
-            </tr>
-            </thead>
-            <tbody>
-                {{if formatResponse!=null && formatResponse.length>0}}
-                {{each formatResponse rl requestListIndex}}
-                <tr>
-                    <td>{{rl.name}}</td>
-                    <td>{{rl.description}}</td>
-                    <td>{{rl.dataType}}</td>
-                    <td>{{rl.child}}</td>
-                    <td>{{rl.collection}}</td>
-                    <td>{{rl.level}}</td>
-                </tr>
-                {{/each}}
-                {{/if}}
-            </tbody>
-        </table>
-    </div>
-    <hr>
-    <div>
-        <label class="layui-form-label">响应示例:</label>
-        <div class="layui-form-static"></div>
-    </div>
-
-    <div class="request-table-div">
-        <div class="" id="{{ method.methodUId }}ace_editor" style="height: 100px;overflow: visible!important;" >
-        </div>
-    </div>
-    <hr>
-
-
-
-    <form class="layui-form" action="">
-
-        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-            <button class="layui-btn"   >{{method.method}}</button>
-            <input type="text" name="title"  autocomplete="off" id="methodPath{{method.methodUId}}" class="layui-input" value="{{method.path}}" />
-            <button class="layui-btn" lay-active="sendRequest" method-uid="{{method.methodUId}}" request-method="{{method.method}}"  type="button"> 发 送 </button>
-        </div>
-
-
-        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-
-            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="x-www-form-urlencoded" title="x-www-form-urlencoded">
-            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="form-data" title="form-data" >
-            <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="raw" title="raw" >
-
-
-            <select class="form-select form-select-sm " lay-ignore id="raw{{method.methodUId}}" style="display:none;" >
-                <option value="application/json" selected>JSON(application/json)</option>
-                <option value="text">Text</option>
-                <option value="text/plain">Text(text/plain)</option>
-                <option value="application/xml">XML(application/xml)</option>
-                <option value="text/xml">XML(text/xml)</option>
-                <option value="text/html">HTML(text/html)</option>
-                <option value="application/javascript">Javascript(application/javascript)</option>
-            </select>
-        </div>
-
-
-
-        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-            <table  class="layui-table debug-request-table" lay-size="lg">
-                <thead>
-                    <tr>
-                        <th style="width: 4%;" ><input type="checkbox" request-checkbox-all="change" checked="checked" lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></th>
-                        <th style="width: 10%;" >参数类型</th>
-                        <th style="width: 17%;" >参数名</th>
-                        <th style="width: 66%;" >参数值</th>
-                    </tr>
-                </thead>
-                <tbody id="debugRequestTableId{{method.methodUId}}" >
-                {{if debugRequest!=null && debugRequest.length>0}}
-                {{each debugRequest rl requestListIndex}}
-
-                    <tr>
-                        <td><input type="checkbox"  checked="checked"  lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></td>
-                        <td  >{{rl.requestType|toLowerCase}}</td>
-                        <td><input type="text" class="layui-input" value="{{rl.name}}" /></td>
-                        {{if rl.requestType=='BODY'}}
-                            <td><textarea class="layui-textarea" rows="{{rl.jsonLine}}" placeholder="{{rl.description}}" >{{rl.jsonText}}</textarea></td>
-                        {{else}}
-                            <td><input type="text" class="layui-input" value="" placeholder="{{rl.description}}" /></td>
-                        {{/if}}
-                    </tr>
-
-                {{/each}}
-                {{/if}}
-                </tbody>
-            </table>
-
-        </div>
-
-
-        <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-            <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="width: 100%;margin-bottom: 100px;">
-                <ul class="layui-tab-title">
-                    <li class="layui-this">响应内容</li>
-                    <li>Raw</li>
-                    <li>Header</li>
-                    <li>Curl</li>
-                </ul>
-                <div style="right: 40px;position: absolute;margin-top: -31px;z-index: 9999;" id="responseStatus{{method.methodUId}}">
-                    <!--<span class="debug-span-label" style="margin-right:30px;font-weight: bold;">
-                        <div class="checkbox" style="display: inline;">
-                            <label><input id="checkboxShowDescriptionb144f10b3b5a388b4180dfbf33aa7f80" type="checkbox" checked="checked">显示说明</label>
-                        </div>
-                    </span>-->
-                    <span class="debug-span-label">响应码:</span>
-                    <span class="debug-span-value"></span>
-                    <span class="debug-span-label">耗时:</span>
-                    <span class="debug-span-value">ms</span>
-                    <span class="debug-span-label">大小:</span>
-                    <span class="debug-span-value"></span>
+                <div>
+                    <label class="layui-form-label">接口描述:</label>
+                    <div class="layui-form-static">
+                        {{method.description}}
+                    </div>
                 </div>
-                <div class="layui-tab-content" style="width: 100%;">
-                    <div class="layui-tab-item layui-show">
-                        <div id="debugResponseContent{{method.methodUId}}">
-
-                        </div>
+                <hr>
+                <div>
+                    <label class="layui-form-label">接口地址:</label>
+                    <div class="layui-form-static">
+                        {{method.path}}
                     </div>
-                    <div class="layui-tab-item">
-                    <!--<textarea class="layui-textarea" rows="10" id="debugResponseRawContent{{method.methodUId}}">
-
-                    </textarea>-->
-                        <pre id="debugResponseRawContent{{method.methodUId}}" class="layui-code" lay-height="300px" >
-
-                        </pre>
+                </div>
+                <hr>
+                <div>
+                    <label class="layui-form-label">请求方式:</label>
+                    <div class="layui-form-static">
+                        {{method.method}}
                     </div>
-                    <div class="layui-tab-item">
-                        <table class="layui-table debug-request-table"  >
+                </div>
+                <hr>
+                <div>
+                    <label class="layui-form-label">请求参数:</label>
+                    <div class="layui-form-static"></div>
+                </div>
+                <div class="request-table-div">
+                    <table lay-filter="{{method.methodUId}}requestTable" class="layui-table">
+                        <thead>
+                        <tr>
+                            <th lay-data="{field:'name', width:'26%',templet:'#nameTemplet'}">参数名称</th>
+                            <th lay-data="{field:'description',  width:'26%'}">参数说明</th>
+                            <th lay-data="{field:'requestType', width:'8%'}">请求类型</th>
+                            <th lay-data="{field:'required', width:'8%'}">是否必须</th>
+                            <th lay-data="{field:'dataType', width:'22%'}">数据类型</th>
+                            <th lay-data="{field:'example', width:'10%'}">示例值</th>
+                            <th lay-data="{field:'child',hide:'true'}"></th>
+                            <th lay-data="{field:'collection',hide:'true'}"></th>
+                            <th lay-data="{field:'level',hide:'true'}"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{if formatRequest!=null && formatRequest.length>0}}
+                        {{each formatRequest rl requestListIndex}}
+                        <tr>
+                            <td>{{rl.name}}</td>
+                            <td>{{rl.description}}</td>
+                            <td>{{rl.requestType|toLowerCase}}</td>
+                            <td>{{rl.required}}</td>
+                            <td>{{rl.dataType}}</td>
+                            <td>{{rl.example!=null?rl.example:''}}</td>
+                            <td>{{rl.child}}</td>
+                            <td>{{rl.collection}}</td>
+                            <td>{{rl.level}}</td>
+                        </tr>
+                        {{/each}}
+                        {{/if}}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+
+                <div>
+                    <label class="layui-form-label">响应参数:</label>
+                    <div class="layui-form-static"></div>
+                </div>
+                <div class="request-table-div">
+                    <table lay-filter="{{method.methodUId}}responseTable" class="layui-table">
+                        <thead>
+                        <tr>
+                            <th lay-data="{field:'name', width:'33%',templet:'#nameTemplet'}">参数名称</th>
+                            <th lay-data="{field:'description',  width:'34%'}">参数说明</th>
+                            <th lay-data="{field:'dataType', width:'33%'}">数据类型</th>
+                            <th lay-data="{field:'child',hide:'true'}"></th>
+                            <th lay-data="{field:'collection',hide:'true'}"></th>
+                            <th lay-data="{field:'level',hide:'true'}"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{if formatResponse!=null && formatResponse.length>0}}
+                        {{each formatResponse rl requestListIndex}}
+                        <tr>
+                            <td>{{rl.name}}</td>
+                            <td>{{rl.description}}</td>
+                            <td>{{rl.dataType}}</td>
+                            <td>{{rl.child}}</td>
+                            <td>{{rl.collection}}</td>
+                            <td>{{rl.level}}</td>
+                        </tr>
+                        {{/each}}
+                        {{/if}}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <div>
+                    <label class="layui-form-label">响应示例:</label>
+                    <div class="layui-form-static"></div>
+                </div>
+
+                <div class="request-table-div">
+                    <div class="" id="{{ method.methodUId }}ace_editor" style="height: 100px;overflow: visible!important;" >
+                    </div>
+                </div>
+                <hr>
+
+            </div>
+            <div class="layui-tab-item">
+
+                <form class="layui-form" action="">
+
+                    <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
+                        <button class="layui-btn"   >{{method.method}}</button>
+                        <input type="text" name="title"  autocomplete="off" id="methodPath{{method.methodUId}}" class="layui-input" value="{{method.path}}" />
+                        <button class="layui-btn" lay-active="sendRequest" method-uid="{{method.methodUId}}" request-method="{{method.method}}"  type="button"> 发 送 </button>
+                    </div>
+
+
+                    <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
+
+                        <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="x-www-form-urlencoded" title="x-www-form-urlencoded">
+                        <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="form-data" title="form-data" >
+                        <input type="radio" name="{{method.methodUId}}contentType" method-uid="{{method.methodUId}}"  value="raw" title="raw" >
+
+
+                        <select class="form-select form-select-sm " lay-ignore id="raw{{method.methodUId}}" style="display:none;" >
+                            <option value="application/json" selected>JSON(application/json)</option>
+                            <option value="text">Text</option>
+                            <option value="text/plain">Text(text/plain)</option>
+                            <option value="application/xml">XML(application/xml)</option>
+                            <option value="text/xml">XML(text/xml)</option>
+                            <option value="text/html">HTML(text/html)</option>
+                            <option value="application/javascript">Javascript(application/javascript)</option>
+                        </select>
+                    </div>
+
+
+
+                    <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
+                        <table  class="layui-table debug-request-table" lay-size="lg">
                             <thead>
                             <tr>
-                                <th>请求头</th>
-                                <th>value</th>
+                                <th style="width: 3%;" ><input type="checkbox" request-checkbox-all="change" checked="checked" lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></th>
+                                <th style="width: 11%;" >参数类型</th>
+                                <th style="width: 17%;" >参数名</th>
+                                <th style="width: 66%;" >参数值</th>
                             </tr>
                             </thead>
-                            <tbody id="responseHeader{{method.methodUId}}">
+                            <tbody id="debugRequestTableId{{method.methodUId}}" >
+                            {{if debugRequest!=null && debugRequest.length>0}}
+                            {{each debugRequest rl requestListIndex}}
+
                             <tr>
-                                <th class="active">connection</th>
-                                <td> keep-alive</td>
+                                <td><input type="checkbox"  checked="checked"  lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></td>
+                                <td  >{{rl.requestType|toLowerCase}}</td>
+                                <td><input type="text" class="layui-input" value="{{rl.name}}" /></td>
+                                {{if rl.requestType=='BODY'}}
+                                <td><textarea class="layui-textarea" rows="{{rl.jsonLine}}" placeholder="{{rl.description}}" >{{rl.jsonText}}</textarea></td>
+                                {{else}}
+                                <td><input type="text" class="layui-input" value="" placeholder="{{rl.description}}" /></td>
+                                {{/if}}
                             </tr>
+
+                            {{/each}}
+                            {{/if}}
                             </tbody>
                         </table>
-                    </div>
-                    <div class="layui-tab-item">
-                        <code>
 
-                        </code>
                     </div>
-                </div>
+
+
+                    <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
+                        <div class="layui-tab layui-tab-brief"  lay-filter="docDemoTabBrief" style="width: 100%;margin-bottom: 100px;position: relative!important;">
+                            <ul class="layui-tab-title">
+                                <li class="layui-this">响应内容</li>
+                                <li>Raw</li>
+                                <li>Header</li>
+                                <li>Curl</li>
+                            </ul>
+                            <div class="debug-response-info"  id="responseStatus{{method.methodUId}}">
+                                <!--<span class="debug-span-label" style="margin-right:30px;font-weight: bold;">
+                                    <div class="checkbox" style="display: inline;">
+                                        <label><input id="checkboxShowDescriptionb144f10b3b5a388b4180dfbf33aa7f80" type="checkbox" checked="checked">显示说明</label>
+                                    </div>
+                                </span>-->
+                                <span class="debug-span-label">响应码:</span>
+                                <span class="debug-span-value"></span>
+                                <span class="debug-span-label">耗时:</span>
+                                <span class="debug-span-value">ms</span>
+                                <span class="debug-span-label">大小:</span>
+                                <span class="debug-span-value"></span>
+                            </div>
+                            <div class="layui-tab-content" style="width: 100%;">
+                                <div class="layui-tab-item layui-show">
+                                    <div id="debugResponseContent{{method.methodUId}}">
+
+                                    </div>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <!--<textarea class="layui-textarea" rows="10" id="debugResponseRawContent{{method.methodUId}}">
+
+                                    </textarea>-->
+                                    <pre id="debugResponseRawContent{{method.methodUId}}" class="layui-code" lay-height="300px" >
+
+                        </pre>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <table class="layui-table debug-request-table"  >
+                                        <thead>
+                                        <tr>
+                                            <th>请求头</th>
+                                            <th>value</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="responseHeader{{method.methodUId}}">
+                                        <tr>
+                                            <th class="active">connection</th>
+                                            <td> keep-alive</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="layui-tab-item">
+                                    <code>
+
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </form>
+
             </div>
         </div>
-
-
-    </form>
-
-
-
-
+    </div>
 
 </script>
 
@@ -449,16 +361,6 @@
         {{d.name}}
     {{#  } }}
 </script>
-<script type="text/html" id="debugRequestName">
-    <input type="text" class="layui-input" value="{{d.name}}" />
-</script>
-<script type="text/html" id="debugRequestValue">
-    {{# if( d.requestType=='BODY' || d.requestType=='body' ){ }}
-        <textarea class="layui-textarea" rows="{{d.jsonLine}}" >{{d.jsonText}}</textarea>
-    {{#  } else { }}
-        <input type="text" class="layui-input" value="" placeholder="{{d.description}}" />
-    {{#  } }}
-</script>
 
 <script type="text/html" id="responseHeaderTemplate">
     {{each list h index}}
@@ -468,6 +370,7 @@
         </tr>
     {{/each}}
 </script>
+
 <script type="text/html" id="responseStatusTemplate">
     {{if responseStatus==200}}
         <span class="debug-span-label">响应码:</span>
@@ -484,13 +387,13 @@
         <span class="debug-span-label">大小:</span>
         <span class="debug-span-value-error">{{responseSpace}}</span>
     {{/if}}
-
 </script>
 
 
 <script type="text/javascript" src="./layui.js"></script>
 <!--    <script type="text/javascript" src="./mars-doc.js"></script>-->
 <script type="text/javascript" src="./template-web.js"></script>
+
 <script type="text/javascript">
 
     template.defaults.imports.toLowerCase=function (s){
