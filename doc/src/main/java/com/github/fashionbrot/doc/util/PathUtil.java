@@ -3,6 +3,10 @@ package com.github.fashionbrot.doc.util;
 
 import com.github.fashionbrot.doc.consts.MarsDocConst;
 
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+
 /**
  * @author fashi
  */
@@ -40,5 +44,32 @@ public class PathUtil {
         return "";
     }
 
+
+    public static PathMatcher getPathMatcher(String syntaxAndPattern){
+        if (ObjectUtil.isEmpty(syntaxAndPattern)){
+            syntaxAndPattern = "glob:{**}";
+        }else{
+            if (!"glob".startsWith(syntaxAndPattern) && !"regex".startsWith(syntaxAndPattern)){
+                syntaxAndPattern = "glob:{"+syntaxAndPattern+"}";
+            }
+        }
+        return FileSystems.getDefault().getPathMatcher( syntaxAndPattern);
+    }
+
+    public static boolean matches(PathMatcher matcher,String path){
+        return matcher.matches(Paths.get(path));
+    }
+
+    public static void main(String[] args) {
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher( "glob:{com.**.fashionbrot,test.abc.fashionbrot}");
+        boolean matches = matcher.matches(Paths.get("com.test.fashionbrot"));
+        System.out.println(matches);
+        boolean matches2 = matcher.matches(Paths.get("test.abc.afashionbrot"));
+        System.out.println(matches2);
+
+        PathMatcher pathMatcher = getPathMatcher("");
+        System.out.println(matches(pathMatcher,"com.sdfds.aaa"));
+        System.out.println(matches(pathMatcher,"com.sdfds.ccc"));
+    }
 
 }

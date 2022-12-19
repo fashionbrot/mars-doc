@@ -32,6 +32,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.nio.file.PathMatcher;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -128,7 +129,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         if (!checkSpringProfilesActive(docConfigurationProperties.getSpringProfilesActive(),environment)){
             return;
         }
-
+        PathMatcher pathMatcher = PathUtil.getPathMatcher(docConfigurationProperties.getScanBasePackage());
         List<String> ignoreClassList = null;
         String ignoreClass = docConfigurationProperties.getIgnoreClass();
         if (ObjectUtil.isNotEmpty(ignoreClass)){
@@ -157,10 +158,14 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 HandlerMethod value = map.getValue();
                 Method method = value.getMethod();
 
-
-
                 //接口类名
                 Class<?> declaringClass = method.getDeclaringClass();
+
+
+                if (!PathUtil.matches(pathMatcher,declaringClass.getName())){
+                    continue;
+                }
+
 
                 ApiIgnore classIgnore = declaringClass.getDeclaredAnnotation(ApiIgnore.class);
                 if (classIgnore!=null){
@@ -177,9 +182,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                     continue;
                 }
 
-//                if ("org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController".equals(method.getDeclaringClass().getName())) {
-//                    continue;
-//                }
+
 
 
                 String classId = declaringClass.getName();

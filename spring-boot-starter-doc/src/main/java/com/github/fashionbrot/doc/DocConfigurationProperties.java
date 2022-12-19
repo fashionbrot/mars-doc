@@ -49,20 +49,29 @@ public class DocConfigurationProperties {
 
     /**
      * 扫描包
+     * 优先级最高
      */
     private String scanBasePackage;
+    /**
+     * 按照class Annotation
+     * 优先级排名第二
+     */
+    private String withClassAnnotation;
+    /**
+     * 按照Method Annotation
+     * 优先级排名第三
+     */
+    private String withMethodAnnotation;
+
 
     private String username;
 
     private String password;
 
-    /**
-     * 要忽略的Class
-     */
-    private String ignoreClass;
-
     private String groupName;
 
     private String baseUrl;
+
+
 
 }
