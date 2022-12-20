@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.nio.file.PathMatcher;
@@ -130,14 +131,10 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
             return;
         }
         PathMatcher pathMatcher = PathUtil.getPathMatcher(docConfigurationProperties.getScanBasePackage());
-        List<String> ignoreClassList = null;
-        String ignoreClass = docConfigurationProperties.getIgnoreClass();
-        if (ObjectUtil.isNotEmpty(ignoreClass)){
-            ignoreClassList = Arrays.stream(ignoreClass.split(",")).collect(Collectors.toList());
-        }else{
-            ignoreClassList = new ArrayList<>(5);
-            ignoreClassList.add(MarsDocController.class.getTypeName());
-        }
+
+
+        List<Class> classAnnotationList = getAnnotationList(docConfigurationProperties.getWithClassAnnotation());
+        List<Class> methodAnnotationList = getAnnotationList(docConfigurationProperties.getWithMethodAnnotation());
 
 
         DocVo docVo = DocVo.builder().build();
@@ -151,6 +148,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         RequestMappingHandlerMapping requestMapping = applicationContext.getBean(REQUEST_BEAN_NAME, RequestMappingHandlerMapping.class);
         Map<RequestMappingInfo, HandlerMethod> infoMap = requestMapping.getHandlerMethods();
 
+
         if (infoMap != null) {
             for (Map.Entry<RequestMappingInfo, HandlerMethod> map : infoMap.entrySet()) {
 
@@ -161,9 +159,14 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 //接口类名
                 Class<?> declaringClass = method.getDeclaringClass();
 
-
                 if (!PathUtil.matches(pathMatcher,declaringClass.getName())){
-                    continue;
+                    long classCount = classAnnotationList.stream().filter(annotation -> declaringClass.getDeclaredAnnotation(annotation) != null).count();
+                    if (classCount==0){
+                        long methodCount = methodAnnotationList.stream().filter(annotation -> method.getDeclaredAnnotation(annotation) != null).count();
+                        if (methodCount==0){
+                            continue;
+                        }
+                    }
                 }
 
 
@@ -176,13 +179,6 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (methodIgnore!=null){
                     continue;
                 }
-
-                long count = ignoreClassList.stream().filter(m -> m.equals(method.getDeclaringClass().getName())).count();
-                if (count>0){
-                    continue;
-                }
-
-
 
 
                 String classId = declaringClass.getName();
@@ -223,6 +219,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                     }
 
                     for (MethodVo vo : methodList) {
+
                         vo.setRequestContentType(requestContentType);
                         vo.setMethodId(methodId);
                         vo.setDescription(methodDescription);
@@ -284,6 +281,24 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 .build());
 
         setDocVoList(docVo);
+    }
+
+    private List<Class> getAnnotationList(String clazzStr) {
+        List<Class> annotationList = new ArrayList<>();
+        String withClassAnnotation =clazzStr;
+        if (ObjectUtil.isNotEmpty(withClassAnnotation)){
+            String[] split = withClassAnnotation.split(",");
+            if (ObjectUtil.isNotEmpty(split)){
+                for (int i = 0; i < split.length; i++) {
+                    String className = split[i];
+                    Class clazz = ClassUtil.parseClass(className);
+                    if (clazz!=null){
+                        annotationList.add(clazz);
+                    }
+                }
+            }
+        }
+        return annotationList;
     }
 
 

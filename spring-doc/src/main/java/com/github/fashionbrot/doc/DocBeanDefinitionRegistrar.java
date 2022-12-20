@@ -2,6 +2,8 @@ package com.github.fashionbrot.doc;
 
 import com.github.fashionbrot.doc.event.DocApplicationListener;
 import com.github.fashionbrot.doc.util.BeanUtil;
+import com.github.fashionbrot.doc.util.ObjectUtil;
+import com.github.fashionbrot.doc.util.SHA1Util;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -28,17 +30,25 @@ public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         AnnotationAttributes attributes = fromMap(metadata.getAnnotationAttributes(EnableMarsDoc.class.getName()));
 
+        String username = environment.getProperty(DocConfigurationProperties.USERNAME);
+        if (ObjectUtil.isNotEmpty(username)){
+            username = SHA1Util.sha1Encode(username);
+        }
+        String password = environment.getProperty(DocConfigurationProperties.PASSWORD);
+        if (ObjectUtil.isNotEmpty(password)){
+            password = SHA1Util.sha1Encode(password);
+        }
 
         DocConfigurationProperties properties= DocConfigurationProperties.builder()
                 .springProfilesActive(environment.getProperty(DocConfigurationProperties.SPRING_PROFILES_ACTIVE,"default"))
-                .contextPath(environment.getProperty(DocConfigurationProperties.CONTEXT_PATH))
                 .description(environment.getProperty(DocConfigurationProperties.DESCRIPTION))
-                .ignoreClass(environment.getProperty(DocConfigurationProperties.IGNORE_CLASS))
-                .username(environment.getProperty(DocConfigurationProperties.USERNAME))
-                .password(environment.getProperty(DocConfigurationProperties.PASSWORD))
+                .username(username)
+                .password(password)
                 .scanBasePackage(environment.getProperty(DocConfigurationProperties.SCAN_BASE_PACKAGE))
                 .groupName(environment.getProperty(DocConfigurationProperties.GROUP_NAME))
                 .baseUrl(environment.getProperty(DocConfigurationProperties.BASE_URL))
+                .withClassAnnotation(environment.getProperty(DocConfigurationProperties.WITH_CLASS_ANNOTATION))
+                .withMethodAnnotation(environment.getProperty(DocConfigurationProperties.WITH_METHOD_ANNOTATION))
                 .build();
 
         BeanUtil.registerSingleton(registry, DocConfigurationProperties.BEAN_NAME, properties);

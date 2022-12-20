@@ -97,7 +97,7 @@ let log = {
 
 let common = {
     formatValue:function (value){
-        if (value=="null" || value==null){
+        if (value=="null" || value==null || value==undefined || value=='undefined'){
             return ""
         }else{
             return value;
@@ -154,7 +154,7 @@ let common = {
     like:function (str,keyWord){
         var reg = new RegExp(keyWord);
         //如果字符串中不包含目标字符会返回-1
-        if(str.match(reg)){
+        if(common.isNotEmpty(str) && str.match(reg)){
             //匹配成功do something
             return true;
         }

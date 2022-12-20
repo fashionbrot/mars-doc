@@ -49,6 +49,9 @@ public class PathUtil {
         if (ObjectUtil.isEmpty(syntaxAndPattern)){
             syntaxAndPattern = "glob:{**}";
         }else{
+            if (!syntaxAndPattern.endsWith("*")){
+                syntaxAndPattern=syntaxAndPattern+".*";
+            }
             if (!"glob".startsWith(syntaxAndPattern) && !"regex".startsWith(syntaxAndPattern)){
                 syntaxAndPattern = "glob:{"+syntaxAndPattern+"}";
             }
@@ -60,16 +63,10 @@ public class PathUtil {
         return matcher.matches(Paths.get(path));
     }
 
-    public static void main(String[] args) {
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher( "glob:{com.**.fashionbrot,test.abc.fashionbrot}");
-        boolean matches = matcher.matches(Paths.get("com.test.fashionbrot"));
-        System.out.println(matches);
-        boolean matches2 = matcher.matches(Paths.get("test.abc.afashionbrot"));
-        System.out.println(matches2);
-
-        PathMatcher pathMatcher = getPathMatcher("");
-        System.out.println(matches(pathMatcher,"com.sdfds.aaa"));
-        System.out.println(matches(pathMatcher,"com.sdfds.ccc"));
-    }
+//    public static void main(String[] args) {
+//
+//        PathMatcher pathMatcher = getPathMatcher("com.test.abc");
+//        System.out.println(matches(pathMatcher,"com.test.abc.TestController"));
+//    }
 
 }

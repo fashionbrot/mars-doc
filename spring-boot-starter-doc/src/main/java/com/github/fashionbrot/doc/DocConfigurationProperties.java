@@ -31,6 +31,8 @@ public class DocConfigurationProperties {
     public static final String IGNORE_CLASS = BASE_PACKAGE+"ignore-class";
     public static final String GROUP_NAME = BASE_PACKAGE +"group-name";
     public static final String BASE_URL = BASE_PACKAGE +"base-url";
+    public static final String WITH_CLASS_ANNOTATION  = BASE_PACKAGE+"with-class-annotation";
+    public static final String WITH_METHOD_ANNOTATION  = BASE_PACKAGE+"with-method-annotation";
 
     /**
      * 环境
@@ -48,30 +50,32 @@ public class DocConfigurationProperties {
     private String description;
 
     /**
-     * 扫描包
-     * 优先级最高
+     * 扫描包 优先级最高
      */
     private String scanBasePackage;
     /**
-     * 按照class Annotation
-     * 优先级排名第二
+     * 按照class Annotation 优先级排名第二
      */
     private String withClassAnnotation;
     /**
-     * 按照Method Annotation
-     * 优先级排名第三
+     * 按照Method Annotation 优先级排名第三
      */
     private String withMethodAnnotation;
+
+    /**
+     * group name
+     */
+    private String groupName;
+    /**
+     * 项目地址
+     */
+    private String baseUrl;
+
 
 
     private String username;
 
     private String password;
-
-    private String groupName;
-
-    private String baseUrl;
-
 
 
 }

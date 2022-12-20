@@ -16,8 +16,7 @@
     <script type="text/javascript" src="./ace/ext-language_tools.js"></script>
     <script type="text/javascript" src="./json5.js"></script>
     <script type="text/javascript" src="./mars-doc.js"></script>
-、
-
+    <script type="text/javascript" src="./sha1.js"></script>
 </head>
 <body>
 
@@ -84,6 +83,7 @@
                    method-id="{{method.methodId}}"
                    method-name="{{method.description}}"
                    method-method="{{method.method}}"
+                   method-path="{{method.path}}"
                 >
                     {{method.description}}
                 </a>
@@ -98,7 +98,7 @@
 <script type="text/html" id="rightContentTemplate">
 
     <div class="layui-tab layui-tab-card right-content-nav " style="margin-top: 30px;">
-        <ul class="layui-tab-title right-left-nav"  style="">
+        <ul class="layui-tab-title right-left-nav"  style="position: fixed; margin-left: 250px;margin-top: 60px;">
             <li class="layui-this" style="border: 1px solid #eee;">文档</li>
             <li >调试</li>
         </ul>
@@ -106,28 +106,28 @@
             <div class="layui-tab-item layui-show">
 
                 <div>
-                    <label class="layui-form-label">接口描述:</label>
+                    <label class="layui-form-label-doc">接口描述:</label>
                     <div class="layui-form-static">
                         {{method.description}}
                     </div>
                 </div>
                 <hr>
                 <div>
-                    <label class="layui-form-label">接口地址:</label>
+                    <label class="layui-form-label-doc">接口地址:</label>
                     <div class="layui-form-static">
                         {{method.path}}
                     </div>
                 </div>
                 <hr>
                 <div>
-                    <label class="layui-form-label">请求方式:</label>
+                    <label class="layui-form-label-doc">请求方式:</label>
                     <div class="layui-form-static">
                         {{method.method}}
                     </div>
                 </div>
                 <hr>
                 <div>
-                    <label class="layui-form-label">请求参数:</label>
+                    <label class="layui-form-label-doc">请求参数:</label>
                     <div class="layui-form-static"></div>
                 </div>
                 <div class="request-table-div">
@@ -167,7 +167,7 @@
                 <hr>
 
                 <div>
-                    <label class="layui-form-label">响应参数:</label>
+                    <label class="layui-form-label-doc">响应参数:</label>
                     <div class="layui-form-static"></div>
                 </div>
                 <div class="request-table-div">
@@ -200,7 +200,7 @@
                 </div>
                 <hr>
                 <div>
-                    <label class="layui-form-label">响应示例:</label>
+                    <label class="layui-form-label-doc">响应示例:</label>
                     <div class="layui-form-static"></div>
                 </div>
 
@@ -216,7 +216,7 @@
                 <form class="layui-form" action="">
 
                     <div style="display: inline-flex;width: 100%;padding: 9px 0px;" >
-                        <button class="layui-btn"   >{{method.method}}</button>
+                        <a class="layui-btn" href="javascript:;"  >{{method.method}}</a>
                         <input type="text" name="title"  autocomplete="off" id="methodPath{{method.methodUId}}" class="layui-input" value="{{method.path}}" />
                         <button class="layui-btn" lay-active="sendRequest" method-uid="{{method.methodUId}}" request-method="{{method.method}}"  type="button"> 发 送 </button>
                     </div>
@@ -303,12 +303,10 @@
                                     </div>
                                 </div>
                                 <div class="layui-tab-item">
-                                    <!--<textarea class="layui-textarea" rows="10" id="debugResponseRawContent{{method.methodUId}}">
+                                    <div contenteditable="true" class="layui-textarea div-textarea" style="height: 300px" rows="10" id="debugResponseRawContent{{method.methodUId}}"></div>
+                                    <!--pre id="debugResponseRawContent{{method.methodUId}}" class="layui-code" lay-height="300px" >
 
-                                    </textarea>-->
-                                    <pre id="debugResponseRawContent{{method.methodUId}}" class="layui-code" lay-height="300px" >
-
-                        </pre>
+                                    </pre>-->
                                 </div>
                                 <div class="layui-tab-item">
                                     <table class="layui-table debug-request-table"  >
@@ -389,6 +387,32 @@
     {{/if}}
 </script>
 
+<script type="text/html" id="loginTemplate">
+    <form class="layui-form layui-form-pane1" action="" lay-filter="first" style="width: 399px;height:200px">
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" id="username" lay-verify="required|username" lay-reqText="请输入账号" required placeholder="账号" autocomplete="off" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" id="password" lay-verify="required|password" autocomplete="off" placeholder="密码" class="layui-input" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">记住密码</label>
+            <div class="layui-input-block">
+                <input type="number" name="rememberDay" value="1" id="rememberDay" style="width: 255px;" autocomplete="off" placeholder="记住密码天数" class="layui-input" />
+                <div class="layui-input-split layui-input-suffix" style="line-height: 34px;">天</div>
+            </div>
+        </div>
+
+    </form>
+
+</script>
+
 
 <script type="text/javascript" src="./layui.js"></script>
 <!--    <script type="text/javascript" src="./mars-doc.js"></script>-->
@@ -426,14 +450,15 @@
     }
 
 
-    layui.use(['element', 'jquery', 'layer', 'util', 'table','form','util','code'], function () {
+    layui.use(['element', 'jquery', 'layer', 'util', 'table','form','util','code','slider'], function () {
         var element = layui.element ,
             layer = layui.layer,
             util = layui.util,
             table = layui.table,
             $ = layui.$,
             form = layui.form,
-            code =  layer.code;
+            code =  layer.code,
+            slider = layui.slider;
 
         let responseEditorMap =new Map();
 
@@ -525,18 +550,17 @@
                     "json",
                     isStream,
                     function (response, status, xhr) {
-
+                        writeResponseStatus($this,methodUId,xhr,startDate);
                         writerResponseContent($this,methodUId,xhr);
                         writeResponseHeader($this,methodUId,xhr);
-                        writeResponseStatus($this,methodUId,xhr,startDate);
+
                     }
                     , function (xhr, status, error) {
-
+                        writeResponseStatus($this,methodUId,xhr,startDate)
                         writerResponseContent($this,methodUId,xhr);
                         writeResponseHeader($this,methodUId,xhr);
-                        writeResponseStatus($this,methodUId,xhr,startDate)
-                    })
 
+                    })
             }
         })
 
@@ -553,12 +577,14 @@
                     try {
                         jsonText = JSON5.stringify(JSON5.parse(jsonText),null,"\t");
                     }catch (e){
-                        log.error(e);
                         if (common.startWith(jsonText,"<!doctype html>")){
                             mode = "html";
                         }else{
                             mode="text";
                         }
+                    }
+                    if (common.like(contentType,"html")){
+
                     }
                     let jsonLine = jsonText.split('\n').length;
 
@@ -573,9 +599,9 @@
                     responseEditor.resize();
 
                     $this.parent().parent().find("[id='debugResponseRawContent"+methodUId+"']").html(jsonText);
-                    layui.code({
-                        elem: '#debugResponseRawContent'+methodUId,
-                    });
+                    // layui.code({
+                    //     elem: '#debugResponseRawContent'+methodUId,
+                    // });
 
                 }else{
                     let responseEditor = responseEditorMap.get(methodUId);
@@ -673,9 +699,11 @@
 
             let methodId = $(this).attr("method-id");
             let methodMethod = $(this).attr("method-method");
+            let methodPath = $(this).attr("method-path");
 
-            let methodUId = methodId+"#"+methodMethod;
+            let methodUId ="M"+sha1(methodId+"#"+methodPath+methodMethod);
             if (methodUId) {
+
 
                 if (existTab(methodUId)) {
                     layui.element.tabChange('rightTab', methodUId)
@@ -687,7 +715,7 @@
                         return;
                     }
 
-                    let thisMethod = getMethod(classUId, methodId,methodMethod);
+                    let thisMethod = getMethod(classUId, methodId,methodPath,methodMethod);
                     if (thisMethod){
                         thisMethod.methodUId = methodUId;
                     }
@@ -845,7 +873,7 @@
             }
         }
 
-        function getMethod(classUId, methodId,methodMethod) {
+        function getMethod(classUId, methodId,methodPath,methodMethod) {
             let classList = json5Parse(storage.get("classList"));
             if (classList) {
                 let classInfo = {};
@@ -862,7 +890,7 @@
                     if (methodList){
                         for (let j = 0; j < methodList.length; j++) {
                             let method = methodList[j];
-                            if (method.methodId == methodId && method.method== methodMethod) {
+                            if (method.methodId == methodId && method.path ==methodPath && method.method== methodMethod) {
                                 methodInfo = method;
                                 break;
                             }
@@ -906,7 +934,7 @@
 
         function existTab(methodUId) {
             let exist = false;
-            $(".layui-tab-title").find("li").each(function () {
+            $(".nav-right-top .layui-tab-title").find("li").each(function () {
                 let id = $(this).attr("lay-id");
                 if (id == methodUId) {
                     exist = true;
@@ -915,13 +943,67 @@
             return exist;
         }
 
-
-        $.getJSON("./mars/api",{},function (data){
-            if (data){
-                initJsonGroup(data);
+        var sliderInst = slider.render({
+            elem: '#remember',
+            min: 1 ,
+            max: 100,
+            value: 1,
+            showstep: false,
+            tips: true,
+            input: false ,
+            range: true,
+            change: function (value) { // 选中值发生改变的回调
+                $("#rememberDay").val(value[1]);
+                console.log('change', value)
+            },
+            done: function (value) { // 值完成选中的回调 -- v2.8.0 新增
+                console.log('done', value);
+            }
+            , setTips: function (value) { //自定义提示文本
+                return value + '天';
             }
         });
-        // initJSON(json);
+
+        initData(null);
+        function initData(callback) {
+            let username = common.formatValue($("#username").val());
+            if (username){
+                username = sha1(username);
+            }
+            let password = common.formatValue($("#password").val()) ;
+            if (password){
+                password = sha1(password);
+            }
+            let rememberDay = common.formatValue($("#rememberDay").val());
+
+
+            $.getJSON("./mars/api?username=" + username + "&password=" + password +"&rememberDay="+rememberDay+ "&v=" + (new Date().getTime()), {}, function (result) {
+                if (result.code == 0) {
+                    initJsonGroup(result.data);
+                    if (callback) {
+                        callback();
+                    }
+
+                } else if (result.code == -10) {
+                    if (callback == null) {
+                        let loginHtml = template("loginTemplate", {});
+                        layer.open({
+                            title: '登录',
+                            scrollbar: false,
+                            content: loginHtml,
+                            area: 'auto',
+                            yes: loginYes
+                        });
+                    }
+                }
+            });
+        }
+
+        function loginYes(index, layero) {
+            initData(function () {
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            })
+        }
 
         function initJsonGroup(jsonArray){
             if (jsonArray){

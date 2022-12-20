@@ -5,6 +5,13 @@
     background-color:#009688 !important;color:#fff !important;border-style:hidden!important;
 }
 
+.div-textarea {
+    resize: both;
+    overflow: auto;
+    border: solid rgb(118,118,118) 1px;
+    border-radius: 2px;
+    padding: 2px;
+}
 .layui-tab-div{margin:0px auto !important;}
 
 .layui-form-static{min-height:36px;margin-left:110px;line-height:36px;}
@@ -57,7 +64,7 @@
     margin: 0 auto;
     /*padding-left: 36px;*/
 }
-.layui-form-label {
+.layui-form-label-doc {
     position: relative;
     float: left;
     display: block;
@@ -206,3 +213,5 @@
 ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(144,147,153,.3);
 }
+
+

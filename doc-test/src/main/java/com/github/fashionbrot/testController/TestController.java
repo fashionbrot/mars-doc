@@ -1,5 +1,7 @@
-package com.github.fashionbrot.controller;
+package com.github.fashionbrot.testController;
 
+import com.github.fashionbrot.annotation.ApiAnnotation;
+import com.github.fashionbrot.annotation.ApiMethodAnnotation;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.entity.MultiTest;
@@ -16,12 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 
+
 @Api(value = "test接口类",priority = 100)
 @Controller
 @RequestMapping(value = {"/test", "t1"})
 public class TestController {
 
-
+    @ApiMethodAnnotation
     @ApiOperation(value = "test1接口",priority = 100)
     @GetMapping("test1")
     @ResponseBody
@@ -29,7 +32,7 @@ public class TestController {
         return "ok";
     }
 
-
+    @ApiMethodAnnotation
     @ApiOperation(value = "test2接口",priority = 99)
     @GetMapping("test2")
     @ResponseBody
