@@ -296,7 +296,7 @@
                                 <li class="layui-this">响应内容</li>
                                 <li>Raw</li>
                                 <li>Header</li>
-                                <li>Curl</li>
+                                <!--<li>Curl</li>-->
                             </ul>
                             <div class="debug-response-info"  id="responseStatus{{method.methodUId}}">
                                 <!--<span class="debug-span-label" style="margin-right:30px;font-weight: bold;">
@@ -339,11 +339,11 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <div class="layui-tab-item">
+                                <!--<div class="layui-tab-item">
                                     <code>
 
                                     </code>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </div>
@@ -574,24 +574,27 @@
                 sendRequest(requestUrl, requestMethod, requestContentType, queryData, formData, bodyData, headerData,
                     function (response, status, xhr) {
                         writeResponseStatus($this, methodUId, xhr, startDate);
-                        writerResponseContent($this, methodUId, xhr);
+                        writerResponseContent(response,$this, methodUId, xhr);
                         writeResponseHeader($this, methodUId, xhr);
                     }
                     , function (xhr, status, error) {
                         writeResponseStatus($this, methodUId, xhr, startDate)
-                        writerResponseContent($this, methodUId, xhr);
+                        writerResponseContent(null,$this, methodUId, xhr);
                         writeResponseHeader($this, methodUId, xhr);
                     }
                 );
             }
         })
 
-        function writerResponseContent($this,methodUId,xhr){
+        function writerResponseContent(response,$this,methodUId,xhr){
             let responseText = xhr.responseText;
             if (responseText){
-                var contentType=xhr.getResponseHeader("Content-Type");
-                var contentDisposition=xhr.getResponseHeader("Content-Disposition");
-                log.log("response contentType",contentType+" contentDisposition:"+contentDisposition);
+                let contentType=xhr.getResponseHeader("Content-Type");
+                let contentDisposition=xhr.getResponseHeader("Content-Disposition");
+                if (common.isNotEmpty(contentDisposition)){
+                    // downloadFile(xhr,response);
+                }
+                log.log("response contentType"+contentType+" contentDisposition:"+contentDisposition);
                 let mode = "json"
                 let jsonText =responseText;
                 if (jsonText){
@@ -621,10 +624,6 @@
                     responseEditor.resize();
 
                     $this.parent().parent().find("[id='debugResponseRawContent"+methodUId+"']").html(jsonText);
-                    // layui.code({
-                    //     elem: '#debugResponseRawContent'+methodUId,
-                    // });
-
                 }else{
                     let responseEditor = responseEditorMap.get(methodUId);
                     responseEditor.setValue('');
@@ -640,6 +639,53 @@
             }
         }
 
+        function downloadFile(xhr,response){
+            if (common.isNotEmpty(response)){
+                let responseText = response;
+                let contentType=xhr.getResponseHeader("Content-Type");
+                let contentDisposition=xhr.getResponseHeader("Content-Disposition");
+                let fileName = contentDisposition?.substring(contentDisposition?.indexOf("=")+1,contentDisposition.length);
+
+                let blob = new Blob([responseText], { type: contentType })
+                if ('download' in document.createElement('a')) {//支持a标签download的浏览器
+                    let link = document.createElement("a");
+                    link.download = fileName;
+                    link.style.display = "none"
+                    link.href = URL.createObjectURL(blob);
+                    document.body.appendChild(link);
+                    link.click();//执行下载
+                    URL.revokeObjectURL(link.href);//释放url
+                    document.body.removeChild(link);//释放标签
+                } else {
+                    if (window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveOrOpenBlob(blob, fileName)
+                    }
+                }
+            }
+
+        }
+
+        function downloadFile2(url,params){
+            let $iframe = document.createElement('iframe');
+            let $form = document.createElement('form');
+            $iframe.setAttribute('id', 'down-file-iframe');
+            $form.setAttribute('target', '_self');
+            $form.setAttribute('method', 'post');
+            $form.setAttribute('enctype', 'multipart/form-data');
+            $form.setAttribute('accept-charset', 'UTF-8')
+            $form.setAttribute('action', url);
+            for (let key in params) {
+                let dom = document.createElement('input');
+                dom.setAttribute('type', 'hidden');
+                dom.setAttribute('name', key);
+                dom.setAttribute('value', params[key]);
+                $form.appendChild(dom);
+            }
+            $iframe.appendChild($form);
+            document.body.appendChild($iframe);
+            $form.submit();
+            $iframe.remove();
+        }
 
 
         function writeResponseHeader($this,methodUId,xhr){
