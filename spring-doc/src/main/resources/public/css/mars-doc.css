@@ -4,7 +4,9 @@
 .nav-right-top>.layui-tab-title>.layui-this{
     background-color:#009688 !important;color:#fff !important;border-style:hidden!important;
 }
-
+.layui-input-file{
+    line-height: 38px;
+}
 .div-textarea {
     resize: both;
     overflow: auto;

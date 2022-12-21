@@ -60,4 +60,9 @@ public class ParameterVo implements Serializable {
      * 子参数
      */
     private List<ParameterVo> child;
+
+    /**
+     * file 类型使用 multiple=“multiple”上传多个文件
+     */
+    private String multiple;
 }

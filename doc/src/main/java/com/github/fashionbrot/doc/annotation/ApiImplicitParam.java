@@ -40,4 +40,6 @@ public @interface ApiImplicitParam {
      * 默认值
      */
     String defaultValue() default "";
+
+    String multiple() default "";
 }

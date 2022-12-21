@@ -127,6 +127,13 @@
                 </div>
                 <hr>
                 <div>
+                    <label class="layui-form-label-doc">Content-Type:</label>
+                    <div class="layui-form-static">
+                        {{method.requestContentType}}
+                    </div>
+                </div>
+                <hr>
+                <div>
                     <label class="layui-form-label-doc">请求参数:</label>
                     <div class="layui-form-static"></div>
                 </div>
@@ -248,8 +255,8 @@
                             <tr>
                                 <th style="width: 3%;" ><input type="checkbox" request-checkbox-all="change" checked="checked" lay-ignore name="debugRequestCheckbox{{method.methodUId}}"  /></th>
                                 <th style="width: 11%;" >参数类型</th>
-                                <th style="width: 17%;" >参数名</th>
-                                <th style="width: 66%;" >参数值</th>
+                                <th style="width: 20%;" >参数名</th>
+                                <th style="width: 63%;" >参数值</th>
                             </tr>
                             </thead>
                             <tbody id="debugRequestTableId{{method.methodUId}}" >
@@ -262,8 +269,16 @@
                                 <td><input type="text" class="layui-input" value="{{rl.name}}" /></td>
                                 {{if rl.requestType=='BODY'}}
                                 <td><textarea class="layui-textarea" rows="{{rl.jsonLine}}" placeholder="{{rl.description}}" >{{rl.jsonText}}</textarea></td>
-                                {{else}}
-                                <td><input type="text" class="layui-input" value="" placeholder="{{rl.description}}" /></td>
+                                {{else }}
+                                    {{if rl.dataType=='file' || rl.dataType=='File' }}
+                                        {{if rl.multiple=='multiple'}}
+                                            <td><input type="file" class="layui-input layui-input-file"  multiple="multiple" title="{{rl.description}}" /></td>
+                                        {{else}}
+                                            <td><input type="file" class="layui-input layui-input-file"  title="{{rl.description}}" /></td>
+                                        {{/if}}
+                                    {{else}}
+                                         <td><input type="text" class="layui-input" value="" placeholder="{{rl.description}}" /></td>
+                                    {{/if}}
                                 {{/if}}
                             </tr>
 
@@ -481,28 +496,24 @@
 
         util.event('lay-active',{
             sendRequest:function (){
-
                 let $this = $(this);
 
                 let methodUId = $(this).attr("method-uid");
-                log.log(methodUId);
-
                 let requestMethod = $(this).attr("request-method");
                 let requestPath = $(this).parent().find("[id='methodPath"+methodUId+"']").val()
 
-                let debugRequestTableBody = $(this).parent().parent().find("[id='debugRequestTableId"+methodUId+"']");
-
-                let requestContentType = $('input[name="'+methodUId+'contentType"]:checked').val();
-                let isStream = false;
+                let requestContentType = $('input[name="'+methodUId+'contentType"]:checked').val()
                 if (common.equalsIgnoreCase("raw",requestContentType)){
-                    isStream = true;
-                    requestContentType =$(this).parent().parent().find("[id='raw"+methodUId+"']").val();
+                    requestContentType = $(this).parent().parent().find("[id='raw"+methodUId+"']").val();
                 }
                 log.log("requestContentType:"+requestContentType)
+
                 let headerData= {};
                 let bodyData = {};
-                let formData = {};
+                let queryData = {};
+                let formData = new FormData();
 
+                let debugRequestTableBody = $(this).parent().parent().find("[id='debugRequestTableId"+methodUId+"']");
                 let trs = debugRequestTableBody.find("tr");
                 if (trs){
                     for (let i = 0; i < trs.length; i++) {
@@ -513,8 +524,25 @@
                             let requestType = $(tds[1]).text();
                             if (common.equalsIgnoreCase("query",requestType)){
                                 let queryName = $(tds[2]).find("input").val();
-                                let queryValue= $(tds[3]).find("input").val();
-                                formData[queryName]=queryValue;
+                                let valueType = $(tds[3]).find("input").attr("type");
+                                if (common.equalsIgnoreCase("file",valueType)){
+                                    let multiple =  $(tds[3]).find("input").attr("multiple")
+                                    if (common.isNotEmpty(multiple) && common.equalsIgnoreCase("multiple",multiple) ){
+                                        let files = $(tds[3]).find("input")[0]
+                                        if (files){
+                                            $.each(files.files,function (index,file){
+                                                formData.append(queryName,file);
+                                            })
+                                        }
+                                    }else{
+                                        let file =$(tds[3]).find("input")[0].files[0];
+                                        formData.append(queryName,file);
+                                    }
+                                }else{
+                                    let queryValue= $(tds[3]).find("input").val();
+                                    formData.append(queryName,queryValue);
+                                    queryData[queryName]=queryValue;
+                                }
                             }else if (common.equalsIgnoreCase("body",requestType)){
 
                                 let queryName = $(tds[2]).find("input").val();
@@ -543,24 +571,18 @@
 
                 let startDate  = (new Date()).getTime();
                 let requestUrl = storage.get("group-base-url")+requestPath;
-                sendRequest(requestUrl,
-                    requestMethod,
-                    Object.assign(formData, bodyData),
-                    headerData,
-                    "json",
-                    isStream,
+                sendRequest(requestUrl, requestMethod, requestContentType, queryData, formData, bodyData, headerData,
                     function (response, status, xhr) {
-                        writeResponseStatus($this,methodUId,xhr,startDate);
-                        writerResponseContent($this,methodUId,xhr);
-                        writeResponseHeader($this,methodUId,xhr);
-
+                        writeResponseStatus($this, methodUId, xhr, startDate);
+                        writerResponseContent($this, methodUId, xhr);
+                        writeResponseHeader($this, methodUId, xhr);
                     }
                     , function (xhr, status, error) {
-                        writeResponseStatus($this,methodUId,xhr,startDate)
-                        writerResponseContent($this,methodUId,xhr);
-                        writeResponseHeader($this,methodUId,xhr);
-
-                    })
+                        writeResponseStatus($this, methodUId, xhr, startDate)
+                        writerResponseContent($this, methodUId, xhr);
+                        writeResponseHeader($this, methodUId, xhr);
+                    }
+                );
             }
         })
 
@@ -653,13 +675,11 @@
 
 
 
-        function sendRequest(url,method,data,headers,dataType,isStream,successCallback,errorCallback){
+        function sendRequest(url,method,requestContentType,queryData,formData,bodyData,headers,successCallback,errorCallback){
             let loading = null;
             let config = {
                 url: url,
                 type: method,
-                dataType: dataType,
-                data: data,
                 async:true,
                 headers:headers,
                 beforeSend: function () {
@@ -674,13 +694,29 @@
                     errorCallback(xhr,status,error);
                 }
             };
-            if (isStream){
+            if (common.equalsIgnoreCase("x-www-form-urlencoded",requestContentType)){
                 let newConfig={
-                    contentType: "application/json",
-                    data: JSON.stringify(data)
+                    dataType:"application/x-www-form-urlencoded",
+                    data:queryData
+                }
+                config = $.extend(config, newConfig);
+            }else if (common.equalsIgnoreCase("form-data",requestContentType)){
+                let newConfig={
+                    contentType:false,
+                    processData:false,
+                    // dataType: "application/json",
+                    mimeType:"multipart/form-data",
+                    data:formData
+                }
+                config = $.extend(config, newConfig);
+            }else {
+                let newConfig={
+                    contentType: requestContentType,
+                    data: JSON.stringify(bodyData)
                 }
                 config = $.extend(config, newConfig);
             }
+
             $.ajax(config)
         }
 

@@ -3,6 +3,7 @@ package com.github.fashionbrot.testController;
 import com.github.fashionbrot.annotation.ApiAnnotation;
 import com.github.fashionbrot.annotation.ApiMethodAnnotation;
 import com.github.fashionbrot.doc.annotation.Api;
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.entity.MultiTest;
 import com.github.fashionbrot.entity.TestEntity;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 
-
+@ApiIgnore
 @Api(value = "test接口类",priority = 100)
 @Controller
 @RequestMapping(value = {"/test", "t1"})

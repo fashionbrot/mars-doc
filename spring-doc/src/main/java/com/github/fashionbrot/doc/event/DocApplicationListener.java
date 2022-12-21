@@ -26,6 +26,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -33,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.lang.reflect.Type;
 import java.nio.file.PathMatcher;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -199,14 +201,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
                 List<MethodVo> methodList = RequestMappingUtil.getRequestMapping(method);
 
-                String requestContentType = "x-www-form-urlencoded";
-                Parameter[] parameters = method.getParameters();
-                if (ObjectUtil.isNotEmpty(parameters)){
-                    long requestBodyCount = Arrays.stream(parameters).filter(m -> m.getDeclaredAnnotation(RequestBody.class)!=null ).count();
-                    if (requestBodyCount>0){
-                        requestContentType = "raw";
-                    }
-                }
+                String requestContentType = getRequestContentType(method);
 
                 if (ObjectUtil.isNotEmpty(methodList)) {
 
@@ -281,6 +276,36 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 .build());
 
         setDocVoList(docVo);
+    }
+
+    private String getRequestContentType(Method method) {
+        String requestContentType = "x-www-form-urlencoded";
+        Parameter[] parameters = method.getParameters();
+        if (ObjectUtil.isNotEmpty(parameters)){
+
+            long multipartFileCount = Arrays.stream(parameters).filter(parameter -> checkMultipartFile(parameter)).count();
+            if (multipartFileCount>0){
+                requestContentType = "form-data";
+            }else {
+                long requestBodyCount = Arrays.stream(parameters).filter(m -> m.getDeclaredAnnotation(RequestBody.class)!=null ).count();
+                if (requestBodyCount>0){
+                    requestContentType = "raw";
+                }
+            }
+        }
+        return requestContentType;
+    }
+
+    private boolean checkMultipartFile(Parameter parameter){
+        if (parameter.getType()==MultipartFile.class){
+            return true;
+        }else{
+            Type parameterizedType = parameter.getParameterizedType();
+            if (parameterizedType!=null){
+                return JavaClassValidateUtil.isFile(parameterizedType.getTypeName());
+            }
+        }
+        return false;
     }
 
     private List<Class> getAnnotationList(String clazzStr) {

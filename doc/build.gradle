@@ -19,7 +19,6 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.10'
 
 
-
     testImplementation 'junit:junit:4.11'
     testCompileOnly 'org.projectlombok:lombok:1.18.22'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'

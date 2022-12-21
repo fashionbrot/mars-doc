@@ -164,7 +164,6 @@ public class RequestUtil {
                             .required(required)
                             .dataType(type.getSimpleName())
                             .build());
-
                 } else {
 
                     ParameterVo req = null;
@@ -200,7 +199,7 @@ public class RequestUtil {
 
             }
         }
-        if (ObjectUtil.isNotEmpty(parameterVoList) && ObjectUtil.isNotEmpty(apiImplicitParamList)){
+        if ( ObjectUtil.isNotEmpty(apiImplicitParamList)){
             parameterVoList.addAll(apiImplicitParamList);
         }
         return parameterVoList;
@@ -232,9 +231,9 @@ public class RequestUtil {
 
     public static boolean checkParamType(String paramType){
         if (ParamTypeEnum.BODY.name().equalsIgnoreCase(paramType) || ParamTypeEnum.QUERY.name().equalsIgnoreCase(paramType)){
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static ParameterVo buildParameterVo(ApiImplicitParam param){
@@ -245,6 +244,7 @@ public class RequestUtil {
                 .required(param.required())
                 .dataType(param.dataType())
                 .example(param.defaultValue())
+                .multiple(param.multiple())
                 .build();
     }
 

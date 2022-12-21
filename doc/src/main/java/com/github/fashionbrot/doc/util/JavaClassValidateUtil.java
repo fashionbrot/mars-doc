@@ -245,6 +245,9 @@ public class JavaClassValidateUtil {
      * @return boolean
      */
     public static boolean isFile(String typeName) {
+        if (ObjectUtil.isEmpty(typeName)){
+            return false;
+        }
         switch (typeName) {
             case "org.springframework.web.multipart.MultipartFile":
             case "org.springframework.web.multipart.MultipartFile[]":
