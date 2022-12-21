@@ -49,8 +49,21 @@ public class PathUtil {
         if (ObjectUtil.isEmpty(syntaxAndPattern)){
             syntaxAndPattern = "glob:{**}";
         }else{
-            if (!syntaxAndPattern.endsWith("*")){
-                syntaxAndPattern=syntaxAndPattern+".*";
+            String[] packages = syntaxAndPattern.split(",");
+            if (ObjectUtil.isNotEmpty(packages)){
+                StringBuilder sb=new StringBuilder();
+                for (int i = 0; i < packages.length; i++) {
+                    String aPackage = packages[i];
+                    if (sb.length()>0){
+                        sb.append(",");
+                    }
+                    if (!aPackage.endsWith("*")){
+                        sb.append(aPackage).append(".*");
+                    }else{
+                        sb.append(aPackage);
+                    }
+                }
+                syntaxAndPattern = sb.toString();
             }
             if (!"glob".startsWith(syntaxAndPattern) && !"regex".startsWith(syntaxAndPattern)){
                 syntaxAndPattern = "glob:{"+syntaxAndPattern+"}";
@@ -65,8 +78,9 @@ public class PathUtil {
 
 //    public static void main(String[] args) {
 //
-//        PathMatcher pathMatcher = getPathMatcher("com.test.abc");
-//        System.out.println(matches(pathMatcher,"com.test.abc.TestController"));
+//        PathMatcher pathMatcher = getPathMatcher("com.test.abc,com.a.b");
+//        System.out.println(matches(pathMatcher,"com.test.abc.TT"));
+//        System.out.println(matches(pathMatcher,"com.a.b.TT"));
 //    }
 
 }

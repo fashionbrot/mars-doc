@@ -1,6 +1,5 @@
 package com.github.fashionbrot.testController;
 
-import com.github.fashionbrot.annotation.ApiAnnotation;
 import com.github.fashionbrot.annotation.ApiMethodAnnotation;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiIgnore;
