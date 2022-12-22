@@ -24,7 +24,7 @@ public class RequestMappingUtil {
     /**
      * 根据method 获取  requestMapping
      * @param method  method
-     * @return List<MethodVo>
+     * @return List MethodVo
      */
     public static List<MethodVo> getRequestMapping(Method method) {
 

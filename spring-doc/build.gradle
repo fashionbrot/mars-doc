@@ -14,6 +14,11 @@ apply plugin: "java-library"
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 
 jar {
     into("META-INF/") {
@@ -110,9 +115,14 @@ signing {
     sign publishing.publications.mavenJava
 }
 
+//processResources {
+//    with copySpec {
+//        from 'src/main/resources'
+//        include 'public/**'
+//    }
+//}
 
-
-sourceSets.main.resources.srcDirs = ["src/main/java","src/main/resources"]
+//sourceSets.main.resources.srcDirs = ["src/main/java","src/main/resources"]
 dependencies {
 
     api project(":doc")

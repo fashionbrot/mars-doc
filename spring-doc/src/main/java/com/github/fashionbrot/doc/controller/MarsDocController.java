@@ -30,22 +30,33 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author fashionbrot
+ */
 @ApiIgnore
 @Controller
-@RequiredArgsConstructor
 public class MarsDocController implements BeanFactoryAware {
 
     private SpringDocConfigurationProperties properties;
 
-    final HttpServletRequest request;
-    final HttpServletResponse response;
+    private HttpServletRequest request;
+    private HttpServletResponse response;
 
-
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    public MarsDocController(HttpServletRequest request, HttpServletResponse response) {
+        this.request = request;
+        this.response = response;
+    }
 
     private final static String COOKIE_USERNAME = "mars-doc-username";
     private final static String COOKIE_PASSWORD = "mars-doc-password";
 
-
+    /**
+     * 获取接口文档
+     * @param req 参数
+     * @return RespVo
+     */
     @ResponseBody
     @RequestMapping("/mars/api")
     public RespVo<List<DocVo>> marsApi(MarsApiReq req){
