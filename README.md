@@ -51,17 +51,19 @@ mars.doc.description=测试注释
 mars.doc.base-url =http://localhost:9090/
 # 要显示文档的环境(多个逗号分割) 默认：default
 mars.doc.spring-profiles-active=test,dev,local
-# 要扫描的接口地址(多个逗号分割)
-mars.doc.scan-base-package=com.github.fashionbrot.controller.**,com.github.fashionbrot.testController
+
 
 # 访问接口文档的账号(不填写不需要登录)
 mars.doc.username = test
 # 访问接口文档的密码(不填写不需要登录)
 mars.doc.password=test
 
-# 通过此注解添加到Class上开启文档 (自定义注解)
+# 开启接口生成文档下面三个配置可多选可选择一个配置都可以
+# 要扫描的接口类包地址(多个逗号分割)
+mars.doc.scan-base-package=com.github.fashionbrot.controller.**,com.github.fashionbrot.testController
+# 通过自定义注解添加到【类上】可生成该类的接口文档
 mars.doc.with-class-annotation=com.github.fashionbrot.annotation.ApiClassAnnotation
-# 通过次注解添加到Method 上开启文档 (自定义注解)
+# 通过自定义注解添加到【方法】上可生成该类的接口文档
 mars.doc.with-method-annotation=com.github.fashionbrot.annotation.ApiMethodAnnotation
 ```
 
