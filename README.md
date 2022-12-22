@@ -18,12 +18,12 @@
 
 
 #### 注解说明
-| 注解            | 范围                            | 说明                    | 示例                                       |
-|---------------|-------------------------------|-----------------------|------------------------------------------|
-| @ApiIgnore    | Class Method Parameter  Field | 使用该注解忽略               | @ApiIgnore|
-| @Api          | Class                         | 修饰整个类，描述Controller的作用 | @Api(value = "banner接口类",priority = 99)  |
-| @ApiOperation | Method                        | 描述一个类的一个方法            |     @ApiOperation(value = "test4接口",priority = 1000)  |
-|@ApiModel | Class                         | class对象说明             |@ApiModel("RespVo统一返回类型")|
+| 注解            | 范围                           | 说明                    | 示例                                       |
+|---------------|------------------------------|-----------------------|------------------------------------------|
+| @ApiIgnore    | Class Method Parameter  | 使用该注解忽略               | @ApiIgnore|
+| @Api          | Class                        | 修饰整个类，描述Controller的作用 | @Api(value = "banner接口类",priority = 99)  |
+| @ApiOperation | Method                       | 描述一个类的一个方法            |     @ApiOperation(value = "test4接口",priority = 1000)  |
+|@ApiModel | Class                        | class对象说明             |@ApiModel("RespVo统一返回类型")|
 |@ApiModelProperty |   Parameter   Field | Class属性描述             |    @ApiModelProperty("返回的数据")|
 |@ApiImplicitParam | Method | 接口参数注解 |    @ApiImplicitParam(name ="uploadFile1",value = "文件",paramType = "query",dataType = "file",multiple = "multiple")|
 
