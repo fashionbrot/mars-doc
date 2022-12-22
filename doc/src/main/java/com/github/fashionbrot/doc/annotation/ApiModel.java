@@ -11,11 +11,13 @@ import java.lang.annotation.*;
 public @interface ApiModel {
     /**
      * 类默认名
+     * @return String
      */
     String value() default "";
 
     /**
      * 类注释
+     * @return String
      */
     String description() default "";
 

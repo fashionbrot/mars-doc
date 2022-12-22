@@ -1,6 +1,12 @@
 plugins {
     id 'java'
 }
+jar{
+    enabled=false
+}
+javadoc{
+    enabled=false
+}
 
 allprojects {
 
@@ -13,11 +19,16 @@ allprojects {
     group 'com.github.fashionbrot'
     version '1.0.0'
 
+    javadoc.options.encoding="UTF-8"
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
         options.warnings = false
         options.deprecation = true
-//    options.compilerArgs += ["-parameters"]
+        options.compilerArgs += ["-parameters"]
     }
 
     repositories {
@@ -33,9 +44,6 @@ allprojects {
         maven { url 'https://repo.spring.io/plugins-snapshot' }
     }
 
-    compileJava.options.encoding = "UTF-8"
-    compileTestJava.options.encoding = "UTF-8"
-    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }
 
 

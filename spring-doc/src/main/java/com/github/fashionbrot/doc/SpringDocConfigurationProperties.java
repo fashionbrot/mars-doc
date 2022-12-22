@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DocConfigurationProperties {
+public class SpringDocConfigurationProperties {
 
-    public static final String BEAN_NAME = "marsDocConfigurationProperties";
+    public static final String BEAN_NAME = "marsDocSpringConfigurationProperties";
 
     public static final String BASE_PACKAGE = "mars.doc.";
 

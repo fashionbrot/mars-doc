@@ -1,8 +1,7 @@
 package com.github.fashionbrot.doc.event;
 
 
-import com.github.fashionbrot.doc.DocConfigurationProperties;
-import com.github.fashionbrot.doc.controller.MarsDocController;
+import com.github.fashionbrot.doc.SpringDocConfigurationProperties;
 import com.github.fashionbrot.doc.util.*;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiIgnore;
@@ -21,17 +20,14 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -51,7 +47,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
     private Environment environment;
 
-    private DocConfigurationProperties docConfigurationProperties;
+    private SpringDocConfigurationProperties springDocConfigurationProperties;
 
     private static List<DocVo> docVoList = new ArrayList<>();
 
@@ -129,19 +125,19 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         }
 
 
-        if (!checkSpringProfilesActive(docConfigurationProperties.getSpringProfilesActive(),environment)){
+        if (!checkSpringProfilesActive(springDocConfigurationProperties.getSpringProfilesActive(),environment)){
             return;
         }
-        PathMatcher pathMatcher = PathUtil.getPathMatcher(docConfigurationProperties.getScanBasePackage());
+        PathMatcher pathMatcher = PathUtil.getPathMatcher(springDocConfigurationProperties.getScanBasePackage());
 
 
-        List<Class> classAnnotationList = getAnnotationList(docConfigurationProperties.getWithClassAnnotation());
-        List<Class> methodAnnotationList = getAnnotationList(docConfigurationProperties.getWithMethodAnnotation());
+        List<Class> classAnnotationList = getAnnotationList(springDocConfigurationProperties.getWithClassAnnotation());
+        List<Class> methodAnnotationList = getAnnotationList(springDocConfigurationProperties.getWithMethodAnnotation());
 
 
         DocVo docVo = DocVo.builder().build();
-        docVo.setBaseUrl(PathUtil.formatUrl(docConfigurationProperties.getBaseUrl()));
-        docVo.setGroupName(docConfigurationProperties.getGroupName());
+        docVo.setBaseUrl(PathUtil.formatUrl(springDocConfigurationProperties.getBaseUrl()));
+        docVo.setGroupName(springDocConfigurationProperties.getGroupName());
 
         List<LinkVo> requestVoList = new ArrayList<>();
         List<LinkVo> responseVoList = new ArrayList<>();
@@ -340,8 +336,8 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         } else if (beanFactory instanceof AbstractApplicationContext) {
             beanRegistry = ((AbstractApplicationContext) beanFactory).getBeanFactory();
         }
-        if (beanFactory.containsBean(DocConfigurationProperties.BEAN_NAME)) {
-            docConfigurationProperties = (DocConfigurationProperties) beanRegistry.getSingleton(DocConfigurationProperties.BEAN_NAME);
+        if (beanFactory.containsBean(SpringDocConfigurationProperties.BEAN_NAME)) {
+            springDocConfigurationProperties = (SpringDocConfigurationProperties) beanRegistry.getSingleton(SpringDocConfigurationProperties.BEAN_NAME);
         }
     }
 }

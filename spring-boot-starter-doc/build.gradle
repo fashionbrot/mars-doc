@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'java-library'
+
 }
 
 
@@ -14,27 +15,119 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: "java-library"
 
-group 'com.github.fashionbrot'
-version '1.0.0'
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+jar {
+    into("META-INF/") {
+        from rootProject.file("LICENSE")
+    }
+    into("META-INF/maven/$project.group/$project.name") {
+        from { generatePomFileForMavenJavaPublication }
+        rename ".*", "pom.xml"
+    }
+    afterEvaluate {
+        manifest {
+            attributes 'Implementation-Title': archiveBaseName
+            attributes 'Implementation-Version': archiveVersion
+            attributes 'Built-Gradle': gradle.gradleVersion
+            attributes 'Build-OS': System.getProperty("os.name")
+            attributes 'Built-By': System.getProperty("user.name")
+            attributes 'Build-Jdk': System.getProperty("java.version")
+            attributes 'Build-Timestamp': LocalDateTime.now().format("yyyy-MM-dd HH:mm:ss")
+        }
+    }
+}
+
 
 repositories {
     mavenCentral()
 }
 
+
+
+publishing {
+    publications {
+
+        mavenJava(MavenPublication) {
+
+            from components.java
+
+
+            pom {
+
+                name = 'mars-doc'
+                description = 'mars-doc 接口文档生成工具 https://github.com/fashionbrot/mars-doc'
+                url = 'https://github.com/fashionbrot/mars-doc.git'
+                packaging 'jar'
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'fashionbrot'
+                        name = 'fashionbrot'
+                        email = "fashionbrot@163.com"
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/fashionbrot/mars-doc.git'
+                    developerConnection = 'scm:git:ssh://github.com/fashionbrot/mars-doc.git'
+                    url = 'https://github.com/fashionbrot/mars-doc.git'
+                }
+
+                withXml {
+                    def root = asNode()
+                    root.dependencies.'*'.findAll {
+                        def d = it
+                        d.scope.text() == 'runtime' && project.configurations.findByName("implementation").allDependencies.find { dep ->
+                            dep.name == it.artifactId.text()
+                        }.each() {
+                            d.scope*.value = 'compile'
+                            d.appendNode('optional', true)
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username System.getProperty("oss.username")
+                password System.getProperty("oss.password")
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+
+
 dependencies {
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     api project(":spring-doc")
 
-    compileOnly "org.springframework.boot:spring-boot-configuration-processor:2.0.0.RELEASE"
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.0.0.RELEASE'
+//    compileOnly "org.springframework.boot:spring-boot-configuration-processor:2.0.0.RELEASE"
+//    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.0.0.RELEASE'
 
     compileOnly 'org.springframework.boot:spring-boot-starter:2.0.0.RELEASE'
 }
-
-
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'

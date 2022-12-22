@@ -1,7 +1,7 @@
 package com.github.fashionbrot.doc.controller;
 
 
-import com.github.fashionbrot.doc.DocConfigurationProperties;
+import com.github.fashionbrot.doc.SpringDocConfigurationProperties;
 import com.github.fashionbrot.doc.RespVo;
 import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.cookie.ResponseCookie;
@@ -9,9 +9,15 @@ import com.github.fashionbrot.doc.cookie.SameSiteEnum;
 import com.github.fashionbrot.doc.event.DocApplicationListener;
 import com.github.fashionbrot.doc.req.MarsApiReq;
 import com.github.fashionbrot.doc.util.ObjectUtil;
-import com.github.fashionbrot.doc.util.SHA1Util;
 import com.github.fashionbrot.doc.vo.DocVo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.SingletonBeanRegistry;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -28,11 +33,14 @@ import java.util.Optional;
 @ApiIgnore
 @Controller
 @RequiredArgsConstructor
-public class MarsDocController {
+public class MarsDocController implements BeanFactoryAware {
 
-    final DocConfigurationProperties properties;
+    private SpringDocConfigurationProperties properties;
+
     final HttpServletRequest request;
     final HttpServletResponse response;
+
+
 
     private final static String COOKIE_USERNAME = "mars-doc-username";
     private final static String COOKIE_PASSWORD = "mars-doc-password";
@@ -105,4 +113,16 @@ public class MarsDocController {
         return "";
     }
 
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        SingletonBeanRegistry beanRegistry = null;
+        if (beanFactory instanceof SingletonBeanRegistry) {
+            beanRegistry = (SingletonBeanRegistry) beanFactory;
+        } else if (beanFactory instanceof AbstractApplicationContext) {
+            beanRegistry = ((AbstractApplicationContext) beanFactory).getBeanFactory();
+        }
+        if (beanFactory.containsBean(SpringDocConfigurationProperties.BEAN_NAME)) {
+            properties = (SpringDocConfigurationProperties) beanRegistry.getSingleton(SpringDocConfigurationProperties.BEAN_NAME);
+        }
+    }
 }
