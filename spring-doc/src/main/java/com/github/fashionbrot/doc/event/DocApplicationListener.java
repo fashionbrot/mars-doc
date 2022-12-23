@@ -119,6 +119,10 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
+        long count = Arrays.stream(applicationContext.getBeanDefinitionNames()).filter(m-> m.contains("equestMappingHandlerMapping")).count();
+        if (count==0){
+            return;
+        }
         RequestMappingHandlerMapping requestMapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
         if (requestMapping==null){
             return;
