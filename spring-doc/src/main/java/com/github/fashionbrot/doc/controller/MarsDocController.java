@@ -19,6 +19,7 @@ import org.springframework.beans.factory.config.SingletonBeanRegistry;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -58,7 +59,7 @@ public class MarsDocController implements BeanFactoryAware {
      * @return RespVo
      */
     @ResponseBody
-    @RequestMapping("/mars/api")
+    @PostMapping("/mars/api")
     public RespVo<List<DocVo>> marsApi(MarsApiReq req){
 
         if (ObjectUtil.isEmpty(properties.getUsername()) && ObjectUtil.isEmpty(properties.getPassword())) {

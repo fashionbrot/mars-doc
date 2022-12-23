@@ -7,6 +7,7 @@ import com.github.fashionbrot.doc.util.SHA1Util;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
@@ -16,7 +17,7 @@ import static org.springframework.core.annotation.AnnotationAttributes.fromMap;
 /**
  * @author fashi
  */
-public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware, Ordered {
 
     private Environment environment;
 
@@ -56,5 +57,10 @@ public class DocBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         BeanUtil.registerInfrastructureBeanIfAbsent(registry, DocApplicationListener.BEAN_NAME, DocApplicationListener.class);
 
+    }
+
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE-1;
     }
 }

@@ -1058,15 +1058,22 @@
             }
             let rememberDay = common.formatValue($("#rememberDay").val());
 
+            let data=new Object();
+            data.username = username;
+            data.password = password;
+            data.rememberDay = rememberDay;
+            data.v = new Date().getTime();
 
-            $.getJSON("./mars/api?username=" + username + "&password=" + password +"&rememberDay="+rememberDay+ "&v=" + (new Date().getTime()), {}, function (result) {
+            jQuery.post("./mars/api",data,function (result){
                 if (result.code == 0) {
+
                     initJsonGroup(result.data);
                     if (callback) {
                         callback();
                     }
 
                 } else if (result.code == -10) {
+
                     if (callback == null) {
                         let loginHtml = template("loginTemplate", {});
                         layer.open({
@@ -1077,8 +1084,10 @@
                             yes: loginYes
                         });
                     }
+
                 }
-            });
+            },"json");
+
         }
 
         function loginYes(index, layero) {

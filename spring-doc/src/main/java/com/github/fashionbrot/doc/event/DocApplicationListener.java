@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -39,11 +40,9 @@ import java.util.stream.Collectors;
  * @author fashi
  */
 @Slf4j
-public class DocApplicationListener implements ApplicationListener<ContextRefreshedEvent>, BeanFactoryAware, EnvironmentAware {
+public class DocApplicationListener implements ApplicationListener<ContextRefreshedEvent>, BeanFactoryAware, EnvironmentAware, Ordered {
 
     public static final String BEAN_NAME = "docApplicationListener";
-
-    private static final String REQUEST_BEAN_NAME = "requestMappingHandlerMapping";
 
     private Environment environment;
 
@@ -120,10 +119,10 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext applicationContext = event.getApplicationContext();
-        if (!applicationContext.containsBean(REQUEST_BEAN_NAME)) {
+        RequestMappingHandlerMapping requestMapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
+        if (requestMapping==null){
             return;
         }
-
 
         if (!checkSpringProfilesActive(springDocConfigurationProperties.getSpringProfilesActive(),environment)){
             return;
@@ -143,7 +142,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         List<LinkVo> responseVoList = new ArrayList<>();
         List<ClassVo> classVoList = new ArrayList<>();
 
-        RequestMappingHandlerMapping requestMapping = applicationContext.getBean(REQUEST_BEAN_NAME, RequestMappingHandlerMapping.class);
+
         Map<RequestMappingInfo, HandlerMethod> infoMap = requestMapping.getHandlerMethods();
 
 
@@ -339,5 +338,10 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         if (beanFactory.containsBean(SpringDocConfigurationProperties.BEAN_NAME)) {
             springDocConfigurationProperties = (SpringDocConfigurationProperties) beanRegistry.getSingleton(SpringDocConfigurationProperties.BEAN_NAME);
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return Integer.MAX_VALUE;
     }
 }
