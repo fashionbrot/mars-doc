@@ -52,9 +52,14 @@ public class ParameterVo implements Serializable {
     private String ref;
 
     /**
-     * 是否是集合类型
+     * 是否是集合类型  1是 0否
      */
     private Integer collection;
+
+    /**
+     * 是否是基本类型 1是 0否
+     */
+    private Integer isPrimitive;
 
     /**
      * 子参数

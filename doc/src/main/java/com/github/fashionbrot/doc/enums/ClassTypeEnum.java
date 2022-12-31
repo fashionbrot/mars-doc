@@ -18,7 +18,10 @@ public enum ClassTypeEnum {
     LONG("long"),
     FLOAT("float"),
     DOUBLE("double"),
-
+    NUMBER("java.lang.Number"),
+    SQL_TIMESTAMP("java.sql.Timestamp"),
+    SQL_TIME("java.sql.Time"),
+    SQL_DATE("java.sql.Date"),
     PACK_BOOLEAN("java.lang.Boolean"),
     PACK_CHAR("java.lang.Character"),
     PACK_BYTE("java.lang.Byte"),
@@ -27,12 +30,14 @@ public enum ClassTypeEnum {
     PACK_LONG("java.lang.Long"),
     PACK_FLOAT("java.lang.Float"),
     PACK_DOUBLE("java.lang.Double"),
-
     STRING("java.lang.String"),
     BIG_DECIMAL("java.math.BigDecimal"),
     BIG_INTEGER("java.math.BigInteger"),
-
     DATE("java.util.Date"),
+    YEAR("java.time.Year"),
+    PERIOD("java.time.Period"),
+    YEAR_MONTH("java.time.YearMonth"),
+    MONTH_DAY ("java.time.MonthDay"),
     LOCAL_TIME("java.time.LocalTime"),
     LOCAL_DATE("java.time.LocalDate"),
     LOCAL_DATE_TIME("java.time.LocalDateTime"),

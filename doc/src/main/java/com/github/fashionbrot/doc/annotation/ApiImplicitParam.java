@@ -36,7 +36,6 @@ public @interface ApiImplicitParam {
 
     /**
      * 数据类型
-     * @see com.github.fashionbrot.doc.enums.ClassTypeEnum
      * @return String
      */
     String dataType() default "";

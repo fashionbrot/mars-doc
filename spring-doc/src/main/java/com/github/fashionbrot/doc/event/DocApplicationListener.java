@@ -193,6 +193,9 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                         continue;
                     }
                     className = api.value();
+                    if (ObjectUtil.isEmpty(api.value())){
+                        className = api.tags();
+                    }
                     priority = api.priority();
                 }
 
@@ -301,7 +304,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         }else{
             Type parameterizedType = parameter.getParameterizedType();
             if (parameterizedType!=null){
-                return JavaClassValidateUtil.isFile(parameterizedType.getTypeName());
+                return JavaUtil.isFile(parameterizedType.getTypeName());
             }
         }
         return false;

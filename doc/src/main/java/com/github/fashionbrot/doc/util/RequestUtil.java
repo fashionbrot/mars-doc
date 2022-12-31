@@ -4,7 +4,6 @@ import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiImplicitParam;
 import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
-import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.enums.ParamTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 
@@ -117,6 +116,70 @@ public class RequestUtil {
 //    }
 
 
+    public static List<ParameterVo> getRequest3(Method method){
+        List<ParameterVo> parameterList = new ArrayList<>();
+        if (method==null){
+            return parameterList;
+        }
+
+        Parameter[] parameterArray = method.getParameters();
+        if (ObjectUtil.isNotEmpty(parameterArray)){
+            for (int i = 0; i < parameterArray.length; i++) {
+                Parameter parameter = parameterArray[i];
+                ApiIgnore apiIgnore = parameter.getDeclaredAnnotation(ApiIgnore.class);
+                if (apiIgnore!=null){
+                    continue;
+                }
+
+                parseProperty(parameter.getType(),parameter.getName());
+
+            }
+        }
+        return parameterList;
+    }
+
+    /**
+     * 解析属性
+     * @param propertyClass 属性class
+     * @param propertyName  属性名
+     */
+    public static void parseProperty(Class propertyClass,String propertyName){
+        if (propertyClass!=null){
+
+            parseSuperClass(propertyClass);
+
+            if (JavaUtil.isArray(propertyClass)){
+
+            }else if (JavaUtil.isCollection(propertyClass)){
+
+            }else if (JavaUtil.isBaseType(propertyClass)){
+
+            }else if (JavaUtil.isObject(propertyClass)){
+
+            }else {
+                /**
+                 * class类解析
+                 */
+                System.out.println(propertyClass.getTypeName());
+            }
+        }
+    }
+
+    /**
+     * 解析 集成类
+     * @param propertyClass
+     */
+    public static void parseSuperClass(Class propertyClass){
+        if (propertyClass!=null){
+            Class superclass = propertyClass.getSuperclass();
+            if (superclass!=null){
+
+            }
+        }
+    }
+
+
+
 
     public static List<ParameterVo> getRequest(Method method) {
         Parameter[] parameters = method.getParameters();
@@ -142,7 +205,7 @@ public class RequestUtil {
 
                 String requestType = requestBodyRequired ? ParamTypeEnum.BODY.name() : ParamTypeEnum.QUERY.name();
 
-                if (ClassTypeEnum.checkClass(parameterClass.getName())) {
+                if (JavaUtil.isPrimitive(parameterClass.getName())) {
 
 
                     Class<?> type = parameter.getType();
@@ -181,7 +244,8 @@ public class RequestUtil {
                                 .description(description)
                                 .build();
                     }
-                    List<ParameterVo> parameterVos = ParameterUtil.forFieldOrParam(parameterClass, null, requestType);
+
+                    List<ParameterVo> parameterVos = ParameterUtil.forFieldOrParam(parameterClass, parameterClass.getGenericSuperclass(), requestType);
                     List<ParameterVo> superField = getSuperClassField(parameterClass, requestType);
                     if (ObjectUtil.isNotEmpty(superField)){
                         parameterVos.addAll(superField);
@@ -253,7 +317,7 @@ public class RequestUtil {
             Class superClass = parameterClass.getSuperclass();
             if (superClass != null) {
 
-                if (!JavaClassValidateUtil.isObject(superClass)){
+                if (JavaUtil.isNotObject(superClass)){
                     TypeVariable<?>[] typeParameters = superClass.getTypeParameters();
 
                     Type[] actualTypeArguments = null;
@@ -294,6 +358,7 @@ public class RequestUtil {
                         continue;
                     }
                 }
+                Type type1 = getTypeByTypeName(types, typeVariables, className);
 
                 ParameterVo build = ParameterVo.builder()
                         .name(name)
@@ -303,11 +368,21 @@ public class RequestUtil {
                         .description(fieldDescription)
                         .build();
 
-                if (!ClassTypeEnum.checkClass(className)) {
+                if (JavaUtil.isNotPrimitive(className)) {
                     Type type = getTypeByTypeName(types, typeVariables, className);
                     if (type != null) {
                         Class fieldClass = MethodUtil.typeConvertClass(type);
-                        build.setDataType(fieldClass.getTypeName());
+                        if (JavaUtil.isPrimitive(fieldClass.getTypeName())){
+                            build.setDataType(fieldClass.getTypeName());
+                        }else{
+
+                            List<ParameterVo> parameterVos = ParameterUtil.forFieldOrParam(fieldClass, fieldClass.getGenericSuperclass(), requestType);
+                            if (ObjectUtil.isNotEmpty(parameterVos)){
+                                build.setDataType(fieldClass.getTypeName());
+                                build.setChild(parameterVos);
+                            }
+
+                        }
                     }
                 }
 
@@ -345,6 +420,7 @@ public class RequestUtil {
         }
         return null;
     }
+
 
 
 }

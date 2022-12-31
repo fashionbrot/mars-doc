@@ -10,6 +10,11 @@ import java.lang.annotation.*;
 @Inherited
 public @interface Api {
 
+    /**
+     * 兼容swagger
+     * @return String
+     */
+    String tags() default "";
 
     /**
      * 接口类名

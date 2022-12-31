@@ -2,15 +2,11 @@ package com.github.fashionbrot.doc.util;
 
 
 import com.github.fashionbrot.doc.consts.MarsDocConst;
-import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
 import com.github.fashionbrot.doc.type.DocParameterizedType;
 import com.github.fashionbrot.doc.vo.MethodTypeVo;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +46,7 @@ public class MethodUtil {
                         .build();
 
 
-                if (!ClassTypeEnum.checkClass(classType.getTypeName())){
+                if (JavaUtil.isNotPrimitive(classType.getTypeName())){
 
                     if (typeClass.isArray()){
 
@@ -109,7 +105,7 @@ public class MethodUtil {
                         .typeName(typeVariable.getTypeName())
                         .build();
 
-                if (!ClassTypeEnum.checkClass(typeClass.getTypeName())){
+                if (JavaUtil.isNotPrimitive(typeClass.getTypeName())){
                     if (typeClass.isArray()){
                         DocParameterizedType parameterizedType = new DocParameterizedType(List.class, new Class[]{typeClass.getComponentType()},null);
                         List<MethodTypeVo> childList = getMethodTypeList(parameterizedType, genType, methodId);
@@ -122,6 +118,14 @@ public class MethodUtil {
             }
         }
         return list;
+    }
+
+    public static TypeVariable[] getTypeVariable(Parameter parameter){
+        Type parameterizedType = parameter.getParameterizedType();
+        if (parameterizedType!=null){
+            return getTypeVariable(parameterizedType);
+        }
+        return null;
     }
 
     public static TypeVariable[] getTypeVariable(Type type){
@@ -148,6 +152,14 @@ public class MethodUtil {
     }
 
 
+    public static Type[] getActualTypeArguments(Parameter parameter){
+        Type parameterizedType = parameter.getParameterizedType();
+        if (parameterizedType!=null){
+            return MethodUtil.convertActualTypeArguments(parameter.getParameterizedType());
+        }
+        return null;
+    }
+
     public static Type[] convertActualTypeArguments(Type type){
         if (type!=null && type instanceof ParameterizedType){
             return ((ParameterizedType) type).getActualTypeArguments();
@@ -155,6 +167,16 @@ public class MethodUtil {
         return null;
     }
 
+    public static Integer getTypeVariableIndex(TypeVariable<?>[] typeVariables, TypeVariable typeVariable) {
+        if (ObjectUtil.isNotEmpty(typeVariables)) {
+            for (int i = 0; i < typeVariables.length; i++) {
+                if (typeVariables[i] == typeVariable) {
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
 
     public static Integer getTypeVariableIndex(TypeVariable<?>[] typeVariables, String fieldTypeName) {
         if (ObjectUtil.isNotEmpty(typeVariables)) {
@@ -169,8 +191,19 @@ public class MethodUtil {
     }
 
     public static Type getTypeByTypeName(Type[] types, TypeVariable<?>[] typeVariables, String fieldTypeName) {
-        if (ObjectUtil.isNotEmpty(types)) {
+        if (ObjectUtil.isNotEmpty(types) && ObjectUtil.isNotEmpty(typeVariables)) {
             Integer typeVariableIndex = getTypeVariableIndex(typeVariables, fieldTypeName);
+            if (typeVariableIndex != null) {
+                Type type = types[typeVariableIndex];
+                return type;
+            }
+        }
+        return null;
+    }
+
+    public static Type getTypeByTypeName(Type[] types, TypeVariable<?>[] typeVariables, TypeVariable typeVariable) {
+        if (ObjectUtil.isNotEmpty(types)) {
+            Integer typeVariableIndex = getTypeVariableIndex(typeVariables, typeVariable);
             if (typeVariableIndex != null) {
                 Type type = types[typeVariableIndex];
                 return type;

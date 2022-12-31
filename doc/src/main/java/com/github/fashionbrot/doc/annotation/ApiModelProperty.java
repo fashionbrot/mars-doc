@@ -38,7 +38,10 @@ public @interface ApiModelProperty {
      * @return String
      */
     String example() default "";
-
-
+    /**
+     * dataType=file multiple=multiple 的时候上传文件多选
+     * @return String
+     */
+    String multiple() default "";
 
 }

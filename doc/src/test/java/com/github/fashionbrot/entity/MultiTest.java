@@ -18,4 +18,5 @@ public class MultiTest {
     @ApiModelProperty("子类哦")
     private Test1 test1;
 
+
 }

@@ -1,7 +1,6 @@
 package com.github.fashionbrot.doc.util;
 
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
-import com.github.fashionbrot.doc.enums.ClassTypeEnum;
 import com.github.fashionbrot.doc.enums.ParameterizedTypeEnum;
 import com.github.fashionbrot.doc.vo.MethodTypeVo;
 import com.github.fashionbrot.doc.vo.ParameterVo;
@@ -49,7 +48,7 @@ public class ParameterUtil {
                         .dataType(field.getGenericType().getTypeName())
                         .build();
 
-                if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
+                if (JavaUtil.isNotPrimitive(field.getGenericType().getTypeName())) {
 
                     if (ObjectUtil.isNotEmpty(methodTypeList)){
                         Optional<MethodTypeVo> first = methodTypeList.stream().filter(m -> m.getTypeName().equals(field.getGenericType().getTypeName())).findFirst();
@@ -58,27 +57,27 @@ public class ParameterUtil {
                             build.setDataType(methodType.getTypeClassStr());
 
 
-                            if (JavaClassValidateUtil.isCollection(methodType.getTypeClass()) ) {
+                            if (JavaUtil.isCollection(methodType.getTypeClass()) ) {
                                 build.setCollection(1);
                                 if (ObjectUtil.isNotEmpty(methodType.getChild())) {
                                     //集合的泛型只有一个
                                     MethodTypeVo childMethodType = methodType.getChild().get(0);
                                     build.setChild(fieldConvertParameter(childMethodType.getTypeClass(), childMethodType.getChild(), requestType));
                                 }
-                            }else if (JavaClassValidateUtil.isArray(methodType.getTypeClass())){
+                            }else if (JavaUtil.isArray(methodType.getTypeClass())){
                                 build.setCollection(1);
                                 build.setChild(fieldConvertParameter(methodType.getTypeClass().getComponentType(), methodType.getChild(), requestType));
                             }else{
                                 build.setCollection(0);
-                                if (!ClassTypeEnum.checkClass(methodType.getTypeClass().getTypeName())){
+                                if (JavaUtil.isNotPrimitive(methodType.getTypeClass().getTypeName())){
                                     build.setChild(fieldConvertParameter(methodType.getTypeClass(),methodType.getChild(), requestType));
                                 }
                             }
                         }
                     }else{
-                        if (JavaClassValidateUtil.isCollection(field.getType()) ) {
+                        if (JavaUtil.isCollection(field.getType()) ) {
                             build.setCollection(1);
-                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                            if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
                                 Type[] actualTypeArguments = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
                                 if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
                                     Class convertClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
@@ -86,16 +85,16 @@ public class ParameterUtil {
                                     build.setChild(fieldConvertParameter(convertClass, null, requestType));
                                 }
                             }
-                        }else if (JavaClassValidateUtil.isArray(field.getType())){
+                        }else if (JavaUtil.isArray(field.getType())){
                             build.setCollection(1);
-                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                            if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
                                 Class convertClass = MethodUtil.typeConvertClass(field.getGenericType());
                                 build.setDataType(convertClass.getComponentType().getTypeName());
                                 build.setChild(fieldConvertParameter(convertClass.getComponentType(),null, requestType));
                             }
                         }else{
                             build.setCollection(0);
-                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                            if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
                                 build.setChild(fieldConvertParameter(field.getType(),null, requestType));
                             }
                         }
@@ -107,6 +106,8 @@ public class ParameterUtil {
         }
         return null;
     }
+
+
 
     public static List<ParameterVo> forFieldOrParam(Class clazz,Type type, String requestType) {
         Field[] declaredFields = clazz.getDeclaredFields();
@@ -143,7 +144,7 @@ public class ParameterUtil {
                         .build();
 
                 Class thisFieldClass = null;
-                if (!ClassTypeEnum.checkClass(field.getGenericType().getTypeName())) {
+                if (JavaUtil.isNotPrimitive(field.getGenericType().getTypeName())) {
 
                     if (type!=null && ParameterizedTypeEnum.isParameterizedType(type.getClass().getName())  ){
 
@@ -157,12 +158,12 @@ public class ParameterUtil {
                             build.setDataType(fieldClass.getTypeName());
 
 
-                            if (!ClassTypeEnum.checkClass(fieldClass.getTypeName())){
-                                if (JavaClassValidateUtil.isArray(fieldClass)) {
+                            if (JavaUtil.isNotPrimitive(fieldClass.getTypeName())){
+                                if (JavaUtil.isArray(fieldClass)) {
                                     fieldClass = fieldClass.getComponentType();
                                     build.setCollection(1);
                                     build.setChild(forFieldOrParam(fieldClass,childType,requestType));
-                                } else if (JavaClassValidateUtil.isCollection(fieldClass)) {
+                                } else if (JavaUtil.isCollection(fieldClass)) {
                                     Type[] actualTypeArguments = ((ParameterizedType) childType).getActualTypeArguments();
                                     if (ObjectUtil.isNotEmpty(actualTypeArguments)){
                                         fieldClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
@@ -179,10 +180,10 @@ public class ParameterUtil {
 
                     }else{
                         build.setDataType(fieldTypeName);
-                        if (JavaClassValidateUtil.isCollection(field.getType()) ) {
+                        if (JavaUtil.isCollection(field.getType()) ) {
                             build.setCollection(1);
 
-                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                            if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
 
                                 Type[] actualTypeArguments = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
                                 if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
@@ -194,9 +195,9 @@ public class ParameterUtil {
                                     build.setChild(fieldParameterList);
                                 }
                             }
-                        }else if (JavaClassValidateUtil.isArray(field.getType())){
+                        }else if (JavaUtil.isArray(field.getType())){
                             build.setCollection(1);
-                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                            if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
                                 Class convertClass = MethodUtil.typeConvertClass(field.getGenericType());
                                 thisFieldClass = convertClass.getComponentType();
                                 build.setDataType(convertClass.getComponentType().getTypeName());
@@ -206,7 +207,7 @@ public class ParameterUtil {
                             }
                         }else{
                             build.setCollection(0);
-                            if (!ClassTypeEnum.checkClass(field.getType().getTypeName())){
+                            if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
                                 thisFieldClass = field.getType();
                                 List<ParameterVo> fieldParameterList = forFieldOrParam(field.getType(), null, requestType);
                                 build.setChild(fieldParameterList);

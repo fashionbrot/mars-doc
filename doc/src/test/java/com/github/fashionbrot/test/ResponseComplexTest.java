@@ -1,12 +1,15 @@
 package com.github.fashionbrot.test;
 
 import com.alibaba.fastjson2.JSON;
+import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.util.RequestUtil;
 import com.github.fashionbrot.doc.util.ResponseUtil;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.CourseVO;
+import com.github.fashionbrot.vo.PageVo;
 import com.github.fashionbrot.vo.RespVo;
+import lombok.Data;
 import org.junit.Test;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -14,19 +17,72 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author fashionbrot
  */
 public class ResponseComplexTest {
 
+    @Data
+    public class ResponseVo {
+
+//        @ApiModelProperty("userList")
+//        private List<List<ResponseHouse>> userList;
+//
+//        @ApiModelProperty("userArray")
+//        private ResponseUser[] userArray;
+//
+//        private List<String> stringList;
+        private Integer[] integers;
+//        @ApiModelProperty("r1")
+//        private List<ResponseCar> r1;
+//
+//        private List<String> r2;
+//        private String[] r3;
+//        private Map<String,Object> r4;
+//        private Object r5;
+//        private ResponseUser requestUser;
+//
+//        private List<ResponseCar> listList;
+//
+//        private List<ResponseUser> responseUsers;
+    }
+
+    @Data
+    public class ResponseUser extends ResponseCourse {
+        @ApiModelProperty("username用户名")
+        private String username;
+
+    }
+
+    @Data
+    public class ResponseCourse extends ResponseHouse {
+        @ApiModelProperty("courseName 课程名")
+        private String courseName;
+    }
+
+    @Data
+    public class ResponseHouse {
+                @ApiModelProperty("houseName 房子名")
+        private String houseName;
+        private List<ResponseCar> carList;
+    }
+
+    public class ResponseCar{
+        @ApiModelProperty("carName 汽车名")
+        private String carName;
+
+
+    }
+
     public class TestController{
 
         @ApiOperation("test1接口")
         @RequestMapping("test1")
         @ResponseBody
-        private CourseVO test1( ){
-            return new CourseVO();
+        private RespVo<CourseVO> test1( ){
+            return null;
         }
 
     }
@@ -37,7 +93,7 @@ public class ResponseComplexTest {
         Method[] methods = ResponseComplexTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse2(method);
+        List<ParameterVo> request = ResponseUtil.getResponse3(method);
 
         System.out.println(JSON.toJSONString(request));
     }
