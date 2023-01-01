@@ -9,6 +9,7 @@ import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.CourseVO;
 import com.github.fashionbrot.vo.PageVo;
 import com.github.fashionbrot.vo.RespVo;
+import com.github.fashionbrot.vo.RespVo2;
 import lombok.Data;
 import org.junit.Test;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class ResponseComplexTest {
 //        private ResponseUser[] userArray;
 //
 //        private List<String> stringList;
+        @ApiModelProperty("integers 哦哦")
         private Integer[] integers;
 //        @ApiModelProperty("r1")
 //        private List<ResponseCar> r1;
@@ -81,12 +83,11 @@ public class ResponseComplexTest {
         @ApiOperation("test1接口")
         @RequestMapping("test1")
         @ResponseBody
-        private RespVo<CourseVO> test1( ){
+        private RespVo2<String,ResponseCar> test1( ){
             return null;
         }
 
     }
-
 
     @Test
     public void test(){
@@ -97,4 +98,5 @@ public class ResponseComplexTest {
 
         System.out.println(JSON.toJSONString(request));
     }
+
 }
