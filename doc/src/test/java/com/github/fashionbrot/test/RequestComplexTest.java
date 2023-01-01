@@ -123,7 +123,7 @@ public class RequestComplexTest {
 //        private Object r5;
 //        private RequestUser requestUser;
 
-        private List<List<RequestUser>> listList;
+        private List<RequestUser> listList;
     }
 
     @Data
@@ -157,7 +157,7 @@ public class RequestComplexTest {
         @ApiOperation("test3接口")
         @RequestMapping("test3")
         @ResponseBody
-        private RespVo test3(User requestReq3){
+        private RespVo test3(RequestReq3 requestReq3){
             return RespVo.success();
         }
     }
