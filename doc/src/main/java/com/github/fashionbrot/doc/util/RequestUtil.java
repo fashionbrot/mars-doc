@@ -165,10 +165,7 @@ public class RequestUtil {
         }
     }
 
-    /**
-     * 解析 集成类
-     * @param propertyClass
-     */
+
     public static void parseSuperClass(Class propertyClass){
         if (propertyClass!=null){
             Class superclass = propertyClass.getSuperclass();

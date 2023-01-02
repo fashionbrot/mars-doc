@@ -200,12 +200,7 @@ public class ParseUtil {
     }
 
 
-    /**
-     * 解析 Class Field
-     *
-     * @param clazz         clazz
-     * @param parameterList 返回List
-     */
+
     public static void parseClassField(boolean isParent,Class clazz, List<ParameterVo> parameterList) {
 
         Field[] declaredFields = clazz.getDeclaredFields();

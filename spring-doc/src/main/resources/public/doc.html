@@ -182,10 +182,10 @@
                         <thead>
                         <tr>
                             <th lay-data="{field:'name', width:'33%',templet:'#nameTemplet'}">参数名称</th>
-                            <th lay-data="{field:'description',  width:'34%'}">参数说明</th>
-                            <th lay-data="{field:'dataType', width:'33%'}">数据类型</th>
-                            <th lay-data="{field:'child',hide:'true'}"></th>
-                            <th lay-data="{field:'collection',hide:'true'}"></th>
+                            <th lay-data="{field:'description',  width:'30%'}">参数说明</th>
+                            <th lay-data="{field:'dataType', width:'30%'}">数据类型</th>
+                            <th lay-data="{field:'collection',width:'7%'}">集合</th>
+                            <th lay-data="{field:'child', hide:'true'}"></th>
                             <th lay-data="{field:'level',hide:'true'}"></th>
                         </tr>
                         </thead>
@@ -196,8 +196,12 @@
                             <td>{{rl.name}}</td>
                             <td>{{rl.description}}</td>
                             <td>{{rl.dataType}}</td>
+                            {{if rl.collection==1}}
+                                <td>Array</td>
+                            {{else}}
+                                <td></td>
+                            {{/if}}
                             <td>{{rl.child}}</td>
-                            <td>{{rl.collection}}</td>
                             <td>{{rl.level}}</td>
                         </tr>
                         {{/each}}
