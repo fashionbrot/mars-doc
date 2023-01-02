@@ -3,6 +3,7 @@ package com.github.fashionbrot.test.response;
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.util.ResponseUtil;
+import com.github.fashionbrot.doc.util.ResponseUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,21 +42,32 @@ public class ResponseTest2 {
         Method[] methods = ResponseTest2.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
         String finalResult = "[{\"collection\":1,\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"java.util.List\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 
 
+
+
+
+    public class TestController2{
+        @ApiOperation("test2接口")
+        @RequestMapping("test2")
+        @ResponseBody
+        private String[] test2( ){
+            return null;
+        }
+    }
     @Test
     public void testArray(){
-        Method[] methods = ResponseTest2.TestController.class.getDeclaredMethods();
+        Method[] methods = ResponseTest2.TestController2.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test2")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
-        String finalResult = "[{\"collection\":1,\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"java.lang.String[]\",\"required\":false}]";
+        String finalResult = "[{\"collection\":1,\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"java.lang.String\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 

@@ -2,6 +2,7 @@ package com.github.fashionbrot.test.response;
 
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.util.ResponseUtil;
+import com.github.fashionbrot.doc.util.ResponseUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class ResponseTest1 {
         Method[] methods = ResponseTest1.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
         String finalResult = "[{\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"java.lang.String\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
@@ -48,7 +49,7 @@ public class ResponseTest1 {
         Method[] methods = ResponseTest1.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("testMap")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
         String finalResult = "[{\"dataType\":\"java.util.HashMap\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"java.util.HashMap\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
@@ -59,7 +60,7 @@ public class ResponseTest1 {
         Method[] methods = ResponseTest1.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("testObject")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
         String finalResult = "[{\"dataType\":\"java.lang.Object\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"java.lang.Object\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));

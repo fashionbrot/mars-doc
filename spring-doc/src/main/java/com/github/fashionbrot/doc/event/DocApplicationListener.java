@@ -238,7 +238,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                 if (respCount == 0) {
                     responseVoList.add(LinkVo.builder()
                             .methodId(methodId)
-                            .list(ResponseUtil.getResponse(method))
+                            .list(ResponseUtilOld.getResponse(method))
                             .build());
                 }
 

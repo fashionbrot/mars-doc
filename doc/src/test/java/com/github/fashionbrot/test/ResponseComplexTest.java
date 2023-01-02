@@ -3,15 +3,9 @@ package com.github.fashionbrot.test;
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
-import com.github.fashionbrot.doc.util.RequestUtil;
-import com.github.fashionbrot.doc.util.ResponseUtil;
+import com.github.fashionbrot.doc.util.ResponseUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
-import com.github.fashionbrot.entity.CourseVO;
-import com.github.fashionbrot.entity.Page;
-import com.github.fashionbrot.vo.PageVo;
 import com.github.fashionbrot.vo.PageVo2;
-import com.github.fashionbrot.vo.RespVo;
-import com.github.fashionbrot.vo.RespVo2;
 import lombok.Data;
 import org.junit.Test;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author fashionbrot
@@ -96,7 +89,7 @@ public class ResponseComplexTest {
         Method[] methods = ResponseComplexTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtilOld.getResponse3(method);
 
         System.out.println(JSON.toJSONString(request));
     }

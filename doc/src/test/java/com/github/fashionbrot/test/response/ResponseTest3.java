@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.util.ResponseUtil;
+import com.github.fashionbrot.doc.util.ResponseUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class ResponseTest3 {
         Method[] methods = ResponseTest3.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
         String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"carName 汽车名\",\"example\":\"\",\"multiple\":\"\",\"name\":\"carName\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.response.ResponseTest3$ResponseCar\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"java.util.List\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
@@ -61,9 +62,9 @@ public class ResponseTest3 {
         Method[] methods = ResponseTest3.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test2")).findFirst().get();
 
-        List<ParameterVo> request = ResponseUtil.getResponse3(method);
+        List<ParameterVo> request = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(request));
-        String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"carName 汽车名\",\"example\":\"\",\"multiple\":\"\",\"name\":\"carName\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.response.ResponseTest3$ResponseCar\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"com.github.fashionbrot.test.response.ResponseTest3$ResponseCar[]\",\"required\":false}]";
+        String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"carName 汽车名\",\"example\":\"\",\"multiple\":\"\",\"name\":\"carName\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.response.ResponseTest3$ResponseCar\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"com.github.fashionbrot.test.response.ResponseTest3$ResponseCar\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 

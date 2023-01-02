@@ -99,22 +99,56 @@ public class TypeUtil {
     }
 
 
-
-
-    public static Class getFieldType(Field field,Type classType){
+    public static Type getFieldType(Field field,Type classType){
         Type fieldGenericType = field.getGenericType();
         if (fieldGenericType instanceof Class){
             return field.getType().getComponentType();
         }else if (fieldGenericType instanceof GenericArrayType){
-            Type genericComponentType = ((GenericArrayType) field.getGenericType()).getGenericComponentType();
+
+            Type genericComponentType = ((GenericArrayType) fieldGenericType).getGenericComponentType();
             Type[] convertActualTypeArguments = TypeUtil.convertActualTypeArguments(classType);
             TypeVariable[] typeVariables = TypeUtil.getTypeVariable(classType);
             Type typeByTypeName = getTypeByTypeName(convertActualTypeArguments, typeVariables, genericComponentType.getTypeName());
-            if (typeByTypeName!=null){
-                return TypeUtil.typeConvertClass(typeByTypeName);
+            return typeByTypeName;
+
+        }else if (fieldGenericType instanceof TypeVariable){
+
+            Type[] convertActualTypeArguments = TypeUtil.convertActualTypeArguments(classType);
+            TypeVariable[] typeVariables = TypeUtil.getTypeVariable(classType);
+            Type typeByTypeName = getTypeByTypeName(convertActualTypeArguments, typeVariables, fieldGenericType.getTypeName());
+            return typeByTypeName;
+
+        }else if (fieldGenericType instanceof ParameterizedType){
+
+            if (JavaUtil.isCollection(field.getType())){
+                Type[] fieldActualTypeArguments = TypeUtil.convertActualTypeArguments(fieldGenericType);
+                if (ObjectUtil.isNotEmpty(fieldActualTypeArguments)){
+                    if (fieldActualTypeArguments[0] instanceof Class){
+                        return fieldActualTypeArguments[0];
+                    }else if (fieldActualTypeArguments[0] instanceof ParameterizedType) {
+                        TypeVariable[] typeVariables = TypeUtil.getTypeVariable(classType);
+                        Type[] convertActualTypeArguments = TypeUtil.convertActualTypeArguments(classType);
+                        Type typeByTypeName = getTypeByTypeName(convertActualTypeArguments, typeVariables, fieldActualTypeArguments[0].getTypeName());
+                        return typeByTypeName;
+                    }else if (fieldActualTypeArguments[0] instanceof TypeVariable){
+                        TypeVariable[] typeVariables = TypeUtil.getTypeVariable(classType);
+                        Type[] convertActualTypeArguments = TypeUtil.convertActualTypeArguments(classType);
+                        Type typeByTypeName = getTypeByTypeName(convertActualTypeArguments, typeVariables, fieldActualTypeArguments[0].getTypeName());
+                        return typeByTypeName;
+                    }
+                }
             }
+
         }
         return null;
 
+    }
+
+    public static Class getFieldTypeClass(Field field,Type classType){
+        Type fieldType = getFieldType(field, classType);
+        if (fieldType!=null){
+            return TypeUtil.typeConvertClass(fieldType);
+        }
+        return null;
     }
 }
