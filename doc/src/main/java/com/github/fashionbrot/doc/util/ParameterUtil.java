@@ -80,7 +80,7 @@ public class ParameterUtil {
                             if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
                                 Type[] actualTypeArguments = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
                                 if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
-                                    Class convertClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
+                                    Class convertClass = TypeUtil.typeConvertClass(actualTypeArguments[0]);
                                     build.setDataType(convertClass.getTypeName());
                                     build.setChild(fieldConvertParameter(convertClass, null, requestType));
                                 }
@@ -88,7 +88,7 @@ public class ParameterUtil {
                         }else if (JavaUtil.isArray(field.getType())){
                             build.setCollection(1);
                             if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
-                                Class convertClass = MethodUtil.typeConvertClass(field.getGenericType());
+                                Class convertClass = TypeUtil.typeConvertClass(field.getGenericType());
                                 build.setDataType(convertClass.getComponentType().getTypeName());
                                 build.setChild(fieldConvertParameter(convertClass.getComponentType(),null, requestType));
                             }
@@ -148,13 +148,13 @@ public class ParameterUtil {
 
                     if (type!=null && ParameterizedTypeEnum.isParameterizedType(type.getClass().getName())  ){
 
-                        TypeVariable<? extends Class<?>>[] typeVariables = MethodUtil.getTypeVariable(type);
+                        TypeVariable<? extends Class<?>>[] typeVariables = TypeUtil.getTypeVariable(type);
                         Type[] types = ((ParameterizedType) type).getActualTypeArguments();
 
-                        Type childType = MethodUtil.getTypeByTypeName(types, typeVariables, fieldTypeName);
+                        Type childType = TypeUtil.getTypeByTypeName(types, typeVariables, fieldTypeName);
                         if (childType != null) {
 
-                            Class fieldClass = MethodUtil.typeConvertClass(childType);
+                            Class fieldClass = TypeUtil.typeConvertClass(childType);
                             build.setDataType(fieldClass.getTypeName());
 
 
@@ -166,7 +166,7 @@ public class ParameterUtil {
                                 } else if (JavaUtil.isCollection(fieldClass)) {
                                     Type[] actualTypeArguments = ((ParameterizedType) childType).getActualTypeArguments();
                                     if (ObjectUtil.isNotEmpty(actualTypeArguments)){
-                                        fieldClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
+                                        fieldClass = TypeUtil.typeConvertClass(actualTypeArguments[0]);
                                     }
                                     build.setCollection(1);
                                     build.setChild(forFieldOrParam(fieldClass,childType,requestType));
@@ -187,7 +187,7 @@ public class ParameterUtil {
 
                                 Type[] actualTypeArguments = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
                                 if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
-                                    Class convertClass = MethodUtil.typeConvertClass(actualTypeArguments[0]);
+                                    Class convertClass = TypeUtil.typeConvertClass(actualTypeArguments[0]);
                                     thisFieldClass = convertClass;
                                     build.setDataType(convertClass.getTypeName());
 
@@ -198,7 +198,7 @@ public class ParameterUtil {
                         }else if (JavaUtil.isArray(field.getType())){
                             build.setCollection(1);
                             if (JavaUtil.isNotPrimitive(field.getType().getTypeName())){
-                                Class convertClass = MethodUtil.typeConvertClass(field.getGenericType());
+                                Class convertClass = TypeUtil.typeConvertClass(field.getGenericType());
                                 thisFieldClass = convertClass.getComponentType();
                                 build.setDataType(convertClass.getComponentType().getTypeName());
 

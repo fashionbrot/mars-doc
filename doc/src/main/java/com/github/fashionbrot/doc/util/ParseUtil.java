@@ -63,10 +63,10 @@ public class ParseUtil {
             parseParameterList(parameter,parameterList);
         } else if (JavaUtil.isPrimitive(propertyClass)) {
             //基本类型
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(parameter));
+            parameterList.add(AnnotationUtil.parseBaseType(parameter));
         } else if (JavaUtil.isObject(propertyClass) || JavaUtil.isMap(propertyClass)) {
             //java.lang.Object类型
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(parameter));
+            parameterList.add(AnnotationUtil.parseBaseType(parameter));
         } else {
             //解析Class
             parseClass(parameter, parameterList);
@@ -95,9 +95,9 @@ public class ParseUtil {
         } else if (JavaUtil.isCollection(propertyClass)) {
             parseFieldList(field,parameterList);
         } else if (JavaUtil.isPrimitive(propertyClass)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(field));
+            parameterList.add(AnnotationUtil.parseBaseType(field));
         } else if (JavaUtil.isObject(propertyClass) || JavaUtil.isMap(propertyClass)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(field));
+            parameterList.add(AnnotationUtil.parseBaseType(field));
         } else {
             //class Field 解析
             parseClassField(field, parameterList);
@@ -113,9 +113,9 @@ public class ParseUtil {
 //            System.out.println("class array");
             parseClassList(clazz,parameterList);
         } else if (JavaUtil.isPrimitive(clazz)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(clazz));
+            parameterList.add(AnnotationUtil.parseBaseType(clazz));
         } else if (JavaUtil.isObject(clazz) || JavaUtil.isMap(clazz)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(clazz));
+            parameterList.add(AnnotationUtil.parseBaseType(clazz));
         } else {
             /**
              * class Field 解析
@@ -156,7 +156,7 @@ public class ParseUtil {
 
     public static void parseClass(Parameter parameter, List<ParameterVo> parameterList) {
 
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(parameter);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(parameter);
         List<ParameterVo> childParameterList = new ArrayList<>();
 
         Class<?> propertyClass = parameter.getType();
@@ -188,7 +188,7 @@ public class ParseUtil {
         parseSuperClass(propertyClass, childParameterList);
 
         if (ObjectUtil.isNotEmpty(declaredFields)) {
-            ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
+            ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
 
             for (Field f : declaredFields) {
 
@@ -221,7 +221,7 @@ public class ParseUtil {
                     parseField( field, parameterList);
                 }
             }else{
-                ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(clazz);
+                ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
                 List<ParameterVo> childParameterList = new ArrayList<>();
 
                 /**
@@ -258,7 +258,7 @@ public class ParseUtil {
 
 
     public static void parseParameterList(Parameter parameter,List<ParameterVo> parameterList ){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(parameter);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(parameter);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
         Type[] actualTypeArguments = TypeUtil.getActualTypeArguments(parameter);
@@ -280,7 +280,7 @@ public class ParseUtil {
     }
 
     public static void parseParameterArray(Parameter parameter,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(parameter);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(parameter);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
         Class convertClass =parameter.getType().getComponentType();
@@ -299,7 +299,7 @@ public class ParseUtil {
     }
 
     public static void parseFieldList(Field field,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
         Type[] actualTypeArguments = TypeUtil.getActualTypeArguments(field);
@@ -323,7 +323,7 @@ public class ParseUtil {
     }
 
     public static void parseFieldArray(Field field,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
         Class convertClass =field.getType().getComponentType();
@@ -344,7 +344,7 @@ public class ParseUtil {
 
 
     public static void parseClassList(Class clazz,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(clazz);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
         Type[] actualTypeArguments = clazz.getGenericInterfaces();
@@ -368,7 +368,7 @@ public class ParseUtil {
     }
 
     public static void parseClassArray(Class clazz,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(clazz);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
         Class convertClass =clazz.getComponentType();

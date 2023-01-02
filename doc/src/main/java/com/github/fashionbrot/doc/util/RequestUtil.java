@@ -371,7 +371,7 @@ public class RequestUtil {
                 if (JavaUtil.isNotPrimitive(className)) {
                     Type type = getTypeByTypeName(types, typeVariables, className);
                     if (type != null) {
-                        Class fieldClass = MethodUtil.typeConvertClass(type);
+                        Class fieldClass = TypeUtil.typeConvertClass(type);
                         if (JavaUtil.isPrimitive(fieldClass.getTypeName())){
                             build.setDataType(fieldClass.getTypeName());
                         }else{

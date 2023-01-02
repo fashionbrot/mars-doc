@@ -2,8 +2,12 @@ package com.github.fashionbrot.doc.util;
 
 
 
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
+import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.consts.SpringMvcAnnotations;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Properties;
 
 
@@ -194,5 +198,16 @@ public class JavaUtil {
 
 
 
+    public static boolean isFinal(Field field) {
+        if (Modifier.isFinal(field.getModifiers())) {
+            return true;
+        }
+        field.setAccessible(true);
+        return false;
+    }
+
+    public static boolean isNotFinal(Field field){
+        return !isFinal(field);
+    }
 
 }

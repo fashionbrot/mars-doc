@@ -57,10 +57,10 @@ public class RequestUtil2 {
 
         } else if (JavaUtil.isBaseType(propertyClass)) {
             //基本类型
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(parameter));
+            parameterList.add(AnnotationUtil.parseBaseType(parameter));
         } else if (JavaUtil.isObject(propertyClass)) {
             //java.lang.Object类型
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(parameter));
+            parameterList.add(AnnotationUtil.parseBaseType(parameter));
         } else {
             //解析Class
             parseParameterClass(ClassTypeUtil.getClassType(parameter), parameterList);
@@ -69,22 +69,22 @@ public class RequestUtil2 {
 
 
     public static void parseParameterClass(ClassType classType, List<ParameterVo> parameterList) {
-
-        ParameterVo parameterVo = ApiModelPropertyUtil.getParameterVo(classType);
-        List<ParameterVo> childParameterList = new ArrayList<>();
-
-        //class parent 类解析
-        parseSuperClass(classType, childParameterList);
-
-
-        Field[] declaredFields = classType.getClazz().getDeclaredFields();
-        if (ObjectUtil.isNotEmpty(declaredFields)) {
-            for (Field field : declaredFields) {
-                checkParseField(classType, field, childParameterList);
-            }
-            parameterVo.setChild(childParameterList);
-            parameterList.add(parameterVo);
-        }
+        //TODO 先注释
+//        ParameterVo parameterVo = AnnotationUtil.getParameterVo(classType);
+//        List<ParameterVo> childParameterList = new ArrayList<>();
+//
+//        //class parent 类解析
+//        parseSuperClass(classType, childParameterList);
+//
+//
+//        Field[] declaredFields = classType.getClazz().getDeclaredFields();
+//        if (ObjectUtil.isNotEmpty(declaredFields)) {
+//            for (Field field : declaredFields) {
+//                checkParseField(classType, field, childParameterList);
+//            }
+//            parameterVo.setChild(childParameterList);
+//            parameterList.add(parameterVo);
+//        }
     }
 
 
@@ -149,10 +149,10 @@ public class RequestUtil2 {
         } else if (JavaUtil.isCollection(propertyClass)) {
 
         } else if (JavaUtil.isBaseType(propertyClass)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(field));
+            parameterList.add(AnnotationUtil.parseBaseType(field));
         } else if (JavaUtil.isObject(propertyClass)) {
 
-            Type filedClass = MethodUtil.getTypeByTypeName(classType.getActualTypeArguments(), classType.getTypeVariables(), field.getGenericType().getTypeName());
+            Type filedClass = TypeUtil.getTypeByTypeName(classType.getActualTypeArguments(), classType.getTypeVariables(), field.getGenericType().getTypeName());
             if (filedClass!=null){
 //                parseTypeField(filedClass,parameterList);
             }

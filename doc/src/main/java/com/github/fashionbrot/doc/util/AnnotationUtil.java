@@ -1,5 +1,6 @@
 package com.github.fashionbrot.doc.util;
 
+import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 
@@ -10,18 +11,21 @@ import java.lang.reflect.Parameter;
 /**
  * @author fashionbrot
  */
-public class ApiModelPropertyUtil {
+public class AnnotationUtil {
 
 
-    public static ParameterVo getParameterVo(ClassType classType){
-        if (classType.getObj() instanceof  Parameter){
-            return parseBaseType((Parameter)classType.getObj());
-        }else if (classType.getObj() instanceof Field){
-            return parseBaseType((Field)classType.getObj());
-        }else{
-            return parseBaseType(classType.getClazz());
+    public static boolean isIgnore(Field field) {
+        ApiIgnore apiIgnore = field.getDeclaredAnnotation(ApiIgnore.class);
+        if (apiIgnore != null) {
+            return true;
         }
+        ApiModelProperty apiModelProperty = field.getDeclaredAnnotation(ApiModelProperty.class);
+        if (apiModelProperty != null && apiModelProperty.hidden()) {
+            return true;
+        }
+        return false;
     }
+
 
     public static ParameterVo parseBaseType(Parameter parameter) {
 

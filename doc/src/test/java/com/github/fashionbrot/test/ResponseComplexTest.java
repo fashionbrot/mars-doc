@@ -7,7 +7,9 @@ import com.github.fashionbrot.doc.util.RequestUtil;
 import com.github.fashionbrot.doc.util.ResponseUtil;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.CourseVO;
+import com.github.fashionbrot.entity.Page;
 import com.github.fashionbrot.vo.PageVo;
+import com.github.fashionbrot.vo.PageVo2;
 import com.github.fashionbrot.vo.RespVo;
 import com.github.fashionbrot.vo.RespVo2;
 import lombok.Data;
@@ -66,9 +68,9 @@ public class ResponseComplexTest {
 
     @Data
     public class ResponseHouse {
-                @ApiModelProperty("houseName 房子名")
-        private String houseName;
-        private List<ResponseCar> carList;
+//                @ApiModelProperty("houseName 房子名")
+//        private String houseName;
+        private ResponseCar[] carList;
     }
 
     public class ResponseCar{
@@ -83,7 +85,7 @@ public class ResponseComplexTest {
         @ApiOperation("test1接口")
         @RequestMapping("test1")
         @ResponseBody
-        private RespVo2<String,ResponseCar> test1( ){
+        private PageVo2<ResponseCar> test1( ){
             return null;
         }
 

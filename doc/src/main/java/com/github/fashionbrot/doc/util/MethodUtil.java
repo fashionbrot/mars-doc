@@ -36,7 +36,7 @@ public class MethodUtil {
                 Type  classType = actualTypeArguments[i];
                 Type  genType = typeParameters[i];
 
-                Class typeClass = typeConvertClass(classType);
+                Class typeClass = TypeUtil.typeConvertClass(classType);
 
                 MethodTypeVo build = MethodTypeVo.builder()
                         .methodId(methodId)
@@ -67,7 +67,7 @@ public class MethodUtil {
         }
         MethodTypeVo root = MethodTypeVo.builder()
                 .methodId(methodId)
-                .typeClass(typeConvertClass(genericReturnType))
+                .typeClass(TypeUtil.typeConvertClass(genericReturnType))
                 .typeName(genericReturnType.getTypeName())
                 .typeClassStr(MarsDocConst.TYPE_CLASS_ROOT)
                 .child(methodTypeVoList)
@@ -85,7 +85,7 @@ public class MethodUtil {
             return list;
         }
 //        TypeVariable<? extends Class<?>>[] typeVariables = ((ParameterizedTypeImpl) classType).getRawType().getTypeParameters();
-        TypeVariable<? extends Class<?>>[] typeVariables = getTypeVariable(classType);
+        TypeVariable<? extends Class<?>>[] typeVariables = TypeUtil.getTypeVariable(classType);
 
 //        TypeVariable<?>[] typeParameters = ((ParameterizedType) classType).getRawType().getClass().getTypeParameters();
 //        TypeVariable<?>[] typeVariables = ((TypeVariable) genType).getGenericDeclaration().getTypeParameters();
@@ -96,7 +96,7 @@ public class MethodUtil {
                 Type typeVariable = typeVariables[i];
                 Type type = actualTypeArguments[i];
 
-                Class typeClass = typeConvertClass(type);
+                Class typeClass = TypeUtil.typeConvertClass(type);
 
                 MethodTypeVo build = MethodTypeVo.builder()
                         .methodId(methodId)
@@ -120,95 +120,10 @@ public class MethodUtil {
         return list;
     }
 
-    public static TypeVariable[] getTypeVariable(Parameter parameter){
-        Type parameterizedType = parameter.getParameterizedType();
-        if (parameterizedType!=null){
-            return getTypeVariable(parameterizedType);
-        }
-        return null;
-    }
-
-    public static TypeVariable[] getTypeVariable(Type type){
-        Class typeClass = null;
-        if(type instanceof  Class){
-            typeClass = (Class) type;
-        }else if (type instanceof ParameterizedType){
-            typeClass = (Class) ((ParameterizedType) type).getRawType();
-        }
-        if (typeClass!=null){
-            return typeClass.getTypeParameters();
-        }
-        return null;
-    }
-
-    public static Class typeConvertClass(Type type) {
-        Class typeClass = null;
-        if(type instanceof  Class){
-            typeClass = (Class) type;
-        }else if (type instanceof ParameterizedType){
-            typeClass = (Class) ((ParameterizedType) type).getRawType();
-        }
-        return typeClass;
-    }
 
 
-    public static Type[] getActualTypeArguments(Parameter parameter){
-        Type parameterizedType = parameter.getParameterizedType();
-        if (parameterizedType!=null){
-            return MethodUtil.convertActualTypeArguments(parameter.getParameterizedType());
-        }
-        return null;
-    }
 
-    public static Type[] convertActualTypeArguments(Type type){
-        if (type!=null && type instanceof ParameterizedType){
-            return ((ParameterizedType) type).getActualTypeArguments();
-        }
-        return null;
-    }
 
-    public static Integer getTypeVariableIndex(TypeVariable<?>[] typeVariables, TypeVariable typeVariable) {
-        if (ObjectUtil.isNotEmpty(typeVariables)) {
-            for (int i = 0; i < typeVariables.length; i++) {
-                if (typeVariables[i] == typeVariable) {
-                    return i;
-                }
-            }
-        }
-        return null;
-    }
 
-    public static Integer getTypeVariableIndex(TypeVariable<?>[] typeVariables, String fieldTypeName) {
-        if (ObjectUtil.isNotEmpty(typeVariables)) {
-            for (int i = 0; i < typeVariables.length; i++) {
-                TypeVariable<?> typeVariable = typeVariables[i];
-                if (typeVariable.getTypeName().equals(fieldTypeName)) {
-                    return i;
-                }
-            }
-        }
-        return null;
-    }
 
-    public static Type getTypeByTypeName(Type[] types, TypeVariable<?>[] typeVariables, String fieldTypeName) {
-        if (ObjectUtil.isNotEmpty(types) && ObjectUtil.isNotEmpty(typeVariables)) {
-            Integer typeVariableIndex = getTypeVariableIndex(typeVariables, fieldTypeName);
-            if (typeVariableIndex != null) {
-                Type type = types[typeVariableIndex];
-                return type;
-            }
-        }
-        return null;
-    }
-
-    public static Type getTypeByTypeName(Type[] types, TypeVariable<?>[] typeVariables, TypeVariable typeVariable) {
-        if (ObjectUtil.isNotEmpty(types)) {
-            Integer typeVariableIndex = getTypeVariableIndex(typeVariables, typeVariable);
-            if (typeVariableIndex != null) {
-                Type type = types[typeVariableIndex];
-                return type;
-            }
-        }
-        return null;
-    }
 }

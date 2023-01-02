@@ -145,7 +145,7 @@ public class ResponseUtil {
         } else if (JavaUtil.isCollection(clazz)) {
             parseClassList(clazz,genericReturnType,parameterList);
         } else if (JavaUtil.isPrimitive(clazz) || JavaUtil.isMap(clazz) || JavaUtil.isObject(clazz)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(clazz));
+            parameterList.add(AnnotationUtil.parseBaseType(clazz));
         }else {
             parseClass(clazz,genericReturnType, parameterList);
         }
@@ -209,9 +209,9 @@ public class ResponseUtil {
         } else if (JavaUtil.isCollection(propertyClass)) {
             parseFieldList(field,classType,parameterList);
         } else if (JavaUtil.isPrimitive(propertyClass)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(field));
+            parameterList.add(AnnotationUtil.parseBaseType(field));
         } else if (JavaUtil.isMap(propertyClass)) {
-            parameterList.add(ApiModelPropertyUtil.parseBaseType(field));
+            parameterList.add(AnnotationUtil.parseBaseType(field));
         } else if (JavaUtil.isObject(propertyClass)) {
             parseGenericField(field,classType,parameterList);
         } else {
@@ -231,7 +231,7 @@ public class ResponseUtil {
 
         Field[] declaredFields = propertyClass.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
-            ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
+            ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
             for (Field f : declaredFields) {
                 parseField( f, childParameterList);
             }
@@ -245,13 +245,13 @@ public class ResponseUtil {
 
 
     public static void parseGenericField(Field field, Type classType,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
         List<ParameterVo> childList =new ArrayList<>();
 
         Type[] types = TypeUtil.convertActualTypeArguments(classType);
         TypeVariable[] typeVariables = TypeUtil.getTypeVariable(classType);
         if (ObjectUtil.isNotEmpty(types)){
-            Type typeByTypeName = MethodUtil.getTypeByTypeName(types, typeVariables, field.getGenericType().getTypeName());
+            Type typeByTypeName = TypeUtil.getTypeByTypeName(types, typeVariables, field.getGenericType().getTypeName());
             if (typeByTypeName!=null){
 
                 if (typeByTypeName instanceof Class){
@@ -408,7 +408,7 @@ public class ResponseUtil {
 
 
     public static void parseFieldList(Field field, Type classType, List<ParameterVo> parameterList) {
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
         parameterVo.setCollection(1);
 
         List<ParameterVo> childParameterList = new ArrayList<>();
@@ -430,7 +430,7 @@ public class ResponseUtil {
 //                                parameterVo.setCollection(null);
                             } else {
                                 if (JavaUtil.isPrimitive(convertClass) || JavaUtil.isMap(convertClass) || JavaUtil.isObject(convertClass)) {
-                                    ParameterVo parameterPrimitiveVo = ApiModelPropertyUtil.parseBaseType(convertClass);
+                                    ParameterVo parameterPrimitiveVo = AnnotationUtil.parseBaseType(convertClass);
                                     parameterPrimitiveVo.setCollection(1);
                                     parameterPrimitiveVo.setIsPrimitive(1);
                                     parameterPrimitiveVo.setDataType(convertClass.getTypeName());
@@ -464,7 +464,7 @@ public class ResponseUtil {
                                         parameterVo.setIsPrimitive(1);
                                     }else{
                                         if (JavaUtil.isPrimitive(convertClass) || JavaUtil.isMap(convertClass) || JavaUtil.isObject(convertClass)) {
-                                            ParameterVo parameterPrimitiveVo = ApiModelPropertyUtil.parseBaseType(convertClass);
+                                            ParameterVo parameterPrimitiveVo = AnnotationUtil.parseBaseType(convertClass);
                                             parameterPrimitiveVo.setCollection(1);
                                             parameterPrimitiveVo.setIsPrimitive(1);
                                             parameterPrimitiveVo.setDataType(convertClass.getTypeName());
@@ -488,7 +488,7 @@ public class ResponseUtil {
 //                                if (JavaUtil.isPrimitive(convertClass) || JavaUtil.isMap(convertClass) || JavaUtil.isObject(convertClass)) {
 //                                    parameterVo.setIsPrimitive(1);
 //                                } else {
-//                                    ParameterVo parameterPrimitiveVo = ApiModelPropertyUtil.parseBaseType(convertClass);
+//                                    ParameterVo parameterPrimitiveVo = AnnotationUtil.parseBaseType(convertClass);
 //                                    parameterPrimitiveVo.setCollection(1);
 //                                    parameterPrimitiveVo.setDataType(convertClass.getTypeName());
 //                                    List<ParameterVo> childObjectParameterList=new ArrayList<>();
@@ -519,7 +519,7 @@ public class ResponseUtil {
 //                            if (actualTypeArguments[0] instanceof Class){
 ////                                parseClass(convertClass,actualTypeArguments[0],childParameterList);
 //                                if (JavaUtil.isPrimitive(convertClass) || JavaUtil.isMap(convertClass) || JavaUtil.isObject(convertClass)){
-//                                    ParameterVo parameterPrimitiveVo = ApiModelPropertyUtil.parseBaseType(convertClass);
+//                                    ParameterVo parameterPrimitiveVo = AnnotationUtil.parseBaseType(convertClass);
 //                                    parameterPrimitiveVo.setCollection(1);
 //                                    parameterPrimitiveVo.setIsPrimitive(1);
 //                                    parameterPrimitiveVo.setDataType(convertClass.getTypeName());
@@ -562,17 +562,17 @@ public class ResponseUtil {
     }
 
     public static void parseFieldArray(Field field,Type classType,List<ParameterVo> parameterList){
-        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(field);
-
+        ParameterVo parameterVo = AnnotationUtil.parseBaseType(field);
         List<ParameterVo> childParameterList = new ArrayList<>();
-        Class convertClass =field.getType().getComponentType();
-        if (convertClass!=null){
+
+        Class componentType = TypeUtil.getFieldType(field,classType);
+        if (componentType!=null){
             parameterVo.setCollection(1);
-            parameterVo.setDataType(convertClass.getTypeName());
-            if (JavaUtil.isPrimitive(convertClass) || JavaUtil.isMap(convertClass) || JavaUtil.isObject(convertClass)){
+            parameterVo.setDataType(componentType.getTypeName());
+            if (JavaUtil.isPrimitive(componentType) || JavaUtil.isMap(componentType) || JavaUtil.isObject(componentType)){
                 parameterVo.setIsPrimitive(1);
             }else{
-                parseClass(convertClass,classType, childParameterList);
+                parseClass(componentType,classType, childParameterList);
             }
         }
 
@@ -584,9 +584,9 @@ public class ResponseUtil {
 
 
     public static void parseClassList(Class clazz,Type classType,List<ParameterVo> parameterList){
-        if (classType == null) {
-            return;
-        }
+//        if (classType == null) {
+//            return;
+//        }
         if (classType instanceof Class){
             Type[] actualTypeArguments = TypeUtil.convertActualTypeArguments(classType);
             if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
@@ -602,7 +602,7 @@ public class ResponseUtil {
                     Class convertClass = TypeUtil.typeConvertClass(actualTypeArguments[0]);
                     if (convertClass!=null){
 
-                        ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(clazz);
+                        ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
                         parameterVo.setCollection(1);
                         parameterVo.setDataType(convertClass.getTypeName());
 
@@ -615,9 +615,6 @@ public class ResponseUtil {
                         }
                         parameterList.add(parameterVo);
                     }
-
-                }else if (actualTypeArguments[0] instanceof ParameterizedType){
-                    classSelector((Class) actualTypeArguments[0], classType, parameterList);
                 }
             }
         }
@@ -627,7 +624,7 @@ public class ResponseUtil {
         if (convertClass!=null){
             if (classType instanceof Class){
 
-                ParameterVo parameterVo = ApiModelPropertyUtil.parseBaseType(clazz);
+                ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
                 parameterVo.setCollection(1);
                 parameterVo.setDataType(convertClass.getTypeName());
                 parameterVo.setName(convertClass.getTypeName()+"[]");
