@@ -610,7 +610,7 @@ public class ResponseUtil {
                             parameterVo.setIsPrimitive(1);
                         }else{
                             List<ParameterVo> childList=new ArrayList<>();
-                            parseClass(convertClass, classType, childList);
+                            parseClass(convertClass, actualTypeArguments[0], childList);
                             parameterVo.setChild(childList);
                         }
                         parameterList.add(parameterVo);
