@@ -17,6 +17,12 @@
     <script type="text/javascript" src="./json5.js"></script>
     <script type="text/javascript" src="./mars-doc.js"></script>
     <script type="text/javascript" src="./sha1.js"></script>
+    <style>
+        .layui-table-cell{
+            display:table-cell;
+            vertical-align: middle;
+        }
+    </style>
 </head>
 <body>
 
@@ -182,10 +188,10 @@
                         <thead>
                         <tr>
                             <th lay-data="{field:'name', width:'33%',templet:'#nameTemplet'}">参数名称</th>
-                            <th lay-data="{field:'description',  width:'30%'}">参数说明</th>
-                            <th lay-data="{field:'dataType', width:'30%'}">数据类型</th>
-                            <th lay-data="{field:'collection',width:'7%'}">集合</th>
+                            <th lay-data="{field:'description',  width:'34%'}">参数说明</th>
+                            <th lay-data="{field:'dataType', width:'33%'}">数据类型</th>
                             <th lay-data="{field:'child', hide:'true'}"></th>
+                            <th lay-data="{field:'collection', hide:'true'}">集合</th>
                             <th lay-data="{field:'level',hide:'true'}"></th>
                         </tr>
                         </thead>
@@ -195,13 +201,13 @@
                         <tr>
                             <td>{{rl.name}}</td>
                             <td>{{rl.description}}</td>
-                            <td>{{rl.dataType}}</td>
                             {{if rl.collection==1}}
-                                <td>Array</td>
+                                <td>{{rl.dataType}} (Array)</td>
                             {{else}}
-                                <td></td>
+                                <td>{{rl.dataType}}</td>
                             {{/if}}
                             <td>{{rl.child}}</td>
+                            <td>{{rl.collection}}</td>
                             <td>{{rl.level}}</td>
                         </tr>
                         {{/each}}
@@ -840,7 +846,8 @@
 
         function initTable(id,size,textNone){
             table.init(id, { //转化静态表格
-                // height: 'full-500'
+                // height: 'full-500',
+                limit:1000,
                 size: size,
                 text: {
                     none: textNone
@@ -945,7 +952,7 @@
                         });
                         array.push(childJson);
                         json[request.name]=array;
-                    }else if (collection==0 && child){
+                    }else if ((collection==null || collection==0) && child){
 
                         let childJson = {}
                         $.each(child,function (index,r){

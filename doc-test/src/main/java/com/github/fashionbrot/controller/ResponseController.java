@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * @author fashionbrot
  */
+
 @Api(value = "responseTest接口",priority = 97)
 @Controller
 @RequestMapping("/response")
