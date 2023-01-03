@@ -5,7 +5,6 @@ import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.util.ParameterUtil;
-import com.github.fashionbrot.doc.util.RequestUtil;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.vo.RespVo;
 import lombok.Data;

@@ -1,29 +1,22 @@
 package com.github.fashionbrot.test;
 
 import com.alibaba.fastjson2.JSON;
-import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
-import com.github.fashionbrot.doc.util.ObjectUtil;
 import com.github.fashionbrot.doc.util.ParseUtil;
-import com.github.fashionbrot.doc.util.RequestUtil;
+import com.github.fashionbrot.doc.util.RequestUtilOld;
 import com.github.fashionbrot.doc.util.RequestUtil2;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.*;
-import com.github.fashionbrot.req.TestReq;
 import com.github.fashionbrot.vo.RespVo;
 import lombok.Data;
 import org.junit.Test;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author fashionbrot
@@ -63,7 +56,7 @@ public class RequestComplexTest {
         Method[] methods = RequestComplexTest.RequestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtil.getRequest(method);
+        List<ParameterVo> request = RequestUtilOld.getRequest(method);
         System.out.println(JSON.toJSONString(request));
     }
 
@@ -94,7 +87,7 @@ public class RequestComplexTest {
         Method[] methods = RequestComplexTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test2")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtil.getRequest(method);
+        List<ParameterVo> request = RequestUtilOld.getRequest(method);
 
         System.out.println(JSON.toJSONString(request));
     }

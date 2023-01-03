@@ -26,6 +26,18 @@ public class AnnotationUtil {
         return false;
     }
 
+    public static boolean isIgnore(Parameter parameter) {
+        ApiIgnore apiIgnore = parameter.getDeclaredAnnotation(ApiIgnore.class);
+        if (apiIgnore != null) {
+            return true;
+        }
+        ApiModelProperty apiModelProperty = parameter.getDeclaredAnnotation(ApiModelProperty.class);
+        if (apiModelProperty != null && apiModelProperty.hidden()) {
+            return true;
+        }
+        return false;
+    }
+
 
     public static ParameterVo parseBaseType(Parameter parameter) {
 

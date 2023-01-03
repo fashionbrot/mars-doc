@@ -4,7 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
-import com.github.fashionbrot.doc.util.RequestUtil;
+import com.github.fashionbrot.doc.util.RequestUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.Multi2Test;
 import com.github.fashionbrot.entity.MultiTest;
@@ -52,7 +52,7 @@ public class RequestTest {
         Method[] methods = RequestTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtil.getRequest(method);
+        List<ParameterVo> request = RequestUtilOld.getRequest(method);
 
         System.out.println(JSON.toJSONString(request));
     }
@@ -62,7 +62,7 @@ public class RequestTest {
         Method[] methods = RequestTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test2")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtil.getRequest(method);
+        List<ParameterVo> request = RequestUtilOld.getRequest(method);
 
         System.out.println(JSON.toJSONString(request));
     }
@@ -119,7 +119,7 @@ public class RequestTest {
         Method[] methods = RequestTest.TestController2.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test3")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtil.getRequest(method);
+        List<ParameterVo> request = RequestUtilOld.getRequest(method);
 
         System.out.println(JSON.toJSONString(request));
     }
@@ -129,7 +129,7 @@ public class RequestTest {
         Method[] methods = RequestTest.TestController2.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test4")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtil.getRequest(method);
+        List<ParameterVo> request = RequestUtilOld.getRequest(method);
 
         System.out.println(JSON.toJSONString(request));
     }

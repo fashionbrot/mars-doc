@@ -219,7 +219,7 @@ public class ParameterUtil {
 
 
                 //获取 superClass的属性
-                List<ParameterVo> superClassFieldList = RequestUtil.getSuperClassField(thisFieldClass, requestType);
+                List<ParameterVo> superClassFieldList = RequestUtilOld.getSuperClassField(thisFieldClass, requestType);
                 if (ObjectUtil.isNotEmpty(superClassFieldList)){
                     build.getChild().addAll(superClassFieldList);
                     build.setChild(build.getChild());
