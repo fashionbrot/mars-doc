@@ -7,6 +7,7 @@ import com.github.fashionbrot.doc.vo.ParameterVo;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class RequestTest2 {
     }
 
     public class TestController{
-        private void test1(TestUser1 testUser1){
+        private void test1(@RequestBody TestUser1 testUser1){
 
         }
     }
@@ -36,7 +37,7 @@ public class RequestTest2 {
 
         List<ParameterVo> request = RequestUtil.getRequest(method);
         System.out.println(JSON.toJSONString(request));
-        String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"参数1\",\"example\":\"\",\"multiple\":\"\",\"name\":\"t1\",\"required\":false}],\"dataType\":\"com.github.fashionbrot.test.request.RequestTest2$TestUser1\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"testUser1\",\"required\":false}]";
+        String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"参数1\",\"example\":\"\",\"multiple\":\"\",\"name\":\"t1\",\"requestType\":\"BODY\",\"required\":false}],\"dataType\":\"com.github.fashionbrot.test.request.RequestTest2$TestUser1\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"testUser1\",\"requestType\":\"BODY\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 
@@ -47,7 +48,7 @@ public class RequestTest2 {
         private String t1;
     }
     public class TestController2{
-        private void test2(List<TestUser> testUserList, TestUser[] testUsers){
+        private void test2(@RequestBody List<TestUser> testUserList, TestUser[] testUsers){
         }
     }
 
@@ -58,7 +59,7 @@ public class RequestTest2 {
 
         List<ParameterVo> request = RequestUtil.getRequest(method);
         System.out.println(JSON.toJSONString(request));
-        String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"参数1\",\"example\":\"\",\"multiple\":\"\",\"name\":\"t1\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.request.RequestTest2$TestUser\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"testUserList\",\"required\":false},{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"参数1\",\"example\":\"\",\"multiple\":\"\",\"name\":\"t1\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.request.RequestTest2$TestUser\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"testUsers\",\"required\":false}]";
+        String finalResult = "[{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"参数1\",\"example\":\"\",\"multiple\":\"\",\"name\":\"t1\",\"requestType\":\"BODY\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.request.RequestTest2$TestUser\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"testUserList\",\"requestType\":\"BODY\",\"required\":false},{\"child\":[{\"dataType\":\"java.lang.String\",\"description\":\"参数1\",\"example\":\"\",\"multiple\":\"\",\"name\":\"t1\",\"requestType\":\"QUERY\",\"required\":false}],\"collection\":1,\"dataType\":\"com.github.fashionbrot.test.request.RequestTest2$TestUser\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"testUsers\",\"requestType\":\"QUERY\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 

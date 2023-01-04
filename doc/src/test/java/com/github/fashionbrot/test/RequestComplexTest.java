@@ -5,7 +5,6 @@ import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
 import com.github.fashionbrot.doc.util.ParseUtil;
 import com.github.fashionbrot.doc.util.RequestUtilOld;
-import com.github.fashionbrot.doc.util.RequestUtil2;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.*;
 import com.github.fashionbrot.vo.RespVo;

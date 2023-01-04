@@ -31,7 +31,7 @@ public class RequestTest1 {
 
         List<ParameterVo> request = RequestUtil.getRequest(method);
         System.out.println(JSON.toJSONString(request));
-        String finalResult = "[{\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"string\",\"required\":false},{\"dataType\":\"java.lang.Integer\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"integer\",\"required\":false},{\"dataType\":\"java.util.HashMap\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"hashMap\",\"required\":false}]";
+        String finalResult = "[{\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"string\",\"requestType\":\"QUERY\",\"required\":false},{\"dataType\":\"java.lang.Integer\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"integer\",\"requestType\":\"QUERY\",\"required\":false},{\"dataType\":\"java.util.HashMap\",\"description\":\"\",\"example\":\"\",\"multiple\":\"\",\"name\":\"hashMap\",\"requestType\":\"QUERY\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 
@@ -50,7 +50,7 @@ public class RequestTest1 {
 
         List<ParameterVo> request = RequestUtil.getRequest(method);
         System.out.println(JSON.toJSONString(request));
-        String finalResult = "[{\"collection\":1,\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"string\",\"required\":false},{\"collection\":1,\"dataType\":\"java.lang.Integer\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"integer\",\"required\":false}]";
+        String finalResult = "[{\"collection\":1,\"dataType\":\"java.lang.String\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"string\",\"requestType\":\"QUERY\",\"required\":false},{\"collection\":1,\"dataType\":\"java.lang.Integer\",\"description\":\"\",\"example\":\"\",\"isPrimitive\":1,\"multiple\":\"\",\"name\":\"integer\",\"requestType\":\"QUERY\",\"required\":false}]";
         Assert.assertEquals(finalResult,JSON.toJSONString(request));
     }
 
