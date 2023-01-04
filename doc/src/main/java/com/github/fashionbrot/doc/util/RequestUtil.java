@@ -3,36 +3,56 @@ package com.github.fashionbrot.doc.util;
 import com.github.fashionbrot.doc.annotation.ApiImplicitParam;
 import com.github.fashionbrot.doc.enums.ParamTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author fashionbrot
  */
+@Slf4j
 public class RequestUtil {
 
     public static final String REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
     public static final String REQUEST_BODY_REQUIRED = "required";
+
+    private static HashMap<String,Integer> REQUEST_MAP = new HashMap();
+
+    private static boolean checkCycleReference(String key,Object obj){
+//        if (REQUEST_MAP.containsKey(key)){
+//            int count = REQUEST_MAP.get(key)+1;
+//            REQUEST_MAP.put(key,count);
+//            if (count>5) {
+//                return true;
+//            }
+//        }else  {
+//            REQUEST_MAP.put(key, 1);
+//        }
+        return false;
+    }
 
 
     public static List<ParameterVo> getRequest(Method method) {
         List<ParameterVo> parameterList = new ArrayList<>();
         List<ParameterVo> apiImplicitParamList = parseApiImplicitParam(method);
 
-
-        Parameter[] parameterArray = method.getParameters();
-        if (ObjectUtil.isNotEmpty(parameterArray)) {
-            for (int i = 0; i < parameterArray.length; i++) {
-                Parameter parameter = parameterArray[i];
-                parameterSelector(parameter, parameterList);
+        try {
+            Parameter[] parameterArray = method.getParameters();
+            if (ObjectUtil.isNotEmpty(parameterArray)) {
+                for (int i = 0; i < parameterArray.length; i++) {
+                    Parameter parameter = parameterArray[i];
+                    parameterSelector(parameter, parameterList);
+                }
             }
+        }catch (Exception e){
+            log.error("requestUtil getRequest error",e);
+        }finally {
+            REQUEST_MAP.clear();
         }
+
         if (ObjectUtil.isNotEmpty(apiImplicitParamList)) {
             parameterList.addAll(apiImplicitParamList);
         }
@@ -120,6 +140,13 @@ public class RequestUtil {
         parameterVo.setRequestType(requestType);
         List<ParameterVo> childList = new ArrayList<>();
 
+        String key = field.getType().getTypeName()+"#"+field.getDeclaringClass().getTypeName();
+        if (checkCycleReference(key,field)){
+            return;
+        }
+
+//        System.out.println("field:"+field.getName()+" class:"+field.getType().getTypeName()+" DeclaringClass:"+field.getDeclaringClass().getTypeName());
+
         Class<?> typeClass = field.getType();
         /**
          * class parent 类解析
@@ -153,6 +180,12 @@ public class RequestUtil {
 //            parameterVo.setChild(childList);
 //            parameterList.add(parameterVo);
 //        }
+//        System.out.println("field:"+clazz.getName()+" class:"+clazz.getTypeName());
+
+        String key = clazz.getTypeName();
+        if (checkCycleReference(key,clazz)){
+            return;
+        }
 
         parseSuperClass(clazz, requestType, parameterList);
 
@@ -167,6 +200,7 @@ public class RequestUtil {
     public static void parseSuperClass(Class clazz, String requestType, List<ParameterVo> parameterList) {
         Class superclass = clazz.getSuperclass();
         if (superclass != null && JavaUtil.isNotObject(superclass)) {
+
             /**
              * class Field 解析
              */

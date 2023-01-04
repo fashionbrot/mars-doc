@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiModel;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
+import com.github.fashionbrot.doc.util.RequestUtil;
 import com.github.fashionbrot.doc.util.RequestUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
+import com.github.fashionbrot.entity.CourseVO;
 import com.github.fashionbrot.entity.Multi2Test;
 import com.github.fashionbrot.entity.MultiTest;
 import com.github.fashionbrot.req.TestReq;
@@ -31,19 +33,9 @@ public class RequestTest {
         @ApiOperation("test1接口")
         @RequestMapping("test1")
         @ResponseBody
-        private RespVo<MultiTest> test1(TestReq req){
+        private RespVo<MultiTest> test1(CourseVO req){
             return RespVo.success();
         }
-
-
-        @ApiOperation("test2接口")
-        @RequestMapping("test2")
-        @ResponseBody
-        private RespVo<Multi2Test> test2(@RequestBody Multi2Test req){
-            return RespVo.success();
-        }
-
-
     }
 
 
@@ -52,14 +44,30 @@ public class RequestTest {
         Method[] methods = RequestTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> request = RequestUtilOld.getRequest(method);
+        List<ParameterVo> request = RequestUtil.getRequest(method);
 
         System.out.println(JSON.toJSONString(request));
     }
 
+
+
+
+
+
+    public class TestController11{
+
+        @ApiOperation("test2接口")
+        @RequestMapping("test2")
+        @ResponseBody
+        private RespVo<Multi2Test> test2(@RequestBody Multi2Test req){
+            return RespVo.success();
+        }
+    }
+
+
     @Test
     public void test2(){
-        Method[] methods = RequestTest.TestController.class.getDeclaredMethods();
+        Method[] methods = RequestTest.TestController11.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test2")).findFirst().get();
 
         List<ParameterVo> request = RequestUtilOld.getRequest(method);

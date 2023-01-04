@@ -3,7 +3,7 @@ package com.github.fashionbrot.test;
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
-import com.github.fashionbrot.doc.util.ParseUtil;
+import com.github.fashionbrot.doc.util.RequestUtil;
 import com.github.fashionbrot.doc.util.RequestUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.*;
@@ -24,7 +24,7 @@ public class RequestComplexTest {
 
 
     @Data
-    public class RequestTest extends RequestParent<RequestParent1>{
+    public class RequestTest extends RequestParent<RequestParent1,Integer>{
         private String t1;
     }
     @Data
@@ -32,7 +32,7 @@ public class RequestComplexTest {
         private String t2;
     }
     @Data
-    public class RequestParent<T>{
+    public class RequestParent<T2,T>{
         private T  t;
     }
     @Data
@@ -161,7 +161,7 @@ public class RequestComplexTest {
         Method[] methods = RequestComplexTest.TestController3.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test3")).findFirst().get();
 
-        List<ParameterVo> request = ParseUtil.getRequest3(method);
+        List<ParameterVo> request = RequestUtil.getRequest(method);
         System.out.println(JSON.toJSONString(request));
     }
 

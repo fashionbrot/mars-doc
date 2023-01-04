@@ -2,10 +2,6 @@ package com.github.fashionbrot.doc.util;
 
 
 
-import com.github.fashionbrot.doc.annotation.ApiIgnore;
-import com.github.fashionbrot.doc.annotation.ApiModelProperty;
-import com.github.fashionbrot.doc.consts.SpringMvcAnnotations;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
@@ -178,23 +174,6 @@ public class JavaUtil {
     }
 
 
-
-    /**
-     * ignore param with annotation
-     *
-     * @param annotation Spring Mvc's annotation
-     * @return boolean
-     */
-    public static boolean ignoreSpringMvcParamWithAnnotation(String annotation) {
-        switch (annotation) {
-            case SpringMvcAnnotations.SESSION_ATTRIBUTE:
-            case SpringMvcAnnotations.REQUEST_ATTRIBUTE:
-            case SpringMvcAnnotations.REQUEST_HERDER:
-                return true;
-            default:
-                return false;
-        }
-    }
 
 
 

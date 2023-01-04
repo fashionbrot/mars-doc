@@ -4,6 +4,7 @@ package com.github.fashionbrot.controller;
 import com.github.fashionbrot.doc.annotation.Api;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
+import com.github.fashionbrot.entity.CourseVO;
 import com.github.fashionbrot.req.RequestReq1;
 import com.github.fashionbrot.req.RequestReq2;
 import com.github.fashionbrot.vo.RespVo;
@@ -55,4 +56,11 @@ public class RequestController {
     }
 
 
+    @ApiOperation(value = "request6测试接口",priority = 40)
+    @ResponseBody
+    @PostMapping("request6")
+    public RespVo<Integer> request5(@RequestBody CourseVO courseVO){
+
+        return RespVo.success(1);
+    }
 }

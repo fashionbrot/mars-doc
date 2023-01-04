@@ -2,6 +2,7 @@ package com.github.fashionbrot.test;
 
 import com.alibaba.fastjson2.JSON;
 import com.github.fashionbrot.doc.annotation.ApiOperation;
+import com.github.fashionbrot.doc.util.ResponseUtil;
 import com.github.fashionbrot.doc.util.ResponseUtilOld;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import com.github.fashionbrot.entity.Multi2Test;
@@ -64,7 +65,7 @@ public class ResponseTest {
         Method[] methods = ResponseTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test1")).findFirst().get();
 
-        List<ParameterVo> response = ResponseUtilOld.getResponse(method);
+        List<ParameterVo> response = ResponseUtil.getResponse(method);
 
         System.out.println(JSON.toJSONString(response));
     }
@@ -81,7 +82,7 @@ public class ResponseTest {
     public void test7(){
         Method[] methods = ResponseTest.TestController.class.getDeclaredMethods();
         Method method  = Arrays.stream(methods).filter(m -> m.getName().equals("test7")).findFirst().get();
-        List<ParameterVo> response = ResponseUtilOld.getResponse(method);
+        List<ParameterVo> response = ResponseUtil.getResponse(method);
         System.out.println(JSON.toJSONString(response));
     }
 

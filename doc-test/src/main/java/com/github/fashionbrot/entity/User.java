@@ -2,8 +2,6 @@
 package com.github.fashionbrot.entity;
 
 
-import jdk.nashorn.internal.objects.Global;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
