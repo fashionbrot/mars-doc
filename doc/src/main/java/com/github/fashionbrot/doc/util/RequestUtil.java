@@ -22,15 +22,21 @@ public class RequestUtil {
     private static HashMap<String,Integer> REQUEST_MAP = new HashMap();
 
     private static boolean checkCycleReference(String key,Object obj){
-//        if (REQUEST_MAP.containsKey(key)){
-//            int count = REQUEST_MAP.get(key)+1;
-//            REQUEST_MAP.put(key,count);
-//            if (count>5) {
-//                return true;
-//            }
-//        }else  {
-//            REQUEST_MAP.put(key, 1);
-//        }
+
+        if (REQUEST_MAP.containsKey(key)){
+            int count = REQUEST_MAP.get(key)+1;
+            REQUEST_MAP.put(key,count);
+            if (count>1) {
+                if (count==2){
+                    System.out.println("-------："+key);
+                }
+
+                return true;
+            }
+        }else  {
+            System.out.println(key);
+            REQUEST_MAP.put(key, 1);
+        }
         return false;
     }
 
@@ -140,7 +146,7 @@ public class RequestUtil {
         parameterVo.setRequestType(requestType);
         List<ParameterVo> childList = new ArrayList<>();
 
-        String key = field.getType().getTypeName()+"#"+field.getDeclaringClass().getTypeName();
+        String key = field.getName()+"#"+field.getType().getTypeName()+"#"+field.getDeclaringClass().getTypeName();
         if (checkCycleReference(key,field)){
             return;
         }
@@ -163,7 +169,7 @@ public class RequestUtil {
         }
     }
 
-    public static void parseClassField(Class clazz, String requestType, List<ParameterVo> parameterList) {
+    public static void parseClassField(Class clazz, String requestType, List<ParameterVo> parameterList,Class parentClass) {
 //        ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
 //        List<ParameterVo> childList = new ArrayList<>();
 //
@@ -183,6 +189,9 @@ public class RequestUtil {
 //        System.out.println("field:"+clazz.getName()+" class:"+clazz.getTypeName());
 
         String key = clazz.getTypeName();
+        if (parentClass!=null){
+            key +="#"+parentClass.getTypeName();
+        }
         if (checkCycleReference(key,clazz)){
             return;
         }
@@ -204,7 +213,7 @@ public class RequestUtil {
             /**
              * class Field 解析
              */
-            parseClassField(superclass, requestType, parameterList);
+            parseClassField(superclass, requestType, parameterList,clazz);
         }
     }
 
@@ -220,7 +229,7 @@ public class RequestUtil {
                 if (JavaUtil.isPrimitive((Class) actualTypeArguments[0])) {
                     parameterVo.setIsPrimitive(1);
                 } else {
-                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList);
+                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList,field.getType());
                 }
             }
         }
@@ -241,7 +250,7 @@ public class RequestUtil {
             if (JavaUtil.isPrimitive(convertClass)) {
                 parameterVo.setIsPrimitive(1);
             } else {
-                parseClassField(convertClass, requestType, childParameterList);
+                parseClassField(convertClass, requestType, childParameterList,field.getType());
             }
         }
 
@@ -263,7 +272,7 @@ public class RequestUtil {
             if (JavaUtil.isPrimitive(convertClass)) {
                 parameterVo.setIsPrimitive(1);
             } else {
-                parseClassField(convertClass, requestType, childParameterList);
+                parseClassField(convertClass, requestType, childParameterList,parameter.getType());
             }
         }
         if (ObjectUtil.isNotEmpty(childParameterList)) {
@@ -286,7 +295,7 @@ public class RequestUtil {
                 if (JavaUtil.isPrimitive((Class) actualTypeArguments[0])) {
                     parameterVo.setIsPrimitive(1);
                 } else {
-                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList);
+                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList,parameter.getType());
                 }
             }
         }
