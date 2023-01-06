@@ -115,6 +115,9 @@ public class RequestUtil {
             parameterVo.setRequestType(requestType);
             parameterList.add(parameterVo);
         } else {
+//            if (checkCycleReference(field.toGenericString()+field.getDeclaringClass().getTypeName(),null)){
+//                return;
+//            }
             //class Field 解析
             parseClassField(field, requestType, parameterList);
         }
@@ -146,10 +149,10 @@ public class RequestUtil {
         parameterVo.setRequestType(requestType);
         List<ParameterVo> childList = new ArrayList<>();
 
-        String key = field.getName()+"#"+field.getType().getTypeName()+"#"+field.getDeclaringClass().getTypeName();
-        if (checkCycleReference(key,field)){
-            return;
-        }
+//        String key = field.getName()+"#"+field.getType().getTypeName()+"#"+field.getDeclaringClass().getTypeName();
+//        if (checkCycleReference(key,field)){
+//            return;
+//        }
 
 //        System.out.println("field:"+field.getName()+" class:"+field.getType().getTypeName()+" DeclaringClass:"+field.getDeclaringClass().getTypeName());
 
@@ -188,13 +191,13 @@ public class RequestUtil {
 //        }
 //        System.out.println("field:"+clazz.getName()+" class:"+clazz.getTypeName());
 
-        String key = clazz.getTypeName();
-        if (parentClass!=null){
-            key +="#"+parentClass.getTypeName();
-        }
-        if (checkCycleReference(key,clazz)){
-            return;
-        }
+//        String key = clazz.getTypeName();
+//        if (parentClass!=null){
+//            key +="#"+parentClass.getTypeName();
+//        }
+//        if (checkCycleReference(key,clazz)){
+//            return;
+//        }
 
         parseSuperClass(clazz, requestType, parameterList);
 
