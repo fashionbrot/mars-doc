@@ -19,26 +19,6 @@ public class RequestUtil {
     public static final String REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
     public static final String REQUEST_BODY_REQUIRED = "required";
 
-    private static HashMap<String,Integer> REQUEST_MAP = new HashMap();
-
-    private static boolean checkCycleReference(String key,Object obj){
-
-        if (REQUEST_MAP.containsKey(key)){
-            int count = REQUEST_MAP.get(key)+1;
-            REQUEST_MAP.put(key,count);
-            if (count>1) {
-                if (count==2){
-                    System.out.println("-------："+key);
-                }
-
-                return true;
-            }
-        }else  {
-            System.out.println(key);
-            REQUEST_MAP.put(key, 1);
-        }
-        return false;
-    }
 
 
     public static List<ParameterVo> getRequest(Method method) {
@@ -53,10 +33,8 @@ public class RequestUtil {
                     parameterSelector(parameter, parameterList);
                 }
             }
-        }catch (Exception e){
+        }catch (Throwable e){
             log.error("requestUtil getRequest error",e);
-        }finally {
-            REQUEST_MAP.clear();
         }
 
         if (ObjectUtil.isNotEmpty(apiImplicitParamList)) {
@@ -77,8 +55,8 @@ public class RequestUtil {
         if (isRequestBody(parameter)) {
             requestType = ParamTypeEnum.BODY.name();
         }
-
         Class<?> propertyClass = parameter.getType();
+
         if (JavaUtil.isArray(propertyClass)) {
             //数组类型
             parseParameterArray(parameter, requestType, parameterList);
@@ -96,7 +74,7 @@ public class RequestUtil {
         }
     }
 
-    public static void fieldSelector(Field field, String requestType, List<ParameterVo> parameterList) {
+    public static void fieldSelector(Class clazz,Field field, String requestType, List<ParameterVo> parameterList) {
         if (JavaUtil.isFinal(field) || AnnotationUtil.isIgnore(field)) {
             return;
         }
@@ -115,9 +93,6 @@ public class RequestUtil {
             parameterVo.setRequestType(requestType);
             parameterList.add(parameterVo);
         } else {
-//            if (checkCycleReference(field.toGenericString()+field.getDeclaringClass().getTypeName(),null)){
-//                return;
-//            }
             //class Field 解析
             parseClassField(field, requestType, parameterList);
         }
@@ -129,6 +104,7 @@ public class RequestUtil {
         List<ParameterVo> childList = new ArrayList<>();
 
         Class<?> typeClass = parameter.getType();
+        String parameterName = parameter.getName();
         /**
          * class parent 类解析
          */
@@ -137,7 +113,7 @@ public class RequestUtil {
         Field[] declaredFields = typeClass.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
             for (Field field : declaredFields) {
-                fieldSelector(field, requestType, childList);
+                fieldSelector(typeClass,field, requestType, childList);
             }
             parameterVo.setChild(childList);
             parameterList.add(parameterVo);
@@ -149,12 +125,6 @@ public class RequestUtil {
         parameterVo.setRequestType(requestType);
         List<ParameterVo> childList = new ArrayList<>();
 
-//        String key = field.getName()+"#"+field.getType().getTypeName()+"#"+field.getDeclaringClass().getTypeName();
-//        if (checkCycleReference(key,field)){
-//            return;
-//        }
-
-//        System.out.println("field:"+field.getName()+" class:"+field.getType().getTypeName()+" DeclaringClass:"+field.getDeclaringClass().getTypeName());
 
         Class<?> typeClass = field.getType();
         /**
@@ -165,46 +135,25 @@ public class RequestUtil {
         Field[] declaredFields = typeClass.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
             for (Field f : declaredFields) {
-                fieldSelector(f, requestType, childList);
+                fieldSelector(typeClass,f, requestType, childList);
             }
             parameterVo.setChild(childList);
             parameterList.add(parameterVo);
         }
     }
 
-    public static void parseClassField(Class clazz, String requestType, List<ParameterVo> parameterList,Class parentClass) {
-//        ParameterVo parameterVo = AnnotationUtil.parseBaseType(clazz);
-//        List<ParameterVo> childList = new ArrayList<>();
-//
-//        /**
-//         * class parent 类解析
-//         */
-//        parseSuperClass(clazz, parameterList);
-//
-//        Field[] declaredFields = clazz.getDeclaredFields();
-//        if (ObjectUtil.isNotEmpty(declaredFields)) {
-//            for (Field field : declaredFields) {
-//                fieldSelector(field, childList);
-//            }
-//            parameterVo.setChild(childList);
-//            parameterList.add(parameterVo);
-//        }
-//        System.out.println("field:"+clazz.getName()+" class:"+clazz.getTypeName());
+    public static void parseClassField(Class clazz, String requestType, List<ParameterVo> parameterList) {
 
-//        String key = clazz.getTypeName();
-//        if (parentClass!=null){
-//            key +="#"+parentClass.getTypeName();
-//        }
-//        if (checkCycleReference(key,clazz)){
-//            return;
-//        }
 
         parseSuperClass(clazz, requestType, parameterList);
 
         Field[] declaredFields = clazz.getDeclaredFields();
         if (ObjectUtil.isNotEmpty(declaredFields)) {
             for (Field field : declaredFields) {
-                fieldSelector(field, requestType, parameterList);
+
+
+
+                fieldSelector(clazz,field, requestType, parameterList);
             }
         }
     }
@@ -216,7 +165,7 @@ public class RequestUtil {
             /**
              * class Field 解析
              */
-            parseClassField(superclass, requestType, parameterList,clazz);
+            parseClassField(superclass, requestType, parameterList);
         }
     }
 
@@ -228,12 +177,16 @@ public class RequestUtil {
         if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
             parameterVo.setCollection(1);
             if (actualTypeArguments[0] instanceof Class) {
-                parameterVo.setDataType(((Class) actualTypeArguments[0]).getTypeName());
-                if (JavaUtil.isPrimitive((Class) actualTypeArguments[0])) {
-                    parameterVo.setIsPrimitive(1);
-                } else {
-                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList,field.getType());
+                Class typeConvertClass = TypeUtil.typeConvertClass(actualTypeArguments[0]);
+                if (typeConvertClass!=null){
+                    parameterVo.setDataType(typeConvertClass.getTypeName());
+                    if (JavaUtil.isPrimitive(typeConvertClass)) {
+                        parameterVo.setIsPrimitive(1);
+                    } else {
+                        parseClassField((Class) actualTypeArguments[0], requestType, childParameterList);
+                    }
                 }
+
             }
         }
         if (ObjectUtil.isNotEmpty(childParameterList)) {
@@ -253,7 +206,7 @@ public class RequestUtil {
             if (JavaUtil.isPrimitive(convertClass)) {
                 parameterVo.setIsPrimitive(1);
             } else {
-                parseClassField(convertClass, requestType, childParameterList,field.getType());
+                parseClassField(convertClass, requestType, childParameterList);
             }
         }
 
@@ -275,7 +228,7 @@ public class RequestUtil {
             if (JavaUtil.isPrimitive(convertClass)) {
                 parameterVo.setIsPrimitive(1);
             } else {
-                parseClassField(convertClass, requestType, childParameterList,parameter.getType());
+                parseClassField(convertClass, requestType, childParameterList);
             }
         }
         if (ObjectUtil.isNotEmpty(childParameterList)) {
@@ -291,14 +244,13 @@ public class RequestUtil {
         List<ParameterVo> childParameterList = new ArrayList<>();
         Type[] actualTypeArguments = TypeUtil.getActualTypeArguments(parameter);
         if (ObjectUtil.isNotEmpty(actualTypeArguments)) {
-
             parameterVo.setCollection(1);
             if (actualTypeArguments[0] instanceof Class) {
                 parameterVo.setDataType(((Class) actualTypeArguments[0]).getTypeName());
                 if (JavaUtil.isPrimitive((Class) actualTypeArguments[0])) {
                     parameterVo.setIsPrimitive(1);
                 } else {
-                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList,parameter.getType());
+                    parseClassField((Class) actualTypeArguments[0], requestType, childParameterList);
                 }
             }
         }
