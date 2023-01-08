@@ -144,6 +144,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
 
         List<LinkVo> requestVoList = new ArrayList<>();
         List<LinkVo> responseVoList = new ArrayList<>();
+        List<ResponseCodeListVo> responseCodeList = new ArrayList<>();
         List<ClassVo> classVoList = new ArrayList<>();
 
 
@@ -242,6 +243,14 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
                             .build());
                 }
 
+                long respCodeCount = responseCodeList.stream().filter(m -> m.getMethodId().equals(methodId)).count();
+                if (respCodeCount == 0) {
+                    responseCodeList.add(ResponseCodeListVo.builder()
+                            .methodId(methodId)
+                            .list(ResponseCodeUtil.getResponseCodeList(method))
+                            .build());
+                }
+
                 Optional<ClassVo> optionalClassVo = classVoList.stream().filter(m -> m.getClassId().equals(classId)).findFirst();
                 if (!optionalClassVo.isPresent()) {
                     ClassVo classVo = ClassVo.builder()
@@ -271,6 +280,7 @@ public class DocApplicationListener implements ApplicationListener<ContextRefres
         docVo.setClassList(classVoList.stream().sorted(Comparator.comparing(ClassVo::getPriority).reversed()).collect(Collectors.toList()));
         docVo.setRequestList(requestVoList);
         docVo.setResponseList(responseVoList);
+        docVo.setResponseCodeList(responseCodeList);
         docVo.setInfo(InfoVo.builder()
                         .version(MarsDocConst.VERSION)
                         .baseUrl("")

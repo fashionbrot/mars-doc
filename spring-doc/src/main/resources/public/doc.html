@@ -178,7 +178,31 @@
                     </table>
                 </div>
                 <hr>
-
+                <div>
+                    <label class="layui-form-label-doc">响应code:</label>
+                    <div class="layui-form-static"></div>
+                </div>
+                <div class="request-table-div">
+                    <table lay-filter="{{method.methodUId}}responseCodeTable" class="layui-table">
+                        <thead>
+                        <tr>
+                            <th lay-data="{field:'name', width:'40%'}">Code</th>
+                            <th lay-data="{field:'description',  width:'60%'}">说明</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{if responseCode!=null && responseCode.list!=null }}
+                            {{each responseCode.list rl codeIndex}}
+                                <tr>
+                                    <td>{{rl.code}}</td>
+                                    <td>{{rl.message}}</td>
+                                </tr>
+                            {{/each}}
+                        {{/if}}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
                 <div>
                     <label class="layui-form-label-doc">响应参数:</label>
                     <div class="layui-form-static"></div>
@@ -814,12 +838,15 @@
 
                     let thisRequest = getRequest(methodId);
                     let thisResponse = getResponse(methodId);
+                    let thisResponseCode = getResponseCode(methodId);
+
                     if (thisMethod) {
 
                         let data = {
                             method: thisMethod,
                             request: thisRequest,
                             response: thisResponse,
+                            responseCode:thisResponseCode,
                             formatRequest:formatParam(thisRequest),
                             formatResponse:formatParam(thisResponse),
                             debugRequest:getDebugFormatParam(thisRequest)
@@ -835,6 +862,7 @@
                         form.render();
 
                         initTable(methodUId + 'requestTable','sm','无参数');
+                        initTable(methodUId+"responseCodeTable","sm","无配置");
                         initTable(methodUId + 'responseTable','sm','无返回值');
                         initResponseJson(thisResponse,methodUId);
                         initDebugResponseContent(thisResponse,methodUId,"debugResponseContent"+methodUId);
@@ -846,7 +874,6 @@
 
         function initTable(id,size,textNone){
             table.init(id, { //转化静态表格
-                // height: 'full-500',
                 limit:1000,
                 size: size,
                 text: {
@@ -907,10 +934,6 @@
                 editor.setOption("maxLines", 13);
                 editor.setOption("minLines",3)
             }
-            // var length_editor = editor.session.getLength();
-            // var rows_editor = length_editor * 16;
-            //
-            // $("#"+debugResponseContentId).css('height',rows_editor+"px");
             editor.setReadOnly(true);
             editor.clearSelection();
             editor.resize();
@@ -1024,6 +1047,20 @@
             }
             return response;
         }
+        function getResponseCode(methodId) {
+            let responseCodeList = json5Parse(storage.get("responseCodeList"));
+            let responseCode = {};
+            if (responseCodeList) {
+                for (let j = 0; j < responseCodeList.length; j++) {
+                    let r = responseCodeList[j];
+                    if (r.methodId == methodId) {
+                        responseCode = r;
+                        break;
+                    }
+                }
+            }
+            return responseCode;
+        }
 
         function existTab(methodUId) {
             let exist = false;
@@ -1036,26 +1073,6 @@
             return exist;
         }
 
-        var sliderInst = slider.render({
-            elem: '#remember',
-            min: 1 ,
-            max: 100,
-            value: 1,
-            showstep: false,
-            tips: true,
-            input: false ,
-            range: true,
-            change: function (value) { // 选中值发生改变的回调
-                $("#rememberDay").val(value[1]);
-                console.log('change', value)
-            },
-            done: function (value) { // 值完成选中的回调 -- v2.8.0 新增
-                console.log('done', value);
-            }
-            , setTips: function (value) { //自定义提示文本
-                return value + '天';
-            }
-        });
 
         initData(null);
         function initData(callback) {
@@ -1133,7 +1150,6 @@
                 if (json.baseUrl){
                     storage.set("group-base-url",json.baseUrl);
                 }
-
                 if (json.classList) {
                     storage.set("classList", json5Stringify(json.classList));
                 }
@@ -1142,6 +1158,9 @@
                 }
                 if (json.responseList) {
                     storage.set("responseList", json5Stringify(json.responseList));
+                }
+                if (json.responseCodeList) {
+                    storage.set("responseCodeList", json5Stringify(json.responseCodeList));
                 }
                 initLeft(null);
             }
@@ -1256,9 +1275,6 @@
             json.jsonLine = len;
             return json;
         }
-
-
-
 
     });
 

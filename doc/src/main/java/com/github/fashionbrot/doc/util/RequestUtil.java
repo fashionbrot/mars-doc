@@ -1,6 +1,7 @@
 package com.github.fashionbrot.doc.util;
 
 import com.github.fashionbrot.doc.annotation.ApiImplicitParam;
+import com.github.fashionbrot.doc.annotation.ApiImplicitParams;
 import com.github.fashionbrot.doc.enums.ParamTypeEnum;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,8 @@ public class RequestUtil {
 
     public static List<ParameterVo> getRequest(Method method) {
         List<ParameterVo> parameterList = new ArrayList<>();
-        List<ParameterVo> apiImplicitParamList = parseApiImplicitParam(method);
+
+        parseApiImplicitParam(method,parameterList);
 
         try {
             Parameter[] parameterArray = method.getParameters();
@@ -37,9 +39,6 @@ public class RequestUtil {
             log.error("requestUtil getRequest error",e);
         }
 
-        if (ObjectUtil.isNotEmpty(apiImplicitParamList)) {
-            parameterList.addAll(apiImplicitParamList);
-        }
         return parameterList;
     }
 
@@ -261,20 +260,31 @@ public class RequestUtil {
     }
 
 
-    public static List<ParameterVo> parseApiImplicitParam(Method method) {
-        ApiImplicitParam[] apiImplicitParams = method.getDeclaredAnnotationsByType(ApiImplicitParam.class);
-        if (ObjectUtil.isNotEmpty(apiImplicitParams)) {
-            return Arrays.stream(apiImplicitParams)
+    public static void parseApiImplicitParam(Method method,List<ParameterVo> parameterList) {
+        Class<?> declaringClass = method.getDeclaringClass();
+
+        ApiImplicitParams declaredAnnotation = declaringClass.getDeclaredAnnotation(ApiImplicitParams.class);
+        if (declaredAnnotation!=null && ObjectUtil.isNotEmpty(declaredAnnotation.value())){
+            ApiImplicitParam[] value = declaredAnnotation.value();
+            parameterList.addAll(Arrays.stream(value)
                     .filter(m -> checkParamType(m.paramType()))
                     .map(m -> buildParameterVo(m))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
         }
-        return null;
+
+        ApiImplicitParam[] apiImplicitParams = method.getDeclaredAnnotationsByType(ApiImplicitParam.class);
+        if (ObjectUtil.isNotEmpty(apiImplicitParams)) {
+            parameterList.addAll(Arrays.stream(apiImplicitParams)
+                    .filter(m -> checkParamType(m.paramType()))
+                    .map(m -> buildParameterVo(m))
+                    .collect(Collectors.toList())) ;
+        }
     }
 
     public static boolean checkParamType(String paramType) {
         if (ParamTypeEnum.BODY.name().equalsIgnoreCase(paramType) ||
-                ParamTypeEnum.QUERY.name().equalsIgnoreCase(paramType)) {
+                ParamTypeEnum.QUERY.name().equalsIgnoreCase(paramType)||
+                ParamTypeEnum.HEADER.name().equalsIgnoreCase(paramType)) {
             return true;
         }
         return false;

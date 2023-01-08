@@ -11,15 +11,9 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MethodTypeVo {
+public class ResponseCodeListVo {
 
-    private String methodId;
+    private String methodId ;
 
-    private Class typeClass;
-
-    private String typeClassStr;
-
-    private String typeName;
-
-    private List<MethodTypeVo> child;
+    private List<ResponseCodeVo> list;
 }

@@ -1,6 +1,5 @@
 package com.github.fashionbrot.doc.vo;
 
-import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +25,8 @@ public class DocVo implements Serializable {
     private List<LinkVo> requestList;
 
     private List<LinkVo> responseList;
+
+    private List<ResponseCodeListVo> responseCodeList;
 
     private String baseUrl;
 

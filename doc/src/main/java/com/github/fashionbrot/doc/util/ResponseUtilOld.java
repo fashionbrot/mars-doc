@@ -2,7 +2,6 @@ package com.github.fashionbrot.doc.util;
 
 import com.github.fashionbrot.doc.annotation.ApiIgnore;
 import com.github.fashionbrot.doc.annotation.ApiModelProperty;
-import com.github.fashionbrot.doc.vo.MethodTypeVo;
 import com.github.fashionbrot.doc.vo.ParameterVo;
 
 import java.lang.reflect.*;

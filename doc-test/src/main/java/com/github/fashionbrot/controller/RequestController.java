@@ -56,11 +56,5 @@ public class RequestController {
     }
 
 
-    @ApiOperation(value = "request6测试接口",priority = 40)
-    @ResponseBody
-    @PostMapping("request6")
-    public RespVo<Integer> request5(@RequestBody CourseVO courseVO){
 
-        return RespVo.success(1);
-    }
 }
