@@ -11,6 +11,9 @@ import com.github.fashionbrot.vo.RespVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 @Api(value = "requestTest接口",priority = 98)
 @Controller
@@ -50,11 +53,18 @@ public class RequestController {
     @ApiOperation(value = "request5测试接口",priority = 50)
     @ResponseBody
     @PostMapping("request5")
-    public RespVo<Integer> request5(@RequestBody RequestReq2 requestReq1){
+    public RespVo<List<Integer>> request5(@RequestBody RequestReq2 requestReq1){
 
-        return RespVo.success(1);
+        return RespVo.success(Arrays.asList(1));
     }
 
+    @ApiOperation(value = "request6测试接口",priority = 40)
+    @ResponseBody
+    @PostMapping("request6")
+    public RespVo<String> request6(@RequestBody RequestReq2 requestReq1){
+
+        return RespVo.success("测试");
+    }
 
 
 }

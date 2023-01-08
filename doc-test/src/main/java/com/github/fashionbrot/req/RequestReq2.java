@@ -14,6 +14,9 @@ public class RequestReq2 {
     @ApiModelProperty("test1哦")
     private String test1;
 
+    @ApiModelProperty("test2哦")
+    private List<String> test2;
+
     @ApiModelProperty("requestReq1哦")
     private RequestReq1 requestReq1;
 

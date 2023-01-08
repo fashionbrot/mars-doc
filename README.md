@@ -6,14 +6,15 @@
 ##### gitee :https://gitee.com/fashionbrot/mars-doc.git
 
 
-| 版本 | 版本说明|     
-|---|--------|
-|0.0.1| 基础功能上线|
+| 版本    | 版本说明                   |     
+|-------|------------------------|
+| 0.0.1 | 基础功能上线                 |
+| 0.0.2 | 增加报文 code，优化参数解析，返回值解析 |
 
 
 #### 使用环境
 
-##### spring4.0 及以上
+##### springboot 2.0以上
 ##### jdk1.8 
 
 
@@ -32,13 +33,13 @@
 #### springboot 接入说明
 ##### 引入jar文件
 ```gradle
-    implementation "com.github.fashionbrot:spring-boot-starter-doc:0.0.1"
+    implementation "com.github.fashionbrot:spring-boot-starter-doc:0.0.2"
 ```
 ```xml
      <dependency>
         <groupId>com.github.fashionbrot</groupId>
         <artifactId>spring-boot-starter-doc</artifactId>
-        <version>0.0.1</version>
+        <version>0.0.2</version>
     </dependency>
 ```
 #### application.properties 配置

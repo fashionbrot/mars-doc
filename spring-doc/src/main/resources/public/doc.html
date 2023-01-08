@@ -147,12 +147,12 @@
                     <table lay-filter="{{method.methodUId}}requestTable" class="layui-table">
                         <thead>
                         <tr>
-                            <th lay-data="{field:'name', width:'26%',templet:'#nameTemplet'}">参数名称</th>
+                            <th lay-data="{field:'name', width:'30%',templet:'#nameTemplet'}">参数名称</th>
                             <th lay-data="{field:'description',  width:'26%'}">参数说明</th>
-                            <th lay-data="{field:'requestType', width:'8%'}">请求类型</th>
-                            <th lay-data="{field:'required', width:'8%'}">是否必须</th>
-                            <th lay-data="{field:'dataType', width:'22%'}">数据类型</th>
-                            <th lay-data="{field:'example', width:'10%'}">示例值</th>
+                            <th lay-data="{field:'requestType', width:'5%'}">请求类型</th>
+                            <th lay-data="{field:'required', width:'5%'}">是否必须</th>
+                            <th lay-data="{field:'dataType', width:'30%'}">数据类型</th>
+                            <th lay-data="{field:'example', width:'6%'}">示例值</th>
                             <th lay-data="{field:'child',hide:'true'}"></th>
                             <th lay-data="{field:'collection',hide:'true'}"></th>
                             <th lay-data="{field:'level',hide:'true'}"></th>
@@ -166,7 +166,11 @@
                             <td>{{rl.description}}</td>
                             <td>{{rl.requestType|toLowerCase}}</td>
                             <td>{{rl.required}}</td>
-                            <td>{{rl.dataType}}</td>
+                            {{if rl.collection==1}}
+                                <td>{{rl.dataType}}(Array)</td>
+                            {{else}}
+                                <td>{{rl.dataType}}</td>
+                            {{/if}}
                             <td>{{rl.example!=null?rl.example:''}}</td>
                             <td>{{rl.child}}</td>
                             <td>{{rl.collection}}</td>
@@ -961,9 +965,7 @@
 
         function appendJson(request,json){
             if (request){
-                if (common.like(request.dataType,"String")){
-                    json[request.name]="";
-                }else{
+
                     let child = request.child;
                     let collection = request.collection;
 
@@ -983,11 +985,26 @@
                         });
                         json[request.name]=childJson;
                     }else{
-                        json[request.name]=0;
+                        if (common.like(request.dataType,"String")){
+
+                            if (collection==1){
+                                json[request.name]=[''];
+                            }else{
+                                json[request.name]="";
+                            }
+                        }else{
+                            if (collection==1){
+                                json[request.name]=[];
+                            }else{
+                                json[request.name]=0;
+                            }
+
+                        }
                     }
-                }
+
             }
         }
+
 
         function getMethod(classUId, methodId,methodPath,methodMethod) {
             let classList = json5Parse(storage.get("classList"));
